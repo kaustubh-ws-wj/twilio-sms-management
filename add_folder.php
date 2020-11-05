@@ -6,10 +6,12 @@
   $result_get_group_count = mysqli_query($connect,$query_get_group_count);
   $group_count = mysqli_num_rows($result_get_group_count);
   
+  if(isset($_GET['fid']) && $_GET['fid'] != ''){
+    $query_get_one_folder = "SELECT * FROM folder where folder_id = {$_GET['fid']}";
+    $result_get_one_folder = mysqli_query($connect,$query_get_one_folder);
+    $result_get_one_folder = mysqli_fetch_array($result_get_one_folder);
+  }
   
-  $query_get_one_folder = "SELECT * FROM folder where folder_id = {$_GET['fid']}";
-  $result_get_one_folder = mysqli_query($connect,$query_get_one_folder);
-  $result_get_one_folder = mysqli_fetch_array($result_get_one_folder);
 ?>
 
   <body class=" sidebar-mini ">
@@ -71,8 +73,8 @@
                     <div class="col-md-6">
                       <h4 class="card-title">Enter Folder Name</h4>
                       <div class="form-group form-file-upload form-file-simple">
-                        <input type="text" class="form-control" name="folder_name" value="<?=$result_get_one_folder['folder_name']?>" required="">
-                        <input type="hidden" class="form-control" name="folder_id" value="<?=$result_get_one_folder['folder_id']?>">
+                        <input type="text" class="form-control" name="folder_name" value="<?=@$result_get_one_folder['folder_name']?>" required="">
+                        <input type="hidden" class="form-control" name="folder_id" value="<?=@$result_get_one_folder['folder_id']?>">
                       </div>
                       <div class="form-group form-file-upload form-file-multiple">
                         <input type="submit" value="Submit" class="btn btn-warning">
@@ -102,36 +104,20 @@
                   <div class="table-responsive">
                     <table class="table table-shopping">
                       <thead class="">
-                        <th  class="text-center" >
-                        </th>
-                        <th >
-                          ID
-                        </th>
-                        <th >
-                          Name
-                        </th>
-                        <th >
-                          Action
-                        </th>
+                        <th  class="text-center" ></th>
+                        <th >ID</th>
+                        <th >Name</th>
+                        <th >Action</th>
                       </thead>
                       <tbody>
-                        <?php 
-                          while($row=mysqli_fetch_assoc($result_get_group_count)) {
-                        ?>
+                      <?php 
+                        while($row=mysqli_fetch_assoc($result_get_group_count)) {
+                      ?>
                           <tr>
-                            <td>
-                            </td>
-                            <td>
-                              <?= $row['folder_id']; ?>
-                            </td>
-                            <td>
-                              <?= $row['folder_name']; ?>
-                            </td>
-                            <td>
-                              <a href="add_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info"> Edit</a>
-                              <a href="delete_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info"> Delete</a>
-                            </td>
-                            
+                            <td></td>
+                            <td><?= $row['folder_id']; ?></td>
+                            <td><?= $row['folder_name']; ?></td>
+                            <td><a href="add_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info"> Edit</a> <a href="delete_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info"> Delete</a></td>
                         </tr>
                         <?php
                          }

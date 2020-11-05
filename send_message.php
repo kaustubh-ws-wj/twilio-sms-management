@@ -1,11 +1,9 @@
 <?php
+  include 'config.php';
   $title = "Create Campaign";
   include 'inc/head.php';
   include 'connection.php';
   require 'vendor/autoload.php';
-  use Plivo\RestClient;
-  use Plivo\Exceptions\PlivoRestException;
-  
   
   $query = "SELECT * FROM add_group";
   $result = mysqli_query($connect, $query);
@@ -13,20 +11,27 @@
   $query_routes = "SELECT * FROM call_routes GROUP by `call_routes_name`";
   $result_routes = mysqli_query($connect, $query_routes);
   
-  
-  
-$client = new RestClient("MAOGFLMJLKNGM0ODZMYJ", "MGQ2ZTg5ZWM5YzU5MDY3MjNiZjY0Y2EwMGFiY2M2");
+  $curl = curl_init();
 
-try {
-    $response = $client->numbers->list(
-        [
-        	'limit' => 100
-        ]
-    );
-}
-catch (PlivoRestException $ex) {
-    print_r($ex);
-}
+  curl_setopt_array($curl, array(
+    CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/IncomingPhoneNumbers.json",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_HTTPHEADER => array(
+      "Authorization: Basic ".BASIC_AUTH_KEY
+    ),
+  ));
+
+  $response = curl_exec($curl);
+
+  curl_close($curl);
+  $list_result = json_decode($response);
+  
 ?>
 
   <body class=" sidebar-mini ">

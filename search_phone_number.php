@@ -1,41 +1,44 @@
 <?php
+    include 'config.php';
     $title = "Search Phone Number";
     include 'inc/head.php';
-  
     require 'vendor/autoload.php';
-    
     include 'connection.php';
     
     
-    //search phone number 
+    //search phone number
       //get filter condition by contry code
         //apply filter response to filter data
 
     if(isset($_POST) && !empty($_POST))
     {
-      
+      $price = 0;
       if(isset($_POST['country_code']) && $_POST['country_code'] != ''){
         $country_code = strtoupper($_POST['country_code']);
       }
       if(isset($_POST['type_check']) && $_POST['type_check'] != ''){
         $type_check = $_POST['type_check'];
         if($type_check == 'local'){
-          $url = "https://api.twilio.com/2010-04-01/Accounts/AC529db4ea06aba0a1ed7356e28d6b0dbb/AvailablePhoneNumbers/".$country_code."/Local.json";
+          $url = "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/AvailablePhoneNumbers/".$country_code."/Local.json";
         }else if($type_check == 'mobile'){
-          $url = "https://api.twilio.com/2010-04-01/Accounts/AC529db4ea06aba0a1ed7356e28d6b0dbb/AvailablePhoneNumbers/".$country_code."/Mobile.json";
+          $url = "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/AvailablePhoneNumbers/".$country_code."/Mobile.json";
         }else{
-          $url = "https://api.twilio.com/2010-04-01/Accounts/AC529db4ea06aba0a1ed7356e28d6b0dbb/AvailablePhoneNumbers/".$country_code."/Tollfree.json";
+          $url = "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/AvailablePhoneNumbers/".$country_code."/Tollfree.json";
         }
       }
       $str_args ='';
       if(isset($_POST['capability_check'])){
         if(!empty($_POST['capability_check'])){
           foreach ($_POST['capability_check'] as $key => $value) {
-            $str_args .= $value.'=true&';  
+            $str_args .= $value.'=true&';
           }
         }
       }
-
+      if(isset($_POST['Contains'])){
+        if(!empty($_POST['Contains'])){
+          $str_args .='Contains='.$_POST['Contains'].'&';   
+        }
+      }
       if(isset($_POST['address_check'])){
         if(!empty($_POST['address_check'])){
           foreach ($_POST['address_check'] as $key => $value) {
@@ -59,7 +62,7 @@
       CURLOPT_CUSTOMREQUEST => "GET",
       CURLOPT_POSTFIELDS => $str_args,
       CURLOPT_HTTPHEADER => array(
-          "Authorization: Basic QUM1MjlkYjRlYTA2YWJhMGExZWQ3MzU2ZTI4ZDZiMGRiYjo3MzlmM2Q2YmY3ODA5YjczMmEyMDNhNTFlZDM2MjVkNg==",
+          "Authorization: Basic ".BASIC_AUTH_KEY,
           "Content-Type: application/x-www-form-urlencoded"
       ),
       ));
@@ -69,12 +72,39 @@
       $result = json_decode($response);
       if(!empty($result)){
           if(isset($result->status)){
-              echo json_encode(array('status'=>'error'));
+              echo json_encode(array('status'=>'error','response'=>$response));
           }else{
-              
+              //call phone number 
+              $curl = curl_init();
+              curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://pricing.twilio.com/v1/PhoneNumbers/Countries/".$country_code,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => array(
+                  "Authorization: Basic ".BASIC_AUTH_KEY
+                ),
+              ));
+              $phone_price_json = curl_exec($curl);
+              curl_close($curl);
+              $phone_price_response = json_decode($phone_price_json);
+              foreach ($phone_price_response->phone_number_prices as $key => $value) {
+                if($value->number_type == 'local'){
+                  $price = $value->base_price;
+                }
+                if($value->number_type == 'toll free'){
+                  $price = $value->base_price;
+                }
+                if($value->number_type == 'mobile'){
+                  $price = $value->base_price;
+                }
+              }
           }
       }
-       
     }
 ?>
 
@@ -84,6 +114,13 @@
       <?php
         include 'inc/header.php';
       ?>
+      <style>
+        #overlay img {
+            position: absolute;
+            top: 60%;
+            left: 20%;
+        }
+      </style>
       <div class="main-panel" id="main-panel">
         <!-- Navbar -->
         <?php
@@ -120,7 +157,7 @@
                       <div class="col-md-6">
                         <h4 class="card-title">Search</h4>
                         <div class="form-group form-file-upload form-file-simple">
-                          <input type="text" id="phone" class="form-control" name="country_pattern" required="">
+                          <input type="text" id="phone" class="form-control" name="Contains" required="">
                           <input type="hidden" id="country_code"  name="country_code">
                         </div>
                         <!-- <div class="form-group form-file-upload form-file-multiple">
@@ -129,6 +166,9 @@
                       </div>
                     </div>
                     <hr>
+                    <div id="overlay">
+                      <img src="assets/img/loading.gif" width="35px" height="35px"/>
+                    </div>
                     <div class="row type_section">
                         <label class="col-sm-1 col-form-label">Type</label>
                         <!-- <div class="col-sm-1 col-sm-offset-1 checkbox-radios">
@@ -286,10 +326,10 @@
               <!-- end card -->
             </div>
           </div>
-            <?php
-                if(isset($result->available_phone_numbers) && !empty($result->available_phone_numbers))
-                {
-            ?>
+          <?php
+            if(isset($result->available_phone_numbers) && !empty($result->available_phone_numbers))
+            {
+          ?>
             <div class="row">
               <div class="col-md-12">
                 <div class="card">
@@ -300,87 +340,43 @@
                     <div class="table-responsive">
                       <table class="table table-shopping">
                         <thead class="">
-                          <th  class="text-center" >
-                          </th>
-                          <th >
-                            #
-                          </th>
-                          <th >
-                            Country
-                          </th>
-                          <th >
-                            Number
-                          </th>
-                          <th >
-                            Type
-                          </th>
-                          <th >
-                            Prefix
-                          </th>
-                          <th >
-                            Monthly Rental Rate
-                          </th>
-                          <th >
-                            SMS Rate
-                          </th>
-                          <th >
-                            Voice Rate
-                          </th>
-                          <th >
-                            Action
-                          </th>
+                          <th  class="text-center" ></th>
+                          <th >#</th>
+                          <th >Country</th>
+                          <th >Number</th>
+                          <th >Type</th>
+                          <th >Capability</th>
+                          <th >Monthly Rental Rate</th>
+                          <!-- <th >SMS Rate</th> -->
+                          <!-- <th >Voice Rate</th> -->
+                          <th >Action</th>
                         </thead>
                         <tbody>
                           <?php 
-                          $count = count($result->available_phone_numbers);
-                          foreach ($result->available_phone_numbers as $key => $value) {
-                            # code...
-                          }  
-                          for($i=0; $i<$count;$i++){
-                                  // echo "<pre>";
-                                  // print_r($response->resources[$i]->properties);  
-                                  // echo $i;
+                            $i = 1;
+                            foreach ($result->available_phone_numbers as $key => $value) {
                           ?>
                             <tr>
+                              <td></td>
+                              <td><?= $i; ?></td>
+                              <td><?= $value->iso_country; ?></td>
+                              <td><?= $value->friendly_name; ?></td>
+                              <td><?= $type_check; ?></td>
+                              <td><?php if(isset($value->capabilities->SMS) == true){ echo 'SMS '; }if(isset($value->capabilities->MMS) == true){ echo 'MMS '; }if(isset($value->capabilities->voice) == true){ echo 'VOICE ';}if(isset($value->capabilities->fax) == true){ echo 'FAX ';} ?></td>
+                              <td><?= $price; ?></td>
+                              <!-- <td><?= $value->friendly_name; ?></td> -->
+                              <!-- <td><?= $value->friendly_name; ?></td> -->
                               <td>
-                              </td>
-                              <td>
-                                <?= $i+1; ?>
-                              </td>
-                              <td>
-                                <?= $value->iso_country; ?>
-                              </td>
-                              <td>
-                                <?= $value->friendly_name; ?>
-                              </td>
-                              <td>
-                                <?= $type_check; ?>
-                              </td>
-                              <td>
-                                <?= $value->friendly_name;; ?>
-                              </td>
-                              <td>
-                                <?= $value->friendly_name;; ?>
-                              </td>
-                              <td>
-                                <?= $value->friendly_name; ?>
-                              </td>
-                              <td>
-                                <?= $value->friendly_name; ?>
-                              </td>
-                              <td>
-                                  <form action="buy_number.php" method="post">
-                                      <!-- <input type="hidden" value="<?= $response->resources[$i]->properties['resourceUri']; ?>" name="resourceUri">
-                                      <input type="hidden" value="<?= $response->resources[$i]->properties['number']; ?>" name="number">
-                                      <input type="hidden" value="<?= $response->resources[$i]->properties['prefix']; ?>" name="prefix">
-                                      <input type="hidden" value="<?= $response->resources[$i]->properties['region']; ?>" name="region">
-                                      <input type="hidden" value="<?= $_POST["country_code"]; ?>" name="country_code"> -->
-                                      <input type="button" class="btn btn-success confirm_purchase" value="Buy Now">
+                                  <form action="buy_number.php" method="POST">
+                                    <input type="hidden" value="<?= $value->phone_number; ?>" name="PhoneNumber">
+                                    <input type="hidden" value="<?= $_POST["country_code"]; ?>" name="country_code">
+                                    <input type="button" class="btn btn-success confirm_purchase" value="Buy Now">
                                   </form>
                               </td>
                           </tr>
                           <?php
-                          }
+                            $i++;
+                            }
                           ?>
                         </tbody>
                       </table>
@@ -391,8 +387,8 @@
           </div>
           <?php
              }
-             else if(isset($response->resources[0]->properties) && empty($response->resources[0]->properties)){
-         ?>
+             else if(isset($result->available_phone_numbers) && empty($result->available_phone_numbers)){
+          ?>
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="card">
@@ -402,11 +398,9 @@
                     </div>
                 </div>
             </div>
-         <?php
+          <?php
              }
-            ?>
-          
-          
+          ?>
         </div>
       </div>
     </div>
@@ -415,36 +409,54 @@
     <?php
       include 'inc/footer.php';
     ?>
-    
+    <?php //if(!isset($_SERVER['REQUEST'])){ ?>
     <script>
-
-    $(document).ready(function(){
-
+    $(".advance_content").hide();
       var input = document.querySelector("#phone");
-      var iti = window.intlTelInput(input, {
-        // allowDropdown: false,
-        // autoHideDialCode: false,
-        // autoPlaceholder: "off",
-        // dropdownContainer: document.body,
-        // excludeCountries: ["us"],
-        // formatOnDisplay: false,
-        // geoIpLookup: function(callback) {
-        //   $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
-        //     var countryCode = (resp && resp.country) ? resp.country : "";
-        //     callback(countryCode);
-        //   });
-        // },
-        // hiddenInput: "full_number",
-        // initialCountry: "auto",
-        // localizedCountries: { 'de': 'Deutschland' },
-        // nationalMode: false,
-        // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-        // placeholderNumberType: "MOBILE",
-        // preferredCountries: ['cn', 'jp'],
-        // separateDialCode: true,
-        utilsScript: "assets/js/core/utils.js",
+      var iti;
+      $.ajax({
+          url:"apis/phone_number/fetch_phone_no_country.php",
+          dataType:"JSON",
+          method:"POST",
+          async:false,
+          beforeSend: function () {
+            $("#overlay").show();
+          },
+          success:function(response){
+            if(response.status == 'error'){
+              alert('error');
+            }else{
+              iti = window.intlTelInput(input, {
+                // allowDropdown: false,
+                // autoHideDialCode: false,
+                // autoPlaceholder: "off",
+                // dropdownContainer: document.body,
+                // excludeCountries: ["us"],
+                // formatOnDisplay: false,
+                // geoIpLookup: function(callback) {
+                //   $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+                //     var countryCode = (resp && resp.country) ? resp.country : "";
+                //     callback(countryCode);
+                //   });
+                // },
+                // hiddenInput: "full_number",
+                // initialCountry: "us",
+                // localizedCountries: { 'de': 'Deutschland' },
+                // nationalMode: false,
+                onlyCountries: response,
+                // placeholderNumberType: "MOBILE",
+                // preferredCountries: ['cn', 'jp'],
+                // separateDialCode: true,
+                utilsScript: "assets/js/core/utils.js",
+              });
+              setInterval(function () {
+                $("#overlay").hide();
+              }, 800);
+            }
+          }
       });
-
+    $(document).ready(function(){
+      
       input.addEventListener("countrychange", function(){
         var country_code  = iti.getSelectedCountryData().iso2;
         //call api for the
@@ -453,6 +465,9 @@
           data:{"country_code":country_code},
           dataType:"JSON",
           method:"POST",
+          beforeSend: function () {
+            $("#overlay").show();
+          },
           success:function(response){
             console.log(response);
             if(response.status == 'error'){
@@ -491,126 +506,79 @@
                 $('#type_mobile').prop('disabled', true);
                 $('#type_mobile').parent().parent().addClass('disabled');
               }
+              setInterval(function () {
+                $("#overlay").hide();
+              }, 4500);
             }
           }
         });
       });
-
-
-      $(".advance_content").hide();
       $(".show_hide").on("click", function () {
-          var txt = $(".advance_content").is(':visible') ? 'Show Advanced Search' : 'Hide Advanced Search';
-          $(".show_hide").text(txt);
-          $('.advance_content').slideToggle(200);
+        var txt = $(".advance_content").is(':visible') ? 'Show Advanced Search' : 'Hide Advanced Search';
+        $(".show_hide").text(txt);
+        $('.advance_content').slideToggle(200);
       });
 
       var country_code = $(".iti__active").attr("data-country-code");
-        //call api for the
-        $.ajax({
-          url:"apis/phone_number/fetch_specific_country.php",
-          data:{"country_code":country_code},
-          dataType:"JSON",
-          method:"POST",
-          success:function(response){
-            console.log(response);
-            if(response.status == 'error'){
-              alert('error');
+      //call api for the
+      $.ajax({
+        url:"apis/phone_number/fetch_specific_country.php",
+        data:{"country_code":country_code},
+        dataType:"JSON",
+        method:"POST",
+        beforeSend: function () {
+          $("#overlay").show();
+        },
+        success:function(response){
+          console.log(response);
+          if(response.status == 'error'){
+            alert('error');
+          }else{
+            if('local' in response.subresource_uris){
+              //set check box for local
+              console.log('local');
+              $('#type_local').prop('checked', true);
+              $('#type_local').prop('disabled', false);
+              $('#type_local').parent().parent().removeClass('disabled');
             }else{
-              if('local' in response.subresource_uris){
-                //set check box for local
-                console.log('local');
-                $('#type_local').prop('checked', true);
-                $('#type_local').prop('disabled', false);
-                $('#type_local').parent().parent().removeClass('disabled');
-              }else{
-                $('#type_local').prop('checked', false);
-                $('#type_local').prop('disabled', true);
-                $('#type_local').parent().parent().addClass('disabled');
-              }
-              if('toll_free' in response.subresource_uris){
-                //set check box for toll_free
-                console.log('toll-free');
-                $('#type_toll_free').prop('checked', true);
-                $('#type_toll_free').prop('disabled', false);
-                $('#type_toll_free').parent().parent().removeClass('disabled');
-              }else{
-                $('#type_toll_free').prop('checked', false);
-                $('#type_toll_free').prop('disabled', true);
-                $('#type_toll_free').parent().parent().addClass('disabled');
-              }
-              if('mobile' in response.subresource_uris){
-                //set check box for mobile
-                console.log('mobile');
-                $('#type_mobile').prop('checked', true);
-                $('#type_mobile').prop('disabled', false);
-                $('#type_mobile').parent().parent().removeClass('disabled');
-              }else{
-                $('#type_mobile').prop('checked', false);
-                $('#type_mobile').prop('disabled', true);
-                $('#type_mobile').parent().parent().addClass('disabled');
-              }
+              $('#type_local').prop('checked', false);
+              $('#type_local').prop('disabled', true);
+              $('#type_local').parent().parent().addClass('disabled');
             }
+            if('toll_free' in response.subresource_uris){
+              //set check box for toll_free
+              console.log('toll-free');
+              $('#type_toll_free').prop('checked', true);
+              $('#type_toll_free').prop('disabled', false);
+              $('#type_toll_free').parent().parent().removeClass('disabled');
+            }else{
+              $('#type_toll_free').prop('checked', false);
+              $('#type_toll_free').prop('disabled', true);
+              $('#type_toll_free').parent().parent().addClass('disabled');
+            }
+            if('mobile' in response.subresource_uris){
+              //set check box for mobile
+              console.log('mobile');
+              $('#type_mobile').prop('checked', true);
+              $('#type_mobile').prop('disabled', false);
+              $('#type_mobile').parent().parent().removeClass('disabled');
+            }else{
+              $('#type_mobile').prop('checked', false);
+              $('#type_mobile').prop('disabled', true);
+              $('#type_mobile').parent().parent().addClass('disabled');
+            }
+            setInterval(function () {
+                $("#overlay").hide();
+            }, 4500);
           }
-        });
+        }
+      });
     });
 
-
-    /* $("#phone").focusout(function() {
-        var country_code = $(".iti__active").attr("data-country-code");
-        // var c_code = flag.split("+").pop();
-        console.log(country_code);
-        $("#country_code").val(country_code);
-
-        $.ajax({
-          url:"apis/phone_number/fetch_specific_country.php",
-          data:{"country_code":country_code},
-          dataType:"JSON",
-          method:"POST",
-          success:function(response){
-            console.log(response);
-            if(response.status == 'error'){
-              alert('error');
-            }else{
-              if('local' in response.subresource_uris){
-                //set check box for local
-                console.log('local');
-                $('#type_local').prop('checked', true);
-              }else{
-                $('#type_local').prop('checked', false);
-                $('#type_local').prop('disabled', true);
-                $('#type_local').parent().parent().addClass('disabled');
-              }
-              if('toll_free' in response.subresource_uris){
-                //set check box for toll_free
-                console.log('toll-free');
-                $('#type_toll_free').prop('checked', true);
-              }else{
-                $('#type_toll_free').prop('checked', false);
-                $('#type_toll_free').prop('disabled', true);
-                $('#type_toll_free').parent().parent().addClass('disabled');
-              }
-              if('mobile' in response.subresource_uris){
-                //set check box for mobile
-                console.log('mobile');
-                $('#type_mobile').prop('checked', true);
-              }else{
-                $('#type_mobile').prop('checked', false);
-                $('#type_mobile').prop('disabled', true);
-                $('#type_mobile').parent().parent().addClass('disabled');
-              }
-            }
-          }
-        });
-
-
-    }); */
-    
     $("#get_country_code").click(function() {
         var country_code = $(".iti__active").attr("data-country-code");
-        // var c_code = country_code.split("+").pop();
         console.log(country_code);
         $("#country_code").val(country_code);
-        
         $("#submit_search").submit();
     });
     
@@ -618,10 +586,28 @@
         if(confirm("Are you sure you want to proceed ?"))
         {
           $(this).closest('form').submit();
-          return  false;
+          return false;
         }
     });
   </script>
+  <?php //} ?>
   <?php 
-    if(isset($_POST['']))
+    if(isset($_POST['country_code']) && $_POST['country_code'] != ''){
+  ?>
+  <script>
+      var set_country = '<?php echo @$_POST['country_code']; ?>';
+      iti.setCountry(set_country);
+  </script>
+  <?php    
+    }
+  ?>
+  <?php 
+    if(isset($_POST['Contains']) && $_POST['Contains'] != ''){
+  ?>
+  <script>
+      var set_number = '<?php echo @$_POST['Contains']; ?>';
+      iti.setNumber(set_number);
+  </script>
+  <?php    
+    }
   ?>

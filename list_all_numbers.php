@@ -1,22 +1,32 @@
 <?php
-$title = "Purchased Phone Numbers";
-include 'inc/head.php';
-include 'connection.php';
-require 'vendor/autoload.php';
-use Plivo\RestClient;
-use Plivo\Exceptions\PlivoRestException;
-$client = new RestClient("MAOGFLMJLKNGM0ODZMYJ", "MGQ2ZTg5ZWM5YzU5MDY3MjNiZjY0Y2EwMGFiY2M2");
+  include 'config.php';
+  $title = "Purchased Phone Numbers";
+  include 'inc/head.php';
+  include 'connection.php';
+  require 'vendor/autoload.php';
 
-try {
-    $response = $client->numbers->list(
-        [
-        	'limit' => 100
-        ]
-    );
-}
-catch (PlivoRestException $ex) {
-    print_r($ex);
-}
+
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/IncomingPhoneNumbers.json",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => array(
+        "Authorization: Basic ".BASIC_AUTH_KEY
+      ),
+    ));
+
+    $response = curl_exec($curl);
+
+    curl_close($curl);
+    $result = json_decode($response);
+
 ?>
 
   <body class=" sidebar-mini ">
@@ -53,7 +63,7 @@ catch (PlivoRestException $ex) {
             ?>
           </div>
             <?php
-                if(isset($response->resources[0]->properties) && !empty($response->resources[0]->properties))
+                if(isset($result->incoming_phone_numbers) && !empty($result->incoming_phone_numbers))
                 {
             ?>
             <div class="row">
@@ -68,72 +78,41 @@ catch (PlivoRestException $ex) {
                       <thead class="">
                         <th  class="text-center" >
                         </th>
-                        <th >
-                          #
-                        </th>
-                        <th >
-                          Region
-                        </th>
-                        <th >
-                          Carrier
-                        </th>
-                        <th >
-                          Number Type
-                        </th>
-                        <th >
-                          Number
-                        </th>
-                        <th >
-                          Monthly Rental Rate
-                        </th>
-                        <th >
-                          SMS Rate
-                        </th>
-                        <th >
-                          Voice Rate
-                        </th>
-                        <th >
-                          Purchased On
-                        </th>
+                        <th >#</th>
+                        <th >Region</th>
+                        <th >Carrier</th>
+                        <th >Number Type</th>
+                        <th >Number</th>
+                        <th >Monthly Rental Rate</th>
+                        <!-- <th >SMS Rate</th> -->
+                        <!-- <th >Voice Rate</th> -->
+                        <th >Purchased On</th>
                       </thead>
                       <tbody>
                         <?php 
-                            $count = count($response->resources);
-                            for($i=0; $i<$count;$i++){
+                            //fetch stored purchased numbers
+                            $i = 1; 
+                            foreach ($result->incoming_phone_numbers as $key => $value) {
+                            $query = "SELECT type,region,monthly_rental FROM purchased_numbers WHERE pn_sid = '{$value->sid}'";
+                            $result = mysqli_query($connect, $query);
+                            $row = mysqli_fetch_assoc($result);
                         ?>
                           <tr>
                             <td>
                             </td>
-                            <td>
-                              <?= $i+1; ?>
-                            </td>
-                            <td>
-                              <?= $response->resources[$i]->properties['region']; ?>
-                            </td>
-                            <td>
-                              <?= $response->resources[$i]->properties['carrier']; ?>
-                            </td>
-                            <td>
-                              <?= $response->resources[$i]->properties['numberType']; ?>
-                            </td>
-                            <td>
-                              <?= $response->resources[$i]->properties['number']; ?>
-                            </td>
-                            <td>
-                              <?= $response->resources[$i]->properties['monthlyRentalRate']; ?>
-                            </td>
-                            <td>
-                              <?= $response->resources[$i]->properties['smsRate']; ?>
-                            </td>
-                            <td>
-                              <?= $response->resources[$i]->properties['voiceRate']; ?>
-                            </td>
-                            <td>
-                              <?= $response->resources[$i]->properties['addedOn']; ?>
-                            </td>
+                            <td><?= $i; ?></td>
+                            <td><?= $row['region']; ?></td>
+                            <td><?= $value->origin; ?></td>
+                            <td><?= $row['type']; ?></td>
+                            <td><?= $value->phone_number; ?></td>
+                            <td><?= $row['monthly_rental']; ?></td>
+                            <!-- <td><?= $value->phone_number; ?></td> -->
+                            <!-- <td><?= $value->phone_number; ?></td> -->
+                            <td><?= $value->date_created; ?></td>
                         </tr>
                         <?php
-                         }
+                          $i++; 
+                        }
                         ?>
                       </tbody>
                     </table>
@@ -144,7 +123,7 @@ catch (PlivoRestException $ex) {
           </div>
           <?php
              }
-             else if(isset($response->resources[0]->properties) && empty($response->resources[0]->properties)){
+             else if(isset($result->incoming_phone_numbers) && empty($result->incoming_phone_numbers)){
          ?>
             <div class="row">
                 <div class="col-md-12 text-center">

@@ -1,23 +1,31 @@
 <?php
+include 'config.php';
 include 'inc/head.php';
 include 'connection.php';
-
 require 'vendor/autoload.php';
-use Plivo\RestClient;
-use Plivo\Exceptions\PlivoRestException;
-  
-$client = new RestClient("MAOGFLMJLKNGM0ODZMYJ", "MGQ2ZTg5ZWM5YzU5MDY3MjNiZjY0Y2EwMGFiY2M2");
 
-try {
-    $response = $client->numbers->list(
-        [
-        	'limit' => 100
-        ]
-    );
-}
-catch (PlivoRestException $ex) {
-    print_r($ex);
-}
+
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/IncomingPhoneNumbers.json",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => array(
+        "Authorization: Basic ".BASIC_AUTH_KEY
+      ),
+    ));
+
+    $response = curl_exec($curl);
+
+    curl_close($curl);
+    $result = json_decode($response);
+
 ?>
 
   <body class=" sidebar-mini ">
@@ -73,15 +81,16 @@ catch (PlivoRestException $ex) {
                         <select class="form-control getcontact" name="numbers[]" required="" multiple>
                             <?php 
                                 $count = count($response->resources);
-                                for($i=0; $i<$count;$i++){
+                                foreach ($result->incoming_phone_numbers as $key => $value) {
+                                 
                                 if(isset($_GET['name']) && !empty($_GET['name']) && isset($_GET['type']) && !empty($_GET['type']) && $_GET['edit'] = 'type')
                                 {
-                                    $query = "SELECT * FROM call_routes WHERE `call_routes_name` = '{$_GET['name']}' AND `call_routes_number` = '{$response->resources[$i]->properties['number']}'";
+                                    $query = "SELECT * FROM call_routes WHERE `call_routes_name` = '{$_GET['name']}' AND `call_routes_number` =".str_replace("+","",$value->phone_number);
                                     $result = mysqli_query($connect, $query);
                                     $numbers_count = mysqli_num_rows($result);
                                 }
                             ?>
-                            <option <?=(isset($_GET['name']) && !empty($_GET['name']) && isset($_GET['type']) && !empty($_GET['type']) && $_GET['edit'] = 'type' && $numbers_count == 1) ? 'selected' : ''?> value="<?= $response->resources[$i]->properties['number']; ?>"><?= $response->resources[$i]->properties['number']; ?></option>
+                            <option <?=(isset($_GET['name']) && !empty($_GET['name']) && isset($_GET['type']) && !empty($_GET['type']) && $_GET['edit'] = 'type' && $numbers_count == 1) ? 'selected' : ''?> value="<?= $value->phone_number; ?>"><?= $value->phone_number; ?></option>
                           <?php } ?>
                         </select>
                       </div>

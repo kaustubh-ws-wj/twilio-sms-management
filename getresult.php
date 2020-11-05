@@ -37,15 +37,15 @@ $output = '';
 $i = 1;
 foreach ($numbers as $k => $v)
 { ?>
- <input type="hidden" id="rowcount" name="rowcount" value="<?=$_GET['rowcount'] ?>" />
- <a class="nav-link" id="user-<?=$numbers[$k]['numbers_id'] ?>-tab" data-toggle="pill" href="#user-<?=$numbers[$k]['numbers_id'] ?>" role="tab" aria-controls="user-<?=$numbers[$k]['numbers_id'] ?>" aria-selected="true" onClick="getMessages(<?= $numbers[$k]['numbers_id'] ?>);">
+<input type="hidden" id="rowcount" name="rowcount" value="<?=$_GET['rowcount'] ?>" />
+<a class="nav-link" id="user-<?=$numbers[$k]['numbers_id'] ?>-tab" data-toggle="pill" href="#user-<?=$numbers[$k]['numbers_id'] ?>" role="tab" aria-controls="user-<?=$numbers[$k]['numbers_id'] ?>" aria-selected="true" onClick="getMessages(<?= $numbers[$k]['numbers_id'] ?>);">
     <span class="d-flex">
         <span class="profile-picture">
             <img src="assets/img/sample_p.jpg" alt="Profile Picture">    
         </span>
         <span class="message-highlight">
             <span class="user-name"><?=$numbers[$k]['numbers_first_name'] . ' ' . $numbers[$k]['numbers_last_name'] ?></span>
-            <span class="last-m"><?= "+1 ".$numbers[$k]['numbers_phone_number'] ?></span>
+            <span class="last-m"><?= $numbers[$k]['numbers_phone_number'] ?></span>
         </span>
     </span>
     <span class="m-time">4:52 pm</span>
@@ -57,9 +57,6 @@ if (!empty($perpageresult))
     $output .= '<div id="pagination">' . $perpageresult . '</div>';
 }
 print $output;
-
-
-
 
 // GET DATA FROM DB functions START
 function runQuery($query)

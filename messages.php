@@ -1,44 +1,9 @@
-<style type="text/css">
-    div#overlay img {
-    position: absolute;
-    top: 50%;
-    left: 45%;
-}
-.btn-sm {
-    padding: 5px 10px!important;
-    font-size: 10px!important;
-}
-</style>
+<link href="assets/css/conversation.css" rel="stylesheet" />
 <?php
-  $title = "Messages";
-  include 'inc/head.php';
-
-   require 'vendor/autoload.php';
-    use Plivo\RestClient;
-    use Plivo\Exceptions\PlivoRestException;
-    
+    $title = "Messages";
+    include 'inc/head.php';
+    require 'vendor/autoload.php';
     include 'connection.php';
-
-    // $client = new RestClient("MAOGFLMJLKNGM0ODZMYJ", "MGQ2ZTg5ZWM5YzU5MDY3MjNiZjY0Y2EwMGFiY2M2");
-    // // $client = new RestClient("MANTZHZGNKNZZJY2I2MW", "NDIzZjMyMmY2ZmI0NWQ5NTIyOTk5OWMyN2MyMGIz");
-
-    //  try {
-
-    //             $response = $client->messages->list(
-    //               [
-    //                 'limit' => 1,
-    //                 'offset' => 0,
-    //               ]
-    //             );
-           
-
-    //         // echo '</pre>';
-    //     }
-    //     catch (PlivoRestException $ex) {
-    //         print_r($ex);
-    //     }
-
-      
 
 ?>
 
@@ -80,7 +45,7 @@
                                         <img src="assets/img/loading.gif" width="35px" height="35px"/></div></div>
                                         <div class="page-content">
                                             <div id="pagination-result">
-                                            <input type="hidden" name="rowcount" id="rowcount" />
+                                                <input type="hidden" name="rowcount" id="rowcount" />
                                             </div>
                                         </div>
                                        <!-- Dynamic user list End-->
@@ -104,8 +69,8 @@
     <?php
       include 'inc/footer.php';
     ?>
-    <script>
-        function getresult(url) {
+<script>
+    function getresult(url) {
         $.ajax({
             url: url,
             type: "GET",
@@ -132,50 +97,44 @@
         }
     }
     getresult("getresult.php");
-    </script>
-    <script>
-function getMessages(id) {
+</script>
+<script>
+    function getMessages(id) {
+        $(".nav-link").removeClass("active");
+        $(this).addClass("active");  
+        
+        var profileHeader = '';
+        var messageBody = '';
 
-    $(".nav-link").removeClass("active");
-    $(this).addClass("active");  
-     
-    var profileHeader = '';
-    var messageBody = '';
-
-    $.ajax({
-        url: "getapidata.php",
-        type: "POST",
-        data: {
-            "id": id
-        },
-        beforeSend: function() {
-            $("#overlay").show();
-        },
-        success: function(data) {
-            $("#resultHtml").html(data);
-            setInterval(function() {
-                $("#overlay").hide();
-            }, 500);
-        },
-        error: function() {}
-    });
-
-}
-
-// Send Message to selected list
- 
-
-function sendMessage() {
-    var phone_number = $("#phone_number").val();
-    var message      = $("#message").val();
-
-     $.ajax({
-            type: 'POST',
-            url: 'sendMessage.php',
-            data: {"phone_number":phone_number,"message":message},
-            success: function (data) {
-              alert(data);
-            }
-          });
-}
+        $.ajax({
+            url: "getapidata.php",
+            type: "POST",
+            data: {"id": id},
+            beforeSend: function() {
+                $("#overlay").show();
+            },
+            success: function(data) {
+                $("#resultHtml").html(data);
+                setInterval(function() {
+                    $("#overlay").hide();
+                }, 500);
+            },
+            error: function() {}
+        });
+    }
+    // Send Message to selected list
+    function sendMessage() {
+        var phone_number = $("#phone_number").val();
+        var message      = $("#message").val();
+        console.log(phone_number);
+        console.log(message);
+        /* $.ajax({
+                type: 'POST',
+                url: 'sendMessage.php',
+                data: {"phone_number":phone_number,"message":message},
+                success: function (data) {
+                alert(data);
+                }
+            }); */
+    }
 </script>

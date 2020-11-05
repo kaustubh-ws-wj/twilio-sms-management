@@ -3,7 +3,7 @@
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/AC529db4ea06aba0a1ed7356e28d6b0dbb/AvailablePhoneNumbers/".$country_code."/Mobile.json",
+        CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/AvailablePhoneNumbers/".$country_code."/Mobile.json",
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -12,7 +12,7 @@
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "GET",
         CURLOPT_HTTPHEADER => array(
-            "Authorization: Basic QUM1MjlkYjRlYTA2YWJhMGExZWQ3MzU2ZTI4ZDZiMGRiYjo3MzlmM2Q2YmY3ODA5YjczMmEyMDNhNTFlZDM2MjVkNg=="
+            "Authorization: Basic ".BASIC_AUTH_KEY
         ),
         ));
 

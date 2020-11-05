@@ -51,27 +51,13 @@
                       <thead class="">
                         <th  class="text-center" >
                         </th>
-                        <th >
-                          ID
-                        </th>
-                        <th >
-                          Name
-                        </th>
-                        <th >
-                          Message
-                        </th>
-                        <th >
-                          Group
-                        </th>
-                        <th >
-                          Call Route/Group
-                        </th>
-                        <th >
-                         Call Route/Group Numbers
-                        </th>
-                        <th >
-                          Date
-                        </th>
+                        <th >ID</th>
+                        <th >Name</th>
+                        <th >Message</th>
+                        <th >Group</th>
+                        <th >Call Route/Group</th>
+                        <th >Call Route/Group Numbers</th>
+                        <th >Date</th>
                       </thead>
                       <tbody>
                         <?php 
@@ -83,33 +69,20 @@
                           <tr>
                             <td>
                             </td>
-                            <td>
-                              <?= $row['campaign_id']; ?>
-                            </td>
-                            <td>
-                              <?= $row['campaign_name']; ?>
-                            </td>
-                            <td>
-                              <?= $row['campaign_message']; ?>
-                            </td>
-                            <td>
-                              <?= $row_do['add_group_name']; ?>
-                            </td>
-                            <td>
-                              <?= $row['campaign_call_route']; ?>
-                            </td>
+                            <td><?= $row['campaign_id']; ?></td>
+                            <td><?= $row['campaign_name']; ?></td>
+                            <td><?= $row['campaign_message']; ?></td>
+                            <td><?= $row_do['add_group_name']; ?></td>
+                            <td><?= $row['campaign_call_route']; ?></td>
                             <td>
                               <?php
                                 foreach(unserialize($row['campaign_route_numbers']) as $num)
                                 {
-                                    echo "+".$num."<br>";
+                                    echo $num."<br>";
                                 }
                               ?>
                             </td>
-                            <td>
-                              <?=date("l jS \of F Y h:i:s A",strtotime($row['createdon']))?>
-                            </td>
-                            
+                            <td><?=date("l jS \of F Y h:i:s A",strtotime($row['createdon']))?></td>
                         </tr>
                         <?php
                          }

@@ -1,9 +1,7 @@
 <?php
+include 'config.php';
 include 'connection.php';
 require 'vendor/autoload.php';
-use Plivo\RestClient;
-$client = new RestClient("MAOGFLMJLKNGM0ODZMYJ", "MGQ2ZTg5ZWM5YzU5MDY3MjNiZjY0Y2EwMGFiY2M2");
-
 include 'connection.php';
 // echo "<pre>";
 // print_r($_POST);
@@ -15,7 +13,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
     $result_test = mysqli_query($connect, $query_test);
     $total_rows_test = mysqli_num_rows($result_test);
     if (count($_POST['call_routes_id']) > 0 && $total_rows_test > 0) {
-        $abc = serialize($_POST[call_routes_id]);
+        $abc = serialize($_POST['call_routes_id']);
         // echo "<pre>";
         // print_r($abc);
         // exit;
@@ -29,27 +27,30 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
         $i=0;
         while($roww=mysqli_fetch_assoc($result))
         {
-    	    $phone_number = '+1';
-    		$phone_number .= str_replace("-", "", $roww['numbers_phone_number']);
+    	    $phone_number = $roww['numbers_phone_number'];
     		
-    		$sender = "+".$_POST['call_routes_id'][$i];
+    		$sender = $_POST['call_routes_id'][$i];
     		
-    // 		echo "<pre>";
-    //         print_r($sender);
+    		$curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/Messages.json",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => "Body=".$message."&To=".$phone_number."&From=".$sender,
+                CURLOPT_HTTPHEADER => array(
+                    "Authorization: Basic ".BASIC_AUTH_KEY,
+                    "Content-Type: application/x-www-form-urlencoded"
+                ),
+            ));
+            $response = curl_exec($curl);
+            curl_close($curl);
             
-    // 		echo "<pre>";
-    //         print_r($phone_number);
-            
-    //         echo "<pre>";
-    //         print_r($message);
-            
-            // exit;
-    		$message_created = $client->messages->create(
-    		    $sender,
-    		    [$phone_number],
-    		    $message
-    		);
-    		print_r($message_created);
             $i++;
         }
     	header("location: send_message.php?status=1");
