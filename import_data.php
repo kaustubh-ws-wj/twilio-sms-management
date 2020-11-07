@@ -1,6 +1,14 @@
 <?php
 include 'connection.php';
 include 'PHPExcel-1.8/Classes/PHPExcel.php';
+include 'config.php';
+
+require __DIR__ . '/vendor/autoload.php';
+// Use the REST API Client to make requests to the Twilio REST API
+use Twilio\Rest\Client;
+use Twilio\Exceptions\RestException;
+
+$twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
 $image = $_FILES['file']['name'];
 
@@ -41,42 +49,56 @@ if(move_uploaded_file($_FILES['file']['tmp_name'],"excel_upload/".$image))
                             CURLOPT_FOLLOWLOCATION => true,
                             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                             CURLOPT_CUSTOMREQUEST => "POST",
-                            CURLOPT_POSTFIELDS => "friendlyName=".$phone_wo_no."&uniqueName=".$phone_wo_no,
+                            CURLOPT_POSTFIELDS => "FriendlyName=".$phone_wo_no."&UniqueName=".$phone_wo_no,
                             CURLOPT_HTTPHEADER => array(
                                 "Authorization: Basic ".BASIC_AUTH_KEY,
                                 "Content-Type: application/x-www-form-urlencoded"
                             ),
                         ));
 
-                        $conversations_response = curl_exec($curl);
+                        $conversations_res = curl_exec($curl);
                         curl_close($curl);
-                        
-                        //add participant to conversation api
-                        $curl = curl_init();
-                        curl_setopt_array($curl, array(
-                            CURLOPT_URL => "https://conversations.twilio.com/v1/Conversations/".$created_conversation->sid."/Participants",
-                            CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_ENCODING => "",
-                            CURLOPT_MAXREDIRS => 10,
-                            CURLOPT_TIMEOUT => 0,
-                            CURLOPT_FOLLOWLOCATION => true,
-                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST => "POST",
-                            CURLOPT_POSTFIELDS => "messagingBindingAddress=".$phone_number."&messagingBindingProxyAddress=+14138533247",
-                            CURLOPT_HTTPHEADER => array(
-                                "Authorization: Basic ".BASIC_AUTH_KEY,
-                                "Content-Type: application/x-www-form-urlencoded"
-                            ),
-                        ));
-                        $participat_response = curl_exec($curl);
-                        curl_close($curl);
+                        $conversations_response = json_decode($conversations_res);
 
-                        $query = "INSERT INTO numbers(numbers_first_name,numbers_last_name,numbers_address,numbers_phone_number,numbers_phone_type,numbers_group_id,numbers_status,conversation_sid,participant_sid,conversation_response,participant_reponse) VALUES ('{$value['A']}','{$value['B']}','{$value['C']}','{$phone_number}','{$value['E']}','{$_POST['group']}','1')";
-                        
+                        if(!isset($conversations_response->code)){  //on no exception
+                            $conversation_sid = $conversations_response->sid;
+                            $chat_service_sid = $conversations_response->chat_service_sid;
+                            $messaging_service_sid = $conversations_response->messaging_service_sid;
+
+                            try{
+                                //add participant to conversation api
+                                $participant = $twilio->conversations->v1->conversations($conversation_sid)->participants->create(["messagingBindingAddress" => $phone_number,"messagingBindingProxyAddress" => "+14138533247"]);
+                                $participant_response = $participant->toArray();
+                                $participant_json_response = json_encode($participant_response);
+                                 
+                                if(!isset($participant_response['code'])){    //on no exception
+                                    $participant_sid = $participant_response['sid'];
+                                    $participant_identity = $participant_response['identity'];
+                                    
+                                        $query = "INSERT INTO numbers(numbers_first_name,numbers_last_name,numbers_address,numbers_phone_number,numbers_phone_type,numbers_group_id,numbers_status,conversation_sid,chat_service_sid,messaging_service_sid,participant_sid,identity,conversation_response,participant_response) 
+                                        VALUES ('{$value['A']}','{$value['B']}','{$value['C']}','{$phone_number}','{$value['E']}','{$_POST['group']}','1','{$conversation_sid}','{$chat_service_sid}','{$messaging_service_sid}','{$participant_sid}','{$participant_identity}','{$conversations_res}','{$participant_json_response}')";
+                                        if($q = mysqli_query($connect, $query)){
+                                            
+                                        }else{
+                                            echo 'no';
+                                            print_r($q);die;
+                                        }
+                                }else{
+                                    echo 'no p';
+                                    echo $participant_json_response;die;
+                                }
+                            }catch(RestException $ex){
+                                echo 'Catch';die;
+                            }
+                            
+                            
+                        }else{
+                            echo $conversations_res;die;
+                        }
                     }   
-                    mysqli_query($connect, $query);
                 }
             }
+            
             header("Refresh:0; url=import_contacts.php?status=1");
         }
         else{

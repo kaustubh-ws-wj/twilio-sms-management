@@ -4,6 +4,8 @@ require_once ("pagination.class.php");
 $perPage = new PerPage();
 
 $sql = "SELECT * from numbers ORDER BY numbers_id DESC";
+
+
 $paginationlink = "getresult.php?page=";
 $pagination_setting = $_GET["pagination_setting"];
 
@@ -35,22 +37,34 @@ else
 
 $output = '';
 $i = 1;
-foreach ($numbers as $k => $v)
-{ ?>
-<input type="hidden" id="rowcount" name="rowcount" value="<?=$_GET['rowcount'] ?>" />
-<a class="nav-link" id="user-<?=$numbers[$k]['numbers_id'] ?>-tab" data-toggle="pill" href="#user-<?=$numbers[$k]['numbers_id'] ?>" role="tab" aria-controls="user-<?=$numbers[$k]['numbers_id'] ?>" aria-selected="true" onClick="getMessages(<?= $numbers[$k]['numbers_id'] ?>);">
-    <span class="d-flex">
-        <span class="profile-picture">
-            <img src="assets/img/sample_p.jpg" alt="Profile Picture">    
+if(!empty($numbers)){
+    foreach ($numbers as $k => $v)
+    { ?>
+    <input type="hidden" id="rowcount" name="rowcount" value="<?=$_GET['rowcount'] ?>" />
+    <a class="nav-link" id="user-<?=$numbers[$k]['numbers_id'] ?>-tab" data-toggle="pill" href="#user-<?=$numbers[$k]['numbers_id'] ?>" role="tab" aria-controls="user-<?=$numbers[$k]['numbers_id'] ?>" aria-selected="true" onClick="getMessages(<?= $numbers[$k]['numbers_id'] ?>,'<?php echo $numbers[$k]['conversation_sid'] ?>','<?php echo $numbers[$k]['participant_sid'] ?>');">
+        <span class="d-flex">
+            <span class="profile-picture">
+                <img src="assets/img/sample_p.jpg" alt="Profile Picture">    
+            </span>
+            <span class="message-highlight">
+                <span class="user-name"><?=$numbers[$k]['numbers_first_name'] . ' ' . $numbers[$k]['numbers_last_name'] ?></span>
+                <span class="last-m"><?= $numbers[$k]['numbers_phone_number'] ?></span>
+            </span>
         </span>
-        <span class="message-highlight">
-            <span class="user-name"><?=$numbers[$k]['numbers_first_name'] . ' ' . $numbers[$k]['numbers_last_name'] ?></span>
-            <span class="last-m"><?= $numbers[$k]['numbers_phone_number'] ?></span>
-        </span>
-    </span>
-    <span class="m-time">4:52 pm</span>
-</a>
-<?php $i++;
+        <span class="m-time">4:52 pm</span>
+    </a>
+    <?php $i++;
+    }
+}else{
+    ?>
+        <a class="nav-link" data-toggle="pill" href="#" role="tab" aria-controls="user" aria-selected="true">
+            <span class="d-flex">
+                <span class="message-highlight">
+                    <span class="user-name">No Contacts Found</span> 
+                </span>
+            </span>
+        </a>
+    <?php
 }
 if (!empty($perpageresult))
 {

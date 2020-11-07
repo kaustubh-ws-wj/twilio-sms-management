@@ -99,17 +99,20 @@
     getresult("getresult.php");
 </script>
 <script>
-    function getMessages(id) {
+    function getMessages(id,con_sid,part_sid) {
         $(".nav-link").removeClass("active");
         $(this).addClass("active");  
         
         var profileHeader = '';
         var messageBody = '';
+        var conversation_sid = con_sid;
+        var participant_sid = part_sid;
+        
 
         $.ajax({
             url: "getapidata.php",
             type: "POST",
-            data: {"id": id},
+            data: {"id": id,'conversation_sid':conversation_sid,'participant_sid':participant_sid},
             beforeSend: function() {
                 $("#overlay").show();
             },
@@ -123,18 +126,23 @@
         });
     }
     // Send Message to selected list
-    function sendMessage() {
-        var phone_number = $("#phone_number").val();
-        var message      = $("#message").val();
-        console.log(phone_number);
-        console.log(message);
-        /* $.ajax({
-                type: 'POST',
-                url: 'sendMessage.php',
-                data: {"phone_number":phone_number,"message":message},
-                success: function (data) {
+    function sendMessage(conversation_sid,identity) {
+        alert();
+        var body = $("#body").val();
+        if(body == ''){
+            alert('No Message body');
+        }
+        $.ajax({
+            type: 'POST',
+            url:  'create_conv_message.php',
+            data: {"conversation_sid":conversation_sid,"identity":identity,"body":body},
+            success: function (data) {
                 alert(data);
-                }
-            }); */
+                $('a.nav-link active').trigger("click");
+            }
+        });
     }
+    $('form#send').on('focus',function(){
+        alert();
+    });
 </script>
