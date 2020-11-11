@@ -6,7 +6,7 @@
   <body class=" sidebar-mini ">
     <!-- End Google Tag Manager (noscript) -->
     <div class="wrapper ">
-      <?php
+      <?php 
         include 'inc/header.php';
       ?>
       <div class="main-panel" id="main-panel">

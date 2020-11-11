@@ -72,7 +72,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
               <div class="card">
                 <div class="card-header">
                   <h4 class="card-title"> All Groups</h4>
@@ -120,6 +120,47 @@
                               <a href="delete_group.php?group=<?= $row['add_group_id']; ?>" class="btn btn-info"> Delete</a>
                             </td>
                             
+                        </tr>
+                        <?php
+                         }
+                        ?>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title"> Purchased Number</h4>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-shopping">
+                      <thead class="">
+                        <th  class="text-center" ></th>
+                        <th >ID</th>
+                        <th >Number</th>
+                        <th >Contry Contact</th>
+                        <th >Status</th>
+                      </thead>
+                      <tbody>
+                        <?php 
+                          while($row=mysqli_fetch_assoc($result_get_group_count)) {
+                            $query_do = "SELECT * FROM numbers where numbers_group_id = {$row['add_group_id']}";
+                            $result_do = mysqli_query($connect, $query_do);
+                            $result_do = mysqli_num_rows($result_do);
+                        ?>
+                          <tr>
+                            <td></td>
+                            <td><?= $row['add_group_id']; ?></td>
+                            <td><?= $row['add_group_name']; ?></td>
+                            <td><?=$result_do?></td>
+                            <td>
+                              <a href="view_contacts.php?group=<?= $row['add_group_id']; ?>" class="btn btn-info"> View</a>
+                              <a href="delete_group.php?group=<?= $row['add_group_id']; ?>" class="btn btn-info"> Delete</a>
+                            </td>
                         </tr>
                         <?php
                          }

@@ -1,9 +1,17 @@
 <?php
     include 'config.php';
-    if(isset($_POST) && $_POST['PhoneNumber'] != ''){
-        $curl = curl_init();
-        $phone_number = $_POST['PhoneNumber'];
+    include 'connection.php';
+    require __DIR__ . '/vendor/autoload.php';
+    // Use the REST API Client to make requests to the Twilio REST API
+    use Twilio\Rest\Client;
+    use Twilio\Exceptions\RestException;
+    $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
+    if(isset($_POST) && $_POST['phoneNumber'] != ''){
+        // ADd80bb97cfb167b0bc4a168bdf0d1fcc2
+        $phone_number = $_POST['phoneNumber'];
+        
+        /* $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/IncomingPhoneNumbers.json",
             CURLOPT_RETURNTRANSFER => true,
@@ -20,14 +28,21 @@
             ),
         ));
         $response = curl_exec($curl);
-        curl_close($curl);
-        $result = json_decode($response);
-        if(isset($result->code)){
-            echo json_encode(array('status'=>'error','response'=>$response));
+        curl_close($curl); */
+
+        //
+        $incoming_phone_number = $twilio->incomingPhoneNumbers->create(["phoneNumber" => $phone_number]);
+        $result = $incoming_phone_number->toArray();
+        $response = json_encode($incoming_phone_number->toArray());
+        
+        if(isset($result['code'])){
+            echo json_encode(array('status'=>'error','response'=>json_encode($incoming_phone_number->toArray())));
         }else{
             //Insert to purchased number
-            $query = "INSERT INTO purchased_numbers(pn_sid,address_sid,identity_sid,friendly_name,phone_number,region,type,monthly_rental,origin,voice,sms,mms,fax,date_created,date_updated,status,response) 
-            VALUES ('{$result->sid}','{$result->address_sid}','{$result->identity_sid}','{$result->friendly_name}','{$result->phone_number}','{$_POST['region']}','{$_POST['type']}','{$_POST['monthly_rental']}','{$result->origin}','{$result->capabilities->voice}','{$result->capabilities->sms}','{$result->capabilities->mms}','{$result->capabilities->fax}','{$result->date_created}','{$result->date_update}','{$result->status}','{$response}')";
+            $date_created = $incoming_phone_number->dateCreated->format('Y-m-d H:i:s');
+            $date_updated = $incoming_phone_number->dateUpdated->format('Y-m-d H:i:s');
+            $query = "INSERT INTO purchased_numbers(pn_sid,address_sid,identity_sid,friendly_name,phone_number,region,type,monthly_rental,origin,voice,sms,mms,date_created,date_updated,status,response) 
+            VALUES ('{$incoming_phone_number->sid}','{$incoming_phone_number->addressSid}','{$incoming_phone_number->identitySid}','{$incoming_phone_number->friendlyName}','{$incoming_phone_number->phoneNumber}','{$_POST['region']}','{$_POST['type']}','{$_POST['monthly_rental']}','{$incoming_phone_number->origin}','{$incoming_phone_number->capabilities['voice']}','{$incoming_phone_number->capabilities['sms']}','{$incoming_phone_number->capabilities['mms']}','{$date_created}','{$date_updated}','{$incoming_phone_number->status}','{$response}')";
             if(mysqli_query($connect, $query)){
                 header("Refresh:0; url=list_all_numbers.php?status=1");
             }else{

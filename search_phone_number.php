@@ -2,9 +2,12 @@
     include 'config.php';
     $title = "Search Phone Number";
     include 'inc/head.php';
-    require 'vendor/autoload.php';
     include 'connection.php';
-    
+    require __DIR__ . '/vendor/autoload.php';
+    // Use the REST API Client to make requests to the Twilio REST API
+    use Twilio\Rest\Client;
+    use Twilio\Exceptions\RestException;
+    $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
     
     //search phone number
       //get filter condition by contry code
@@ -16,7 +19,7 @@
       if(isset($_POST['country_code']) && $_POST['country_code'] != ''){
         $country_code = strtoupper($_POST['country_code']);
       }
-      if(isset($_POST['type_check']) && $_POST['type_check'] != ''){
+      /* if(isset($_POST['type_check']) && $_POST['type_check'] != ''){
         $type_check = $_POST['type_check'];
         if($type_check == 'local'){
           $url = "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/AvailablePhoneNumbers/".$country_code."/Local.json";
@@ -25,57 +28,76 @@
         }else{
           $url = "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/AvailablePhoneNumbers/".$country_code."/Tollfree.json";
         }
-      }
+      } */
       $str_args ='';
+      $data = array();
       if(isset($_POST['capability_check'])){
         if(!empty($_POST['capability_check'])){
           foreach ($_POST['capability_check'] as $key => $value) {
-            $str_args .= $value.'=true&';
+            //$str_args .= $value.'=true&';
+            $data[$value] = 'true';
           }
         }
       }
-      if(isset($_POST['Contains'])){
-        if(!empty($_POST['Contains'])){
-          $str_args .='Contains='.$_POST['Contains'].'&';   
+      if(isset($_POST['areaCode'])){
+        if(!empty($_POST['areaCode'])){
+          //$str_args .='areaCode='.$_POST['areaCode'].'&'; 
+          $data['areaCode'] = $_POST['areaCode'];
         }
       }
       if(isset($_POST['address_check'])){
         if(!empty($_POST['address_check'])){
           foreach ($_POST['address_check'] as $key => $value) {
-            $str_args .= $value.'=true&';
+            //$str_args .= $value.'=true&';
+            $data[$value] = 'true';
           }
         }
       }
-      $str_args = rtrim($str_args,'&');
+      //$str_args = rtrim($str_args,'&');
       
+      if(isset($_POST['type_check']) && $_POST['type_check'] != ''){
+        $type_check = $_POST['type_check'];
+        if($type_check == 'local'){
+          $response = $twilio->availablePhoneNumbers($country_code)->local->read($data, 20);
 
+        }else if($type_check == 'mobile'){
+          $response = $twilio->availablePhoneNumbers($country_code)->mobile->read($data, 20);
 
-      $curl = curl_init();
+        }else{
+          $response = $twilio->availablePhoneNumbers($country_code)->tollFree->read($data, 20);
+        }
+      }
+
+      //echo $str_args;die;
+      /* $curl = curl_init();
       curl_setopt_array($curl, array(
-      CURLOPT_URL => $url,
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_ENCODING => "",
-      CURLOPT_MAXREDIRS => 10,
-      CURLOPT_TIMEOUT => 0,
-      CURLOPT_FOLLOWLOCATION => true,
-      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-      CURLOPT_CUSTOMREQUEST => "GET",
-      CURLOPT_POSTFIELDS => $str_args,
-      CURLOPT_HTTPHEADER => array(
-          "Authorization: Basic ".BASIC_AUTH_KEY,
-          "Content-Type: application/x-www-form-urlencoded"
-      ),
-      ));
-
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_POSTFIELDS => $str_args,
+        CURLOPT_HTTPHEADER => array(
+            "Authorization: Basic ".BASIC_AUTH_KEY,
+            "Content-Type: application/x-www-form-urlencoded"
+        ),
+      )); 
       $response = curl_exec($curl);
-      curl_close($curl);
-      $result = json_decode($response);
+      curl_close($curl);*/
+      $result = $response;
+      
       if(!empty($result)){
           if(isset($result->status)){
               echo json_encode(array('status'=>'error','response'=>$response));
           }else{
+
+            $phone_price_json = $twilio->pricing->v1->phoneNumbers->countries($country_code)->fetch();
+
               //call phone number 
-              $curl = curl_init();
+              /* $curl = curl_init();
               curl_setopt_array($curl, array(
                 CURLOPT_URL => "https://pricing.twilio.com/v1/PhoneNumbers/Countries/".$country_code,
                 CURLOPT_RETURNTRANSFER => true,
@@ -90,17 +112,18 @@
                 ),
               ));
               $phone_price_json = curl_exec($curl);
-              curl_close($curl);
-              $phone_price_response = json_decode($phone_price_json);
-              foreach ($phone_price_response->phone_number_prices as $key => $value) {
-                if($value->number_type == 'local'){
-                  $price = $value->base_price;
+              curl_close($curl); */
+              $phone_price_response = $phone_price_json->toArray();
+              
+              foreach ($phone_price_response['phoneNumberPrices'] as $key => $value) {
+                if($value['number_type'] == 'local'){
+                  $price = $value['base_price'];
                 }
-                if($value->number_type == 'toll free'){
-                  $price = $value->base_price;
+                if($value['number_type'] == 'toll free'){
+                  $price = $value['base_price'];
                 }
-                if($value->number_type == 'mobile'){
-                  $price = $value->base_price;
+                if($value['number_type'] == 'mobile'){
+                  $price = $value['base_price'];
                 }
               }
           }
@@ -157,7 +180,7 @@
                       <div class="col-md-6">
                         <h4 class="card-title">Search</h4>
                         <div class="form-group form-file-upload form-file-simple">
-                          <input type="text" id="phone" class="form-control" name="Contains" required="">
+                          <input type="text" id="phone" class="form-control" name="areaCode" required="">
                           <input type="hidden" id="country_code"  name="country_code">
                         </div>
                         <!-- <div class="form-group form-file-upload form-file-multiple">
@@ -226,7 +249,7 @@
                           <div class="col-sm-1 col-sm-offset-1 checkbox-radios">
                               <div class="form-check">
                                   <label class="form-check-label">
-                                      <input class="form-check-input" name="capability_check[]" id="capability_voice" value="VoiceEnabled" type="checkbox">
+                                      <input class="form-check-input" name="capability_check[]" id="capability_voice" value="voiceEnabled" type="checkbox">
                                       <span class="form-check-sign"></span>
                                       VOICE
                                   </label>
@@ -235,7 +258,7 @@
                           <div class="col-sm-1 col-sm-offset-1 checkbox-radios">
                               <div class="form-check">
                                   <label class="form-check-label">
-                                      <input class="form-check-input" name="capability_check[]" id="capability_fax" value="FaxEnabled" type="checkbox" >
+                                      <input class="form-check-input" name="capability_check[]" id="capability_fax" value="faxEnabled" type="checkbox" >
                                       <span class="form-check-sign"></span>
                                       FAX
                                   </label>
@@ -244,7 +267,7 @@
                           <div class="col-sm-1 col-sm-offset-1 checkbox-radios">
                               <div class="form-check ">
                                   <label class="form-check-label">
-                                      <input class="form-check-input" name="capability_check[]" value="SmsEnabled" type="checkbox" >
+                                      <input class="form-check-input" name="capability_check[]" value="smsEnabled" type="checkbox" >
                                       <span class="form-check-sign"></span>
                                       SMS
                                   </label>
@@ -253,7 +276,7 @@
                           <div class="col-sm-1 col-sm-offset-1 checkbox-radios">
                               <div class="form-check ">
                                   <label class="form-check-label">
-                                      <input class="form-check-input" name="capability_check[]" value="MmsEnabled" type="checkbox" >
+                                      <input class="form-check-input" name="capability_check[]" value="mmsEnabled" type="checkbox" >
                                       <span class="form-check-sign"></span>
                                       MMS
                                   </label>
@@ -286,7 +309,7 @@
                           <div class="col-sm-2 col-sm-offset-1 checkbox-radios">
                               <div class="form-check">
                                   <label class="form-check-label">
-                                      <input class="form-check-input" name="address_check[]" value="ExcludeLocalAddressRequired" type="checkbox" >
+                                      <input class="form-check-input" name="address_check[]" value="excludeLocalAddressRequired" type="checkbox" >
                                       <span class="form-check-sign"></span>
                                       Exclude local requirements
                                   </label>
@@ -295,7 +318,7 @@
                           <div class="col-sm-2 col-sm-offset-1 checkbox-radios">
                               <div class="form-check ">
                                   <label class="form-check-label">
-                                      <input class="form-check-input" name="address_check[]" value="ExcludeForeignAddressRequired" type="checkbox" >
+                                      <input class="form-check-input" name="address_check[]" value="excludeForeignAddressRequired" type="checkbox" >
                                       <span class="form-check-sign"></span>
                                       Exclude foreign requirements
                                   </label>
@@ -327,7 +350,7 @@
             </div>
           </div>
           <?php
-            if(isset($result->available_phone_numbers) && !empty($result->available_phone_numbers))
+            if(isset($result) && !empty($result))
             {
           ?>
             <div class="row">
@@ -354,22 +377,26 @@
                         <tbody>
                           <?php 
                             $i = 1;
-                            foreach ($result->available_phone_numbers as $key => $value) {
-                          ?>
+                            foreach ($result as $key => $value) {
+                              $val = $value->toArray();
+                          ?>  
                             <tr>
                               <td></td>
                               <td><?= $i; ?></td>
-                              <td><?= $value->iso_country; ?></td>
-                              <td><?= $value->friendly_name; ?></td>
+                              <td><?= $val['isoCountry']; ?></td>
+                              <td><?= $val['friendlyName']; ?></td>
                               <td><?= $type_check; ?></td>
-                              <td><?php if(isset($value->capabilities->SMS) == true){ echo 'SMS '; }if(isset($value->capabilities->MMS) == true){ echo 'MMS '; }if(isset($value->capabilities->voice) == true){ echo 'VOICE ';}if(isset($value->capabilities->fax) == true){ echo 'FAX ';} ?></td>
+                              <td><?php if(isset($val['capabilities']['SMS']) == true){ echo 'SMS '; }if(isset($val['capabilities']['MMS']) == true){ echo 'MMS '; }if(isset($val['capabilities']['voice']) == true){ echo 'VOICE ';}if(isset($val['capabilities']['fax']) == true){ echo 'FAX ';} ?></td>
                               <td><?= $price; ?></td>
-                              <!-- <td><?= $value->friendly_name; ?></td> -->
-                              <!-- <td><?= $value->friendly_name; ?></td> -->
+                              <!-- <td><?= $val->friendlyName; ?></td> -->
+                              <!-- <td><?= $val->friendlyName; ?></td> -->
                               <td>
                                   <form action="buy_number.php" method="POST">
-                                    <input type="hidden" value="<?= $value->phone_number; ?>" name="PhoneNumber">
+                                    <input type="hidden" value="<?= $val['phoneNumber']; ?>" name="phoneNumber">
                                     <input type="hidden" value="<?= $_POST["country_code"]; ?>" name="country_code">
+                                    <input type="hidden" value="<?= $_POST["country_code"]; ?>" name="region">
+                                    <input type="hidden" value="<?= $price; ?>" name="monthly_rental">
+                                    <input type="hidden" value="<?= $type_check; ?>" name="type">
                                     <input type="button" class="btn btn-success confirm_purchase" value="Buy Now">
                                   </form>
                               </td>
@@ -387,7 +414,7 @@
           </div>
           <?php
              }
-             else if(isset($result->available_phone_numbers) && empty($result->available_phone_numbers)){
+             else if(isset($result) && empty($result)){
           ?>
             <div class="row">
                 <div class="col-md-12 text-center">

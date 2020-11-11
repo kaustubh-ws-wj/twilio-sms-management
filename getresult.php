@@ -41,7 +41,7 @@ if(!empty($numbers)){
     foreach ($numbers as $k => $v)
     { ?>
     <input type="hidden" id="rowcount" name="rowcount" value="<?=$_GET['rowcount'] ?>" />
-    <a class="nav-link" id="user-<?=$numbers[$k]['numbers_id'] ?>-tab" data-toggle="pill" href="#user-<?=$numbers[$k]['numbers_id'] ?>" role="tab" aria-controls="user-<?=$numbers[$k]['numbers_id'] ?>" aria-selected="true" onClick="getMessages(<?= $numbers[$k]['numbers_id'] ?>,'<?php echo $numbers[$k]['conversation_sid'] ?>','<?php echo $numbers[$k]['participant_sid'] ?>');">
+    <a class="nav-link" id="user-<?=$numbers[$k]['numbers_id'] ?>-tab" data-toggle="pill" href="#user-<?=$numbers[$k]['numbers_id'] ?>" role="tab" aria-controls="user-<?=$numbers[$k]['numbers_id'] ?>" aria-selected="true" onClick="getMessages(<?= $numbers[$k]['numbers_id'] ?>,'<?= $numbers[$k]['conversation_sid'] ?>');">
         <span class="d-flex">
             <span class="profile-picture">
                 <img src="assets/img/sample_p.jpg" alt="Profile Picture">    

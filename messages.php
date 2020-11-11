@@ -4,9 +4,25 @@
     include 'inc/head.php';
     require 'vendor/autoload.php';
     include 'connection.php';
+    include 'config.php';
+    require __DIR__ . '/vendor/autoload.php';
+    // Use the REST API Client to make requests to the Twilio REST API
+    use Twilio\Rest\Client;
+    use Twilio\Exceptions\RestException;
+    use Twilio\TwiML\MessagingResponse;
 
+    $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
+    
 ?>
+<?php 
+    if(isset($_GET) && !empty($_GET)){
+    // Set the content-type to XML to send back TwiML from the PHP Helper Library
+    header("content-type: text/xml");
 
+    $response = new MessagingResponse();    
+    echo $response;die;
+    }
+?>
   <body class=" sidebar-mini ">
     <!-- End Google Tag Manager (noscript) -->
     <div class="wrapper ">
@@ -99,20 +115,18 @@
     getresult("getresult.php");
 </script>
 <script>
-    function getMessages(id,con_sid,part_sid) {
+    function getMessages(id,conv_sid) {
         $(".nav-link").removeClass("active");
         $(this).addClass("active");  
         
         var profileHeader = '';
         var messageBody = '';
-        var conversation_sid = con_sid;
-        var participant_sid = part_sid;
         
-
+        
         $.ajax({
             url: "getapidata.php",
             type: "POST",
-            data: {"id": id,'conversation_sid':conversation_sid,'participant_sid':participant_sid},
+            data: {"id": id,'conversation_sid':conv_sid},
             beforeSend: function() {
                 $("#overlay").show();
             },

@@ -38,45 +38,27 @@ if(move_uploaded_file($_FILES['file']['tmp_name'],"excel_upload/".$image))
                         //adding + sign must have left char
                         $phone_number = '+'.$phone_number;
                         //creatring conversation
-                        $curl = curl_init();
-
-                        curl_setopt_array($curl, array(
-                            CURLOPT_URL => "https://conversations.twilio.com/v1/Conversations",
-                            CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_ENCODING => "",
-                            CURLOPT_MAXREDIRS => 10,
-                            CURLOPT_TIMEOUT => 0,
-                            CURLOPT_FOLLOWLOCATION => true,
-                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST => "POST",
-                            CURLOPT_POSTFIELDS => "FriendlyName=".$phone_wo_no."&UniqueName=".$phone_wo_no,
-                            CURLOPT_HTTPHEADER => array(
-                                "Authorization: Basic ".BASIC_AUTH_KEY,
-                                "Content-Type: application/x-www-form-urlencoded"
-                            ),
-                        ));
-
-                        $conversations_res = curl_exec($curl);
-                        curl_close($curl);
-                        $conversations_response = json_decode($conversations_res);
-
-                        if(!isset($conversations_response->code)){  //on no exception
-                            $conversation_sid = $conversations_response->sid;
-                            $chat_service_sid = $conversations_response->chat_service_sid;
-                            $messaging_service_sid = $conversations_response->messaging_service_sid;
-
+                        $conversation = $twilio->conversations->v1->conversations->create(["friendlyName" => $phone_number, "uniqueName"=> $phone_wo_no]);
+                        $conversations_response = $conversation->toArray();
+                        $conversations_json_response = json_encode($conversations_response);
+                       
+                        if(!isset($conversations_response['code'])){  //on no exceptions
+                            $conversation_sid = $conversations_response['sid'];
+                            $chat_service_sid = $conversations_response['chatServiceSid'];
+                            $messaging_service_sid = $conversations_response['messagingServiceSid'];
+                            
                             try{
                                 //add participant to conversation api
-                                $participant = $twilio->conversations->v1->conversations($conversation_sid)->participants->create(["messagingBindingAddress" => $phone_number,"messagingBindingProxyAddress" => "+14138533247"]);
+                                $participant = $twilio->conversations->v1->conversations($conversation_sid)->participants->create(["messagingBindingAddress" => $phone_number,"messagingBindingProxyAddress" => '+18325146419']);
                                 $participant_response = $participant->toArray();
                                 $participant_json_response = json_encode($participant_response);
-                                 
+                                
                                 if(!isset($participant_response['code'])){    //on no exception
                                     $participant_sid = $participant_response['sid'];
                                     $participant_identity = $participant_response['identity'];
                                     
                                         $query = "INSERT INTO numbers(numbers_first_name,numbers_last_name,numbers_address,numbers_phone_number,numbers_phone_type,numbers_group_id,numbers_status,conversation_sid,chat_service_sid,messaging_service_sid,participant_sid,identity,conversation_response,participant_response) 
-                                        VALUES ('{$value['A']}','{$value['B']}','{$value['C']}','{$phone_number}','{$value['E']}','{$_POST['group']}','1','{$conversation_sid}','{$chat_service_sid}','{$messaging_service_sid}','{$participant_sid}','{$participant_identity}','{$conversations_res}','{$participant_json_response}')";
+                                        VALUES ('{$value['A']}','{$value['B']}','{$value['C']}','{$phone_number}','{$value['E']}','{$_POST['group']}','1','{$conversation_sid}','{$chat_service_sid}','{$messaging_service_sid}','{$participant_sid}','{$participant_identity}','{$conversations_json_response}','{$participant_json_response}')";
                                         if($q = mysqli_query($connect, $query)){
                                             
                                         }else{
@@ -90,8 +72,6 @@ if(move_uploaded_file($_FILES['file']['tmp_name'],"excel_upload/".$image))
                             }catch(RestException $ex){
                                 echo 'Catch';die;
                             }
-                            
-                            
                         }else{
                             echo $conversations_res;die;
                         }

@@ -3,10 +3,16 @@
   $title = "Purchased Phone Numbers";
   include 'inc/head.php';
   include 'connection.php';
-  require 'vendor/autoload.php';
+  require __DIR__ . '/vendor/autoload.php';
+    // Use the REST API Client to make requests to the Twilio REST API
+    use Twilio\Rest\Client;
+    use Twilio\Exceptions\RestException;
+    $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
+    
 
 
-    $curl = curl_init();
+  $incomingPhoneNumbers = $twilio->incomingPhoneNumbers->read([], 20); 
+    /* $curl = curl_init();
 
     curl_setopt_array($curl, array(
       CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/IncomingPhoneNumbers.json",
@@ -24,8 +30,8 @@
 
     $response = curl_exec($curl);
 
-    curl_close($curl);
-    $result = json_decode($response);
+    curl_close($curl); */
+    $result = $incomingPhoneNumbers;
 
 ?>
 
@@ -63,7 +69,7 @@
             ?>
           </div>
             <?php
-                if(isset($result->incoming_phone_numbers) && !empty($result->incoming_phone_numbers))
+                if(isset($result) && !empty($result) && !isset($result->code))
                 {
             ?>
             <div class="row">
@@ -92,7 +98,7 @@
                         <?php 
                             //fetch stored purchased numbers
                             $i = 1; 
-                            foreach ($result->incoming_phone_numbers as $key => $value) {
+                            foreach ($result as $key => $value) {
                             $query = "SELECT type,region,monthly_rental FROM purchased_numbers WHERE pn_sid = '{$value->sid}'";
                             $result = mysqli_query($connect, $query);
                             $row = mysqli_fetch_assoc($result);
@@ -104,11 +110,9 @@
                             <td><?= $row['region']; ?></td>
                             <td><?= $value->origin; ?></td>
                             <td><?= $row['type']; ?></td>
-                            <td><?= $value->phone_number; ?></td>
+                            <td><?= $value->phoneNumber; ?></td>
                             <td><?= $row['monthly_rental']; ?></td>
-                            <!-- <td><?= $value->phone_number; ?></td> -->
-                            <!-- <td><?= $value->phone_number; ?></td> -->
-                            <td><?= $value->date_created; ?></td>
+                            <td><?= $value->dateCreated->format('Y-m-d H:i:s'); ?></td>
                         </tr>
                         <?php
                           $i++; 
@@ -123,7 +127,7 @@
           </div>
           <?php
              }
-             else if(isset($result->incoming_phone_numbers) && empty($result->incoming_phone_numbers)){
+             else if(isset($result) && empty($result)){
          ?>
             <div class="row">
                 <div class="col-md-12 text-center">

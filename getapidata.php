@@ -1,6 +1,12 @@
 <?php 
 include 'config.php';
 require_once ("connection.php");
+require __DIR__ . '/vendor/autoload.php';
+// Use the REST API Client to make requests to the Twilio REST API
+use Twilio\Rest\Client;
+use Twilio\Exceptions\RestException;
+$twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
+
 if(!empty($_POST['id'])){
 
 	$sql    = "SELECT * from numbers WHERE numbers_id = ".$_POST['id'];
@@ -8,28 +14,9 @@ if(!empty($_POST['id'])){
     $row    = mysqli_fetch_assoc($result);
 
     $conversation_sid = $_POST['conversation_sid'];
-    $participant_obj = json_decode($row['participant_response']); 
-    $identity = $participant_obj->identity;
-    $curl = curl_init();
-
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://conversations.twilio.com/v1/Conversations/".$conversation_sid."/Messages",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-        CURLOPT_HTTPHEADER => array(
-            "Authorization: Basic ".BASIC_AUTH_KEY
-        ),
-    ));
-
-    $messages_response = curl_exec($curl);
-    curl_close($curl);
-    $messages_result = json_decode($messages_response);
-
+    
+    $messages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read(20);
+    
     $html = '<div class="messages-content-header">
                 <div class="profile-info">
                     <div class="profile-picture">
@@ -55,9 +42,9 @@ if(!empty($_POST['id'])){
         
         $html .='<div class="messages-content-body">
                     <div class="tab-pane fade show active" id="user-one" role="tabpanel" aria-labelledby="user-one-tab" style="height: 510px;">';
-        if(!empty($messages_result->messages)){
-            foreach ($messages_result->messages as $key => $value){    
-                if($value->author == $identity){
+        if(!empty($messages)){
+            foreach ($messages as $key => $value){    
+                if($value->author == $row['numbers_phone_number']){
                     $html .='<div class="single-message">
                                 <div class="profile-picture">
                                     <img src="assets/img/sample_p.jpg" alt="Profile Picture">    
@@ -92,7 +79,7 @@ if(!empty($_POST['id'])){
                     <form id="conv_msg_form" action="create_conv_message.php" method="POST" class="lt-form">
                         <div class="form-group">
                             <input type="hidden" name="conversation_sid" value="'.$conversation_sid.'">
-                            <input type="hidden" name="author" value="+919860538505">
+                            <input type="hidden" name="author" value="+18325146419">
                             <input type="text" class="form-control" required name="body" placeholder="Type Your Message">
                             <button type="submit" id="send" value="Send">Send</button>
                         </div>
