@@ -10,6 +10,18 @@
     $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
     
 
+  if(isset($_POST) && isset($_POST['pn_sid']) && $_POST['pn_sid'] != ''){
+    $pn_sid = $_POST['pn_sid'];
+    try{
+      $twilio->incomingPhoneNumbers($pn_sid)->delete();
+      header("Refresh:0; url=list_all_numbers.php?status=3");
+    }catch(RestException $ex){
+      header("Refresh:0; url=list_all_numbers.php?status=4");
+    }
+    
+  }
+  
+
 
   $incomingPhoneNumbers = $twilio->incomingPhoneNumbers->read([], 20); 
     /* $curl = curl_init();
@@ -65,6 +77,14 @@
             ?>
                 <h1 class="text-center color_red">Unable to purchase this number</h1>
             <?php
+              }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 3) {
+            ?>
+                <h1 class="text-center color_green">Number Release Successfully!!</h1>
+            <?php
+              }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 4) {
+                ?>
+                    <h1 class="text-center color_red">Something Went Wrong !!</h1>
+            <?php
               }
             ?>
           </div>
@@ -93,11 +113,12 @@
                         <!-- <th >SMS Rate</th> -->
                         <!-- <th >Voice Rate</th> -->
                         <th >Purchased On</th>
+                        <th >Action</th>
                       </thead>
                       <tbody>
                         <?php 
                             //fetch stored purchased numbers
-                            $i = 1; 
+                            $i = 1;
                             foreach ($result as $key => $value) {
                             $query = "SELECT type,region,monthly_rental FROM purchased_numbers WHERE pn_sid = '{$value->sid}'";
                             $result = mysqli_query($connect, $query);
@@ -113,6 +134,12 @@
                             <td><?= $value->phoneNumber; ?></td>
                             <td><?= $row['monthly_rental']; ?></td>
                             <td><?= $value->dateCreated->format('Y-m-d H:i:s'); ?></td>
+                            <td>
+                              <form method="POST">
+                                <input type="hidden" name="pn_sid" value="<?php echo $value->sid; ?>">
+                                <input type="submit" class="btn btn-warning" id="release-number" value="Realese">
+                              </form>
+                            </td>
                         </tr>
                         <?php
                           $i++; 
@@ -128,7 +155,7 @@
           <?php
              }
              else if(isset($result) && empty($result)){
-         ?>
+          ?>
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="card">
@@ -151,3 +178,4 @@
     <?php
       include 'inc/footer.php';
     ?>
+    

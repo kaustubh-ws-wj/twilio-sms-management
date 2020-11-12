@@ -78,7 +78,7 @@
                 {
                   $(this).closest('form').submit();
                   return  false;
-                }   
+                } 
             }
             else{
                 alert("Enter phone number");
