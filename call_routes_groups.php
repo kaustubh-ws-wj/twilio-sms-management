@@ -78,7 +78,7 @@ require 'vendor/autoload.php';
                     <div class="col-md-6">
                       <h4 class="card-title">Select Your Numbers</h4>
                       <div class="form-group form-file-upload form-file-simple">
-                        <select class="form-control getcontact" name="numbers[]" required="" multiple>
+                        <select class="form-control getcontact" name="numbers[]" required="" multiple style="height:360px;">
                             <?php 
                                 $count = count($response->resources);
                                 foreach ($result->incoming_phone_numbers as $key => $value) {
