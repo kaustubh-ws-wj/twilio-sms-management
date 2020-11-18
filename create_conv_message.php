@@ -13,11 +13,16 @@ if((!empty($_POST['conversation_sid']) && $_POST['conversation_sid'] != '') && (
     $conversation_sid = $_POST['conversation_sid'];
     $author = $_POST['author'];
     $body = $_POST['body'];
-
-    $message = $twilio->conversations->v1->conversations($conversation_sid)
-                                     ->messages->create(["author" => $author,"body" => $body]);
-    $message_result = json_encode($message->toArray());
-    echo $message_result;
+    try{
+        $message = $twilio->conversations->v1->conversations($conversation_sid)->messages->create(["author" => $author,"body" => $body]);
+        $message_result = $message->toArray();
+        $message_response = json_encode($message->toArray());
+        
+        header("Refresh:0; url=list_all_numbers.php?status=1");
+    }catch(RestException $ex){
+        header("Refresh:0; url=list_all_numbers.php?status=0");
+    }
+    
 }else{
-    echo 'EROROR';
+    header("Refresh:0; url=list_all_numbers.php?status=0");
 }

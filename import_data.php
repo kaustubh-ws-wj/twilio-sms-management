@@ -24,8 +24,15 @@ if(move_uploaded_file($_FILES['file']['tmp_name'],"excel_upload/".$image))
         // $allDataInSheett = unset($allDataInSheet[1]);
         // echo "<pre>";
         // print_r($allDataInSheet);
-        // print_r(count($allDataInSheet));
+        $recipients = count($allDataInSheet)-1;
         // exit();
+
+        //INSERT Query for the List contacts
+        $sql = "INSERT INTO contact_list(list_name,list_path,recipients,status) VALUES('{$image}','{$inputFileName}','{$recipients}','Active')";
+        mysqli_query($connect, $sql);
+        $last_id = $connect->insert_id;
+        
+
         if (count($allDataInSheet) > 1) {
             foreach ($allDataInSheet as $key => $value) {
                 if($key != 1) {
@@ -38,7 +45,7 @@ if(move_uploaded_file($_FILES['file']['tmp_name'],"excel_upload/".$image))
                         //adding + sign must have left char
                         $phone_number = '+'.$phone_number;
                         //creatring conversation
-                        $conversation = $twilio->conversations->v1->conversations->create(["friendlyName" => $phone_number, "uniqueName"=> $phone_wo_no]);
+                        /* $conversation = $twilio->conversations->v1->conversations->create(["friendlyName" => $phone_number, "uniqueName"=> $phone_wo_no]);
                         $conversations_response = $conversation->toArray();
                         $conversations_json_response = json_encode($conversations_response);
                        
@@ -55,17 +62,21 @@ if(move_uploaded_file($_FILES['file']['tmp_name'],"excel_upload/".$image))
                                 
                                 if(!isset($participant_response['code'])){    //on no exception
                                     $participant_sid = $participant_response['sid'];
-                                    $participant_identity = $participant_response['identity'];
+                                    $participant_identity = $participant_response['identity']; */
                                     
-                                        $query = "INSERT INTO numbers(numbers_first_name,numbers_last_name,numbers_address,numbers_phone_number,numbers_phone_type,numbers_group_id,numbers_status,conversation_sid,chat_service_sid,messaging_service_sid,participant_sid,identity,conversation_response,participant_response) 
-                                        VALUES ('{$value['A']}','{$value['B']}','{$value['C']}','{$phone_number}','{$value['E']}','{$_POST['group']}','1','{$conversation_sid}','{$chat_service_sid}','{$messaging_service_sid}','{$participant_sid}','{$participant_identity}','{$conversations_json_response}','{$participant_json_response}')";
-                                        if($q = mysqli_query($connect, $query)){
+                                        /* $query = "INSERT INTO numbers(contact_list_id,numbers_first_name,numbers_last_name,numbers_address,numbers_phone_number,numbers_phone_type,numbers_group_id,numbers_status,conversation_sid,chat_service_sid,messaging_service_sid,participant_sid,identity,conversation_response,participant_response) 
+                                        VALUES ('{$last_id}','{$value['A']}','{$value['B']}','{$value['C']}','{$phone_number}','{$value['E']}','{$_POST['group']}','1','{$conversation_sid}','{$chat_service_sid}','{$messaging_service_sid}','{$participant_sid}','{$participant_identity}','{$conversations_json_response}','{$participant_json_response}')"; */
+                                        
+                                        $query = "INSERT INTO numbers(contact_list_id,numbers_first_name,numbers_last_name,numbers_address,numbers_phone_number,numbers_phone_type,numbers_group_id,numbers_status) 
+                                        VALUES ('{$last_id}','{$value['A']}','{$value['B']}','{$value['C']}','{$phone_number}','{$value['E']}','{$_POST['group']}','1')";
+                                        
+                                        if(mysqli_query($connect, $query)){
                                             
                                         }else{
                                             echo 'no';
                                             print_r($q);die;
                                         }
-                                }else{
+                                /* }else{
                                     echo 'no p';
                                     echo $participant_json_response;die;
                                 }
@@ -74,7 +85,7 @@ if(move_uploaded_file($_FILES['file']['tmp_name'],"excel_upload/".$image))
                             }
                         }else{
                             echo $conversations_res;die;
-                        }
+                        } */
                     }   
                 }
             }

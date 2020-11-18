@@ -14,5 +14,11 @@ foreach ($messages as $key => $value) {
     
 } */
 
-$mobile = 'mobile';
+if($_SERVER['REQUEST'] == 'POST'){
+    if(isset($_POST['accountSid'])){
+        //Store auto creation conversation 
+        $response = json_encode($_POST);
+        $sql = "INSERT INTO conversations (responses) values ($response)";
+    }
+}
 

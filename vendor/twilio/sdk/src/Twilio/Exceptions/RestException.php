@@ -8,6 +8,7 @@ class RestException extends TwilioException {
     protected $statusCode;
     protected $details;
     protected $moreInfo;
+    protected $message;
 
     /**
      * Construct the exception. Note: The message is NOT binary safe.
@@ -23,6 +24,7 @@ class RestException extends TwilioException {
         $this->statusCode = $statusCode;
         $this->moreInfo = $moreInfo;
         $this->details = $details;
+        $this->message = $message;
         parent::__construct($message, $code);
     }
 
@@ -48,5 +50,10 @@ class RestException extends TwilioException {
      */
     public function getDetails(): array {
         return $this->details;
+    }
+
+
+    public function getMessage(): array {
+        return $this->message;
     }
 }

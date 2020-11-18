@@ -67,37 +67,39 @@
             <table id="datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
               <thead>
                 <tr>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Address</th>
-                  <th>Number</th>
-                  <th>Group</th>
+                  <th>List Name</th>
+                  <th>List Path</th>
+                  <th>Recipients</th>
+                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tfoot>
                 <tr>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Address</th>
-                  <th>Number</th>
-                  <th>Group</th>
+                  <th>List Name</th>
+                  <th>List Path</th>
+                  <th>Recipients</th>
+                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </tfoot>
               <tbody>
                 <?php while($row=mysqli_fetch_assoc($result)) {
-                  $query_do = "SELECT add_group_name,add_group_id FROM add_group where add_group_id = {$row['numbers_group_id']}";
+                  // echo '<pre>';
+                  // print_r($row);
+                  // echo '</pre>';
+                  $query_do = "SELECT list_name,list_path,recipients,status FROM contact_list where id = {$row['contact_list_id']}";
+                  // echo $query_do;
                   $result_do = mysqli_query($connect, $query_do);
                   $result_do = mysqli_fetch_assoc($result_do);
+                  
                 ?>
                   <tr>
-                    <td><?=$row['numbers_first_name']?></td>
-                    <td><?=$row['numbers_last_name']?></td>
-                    <td><?=$row['numbers_address']?></td>
-                    <td><?=$row['numbers_phone_number']?></td>
-                    <td><?=$result_do['add_group_name']?></td>
-                    <td><a href="delete_contact.php?group=<?= $result_do['add_group_id'];?>&number=<?= $row['numbers_id']; ?>" class="btn btn-info"> Delete</a></td>
+                    <td><?=$result_do['list_name']?></td>
+                    <td><?=$result_do['list_path']?></td>
+                    <td><?=$result_do['recipients']?></td>
+                    <td><?=$result_do['status']?></td>
+                    <td><a href="edit_contact.php?group=<?= $result_do['id'];?>&number=<?= $row['numbers_id']; ?>" class="btn btn-info"> Edit</a> <a href="delete_contact.php?group=<?= $result_do['id'];?>&number=<?= $row['numbers_id']; ?>" class="btn btn-info"> Delete</a></td>
                   </tr>
                 <?php } ?>
                 

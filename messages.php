@@ -2,7 +2,6 @@
 <?php
     $title = "Messages";
     include 'inc/head.php';
-    require 'vendor/autoload.php';
     include 'connection.php';
     include 'config.php';
     require __DIR__ . '/vendor/autoload.php';
@@ -12,17 +11,15 @@
     use Twilio\TwiML\MessagingResponse;
 
     $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
+    //load conversation
+    try{
+        $conversations = $twilio->conversations->v1->conversations->read(20);
+    }catch(RestException $ex){
+        header("Refresh:0; url=dashboard.php?error=".$ex->getMessage());
+    }
     
 ?>
-<?php 
-    if(isset($_GET) && !empty($_GET)){
-    // Set the content-type to XML to send back TwiML from the PHP Helper Library
-    header("content-type: text/xml");
 
-    $response = new MessagingResponse();    
-    echo $response;die;
-    }
-?>
   <body class=" sidebar-mini ">
     <!-- End Google Tag Manager (noscript) -->
     <div class="wrapper ">
@@ -60,9 +57,40 @@
                                        <div id="overlay"><div>
                                         <img src="assets/img/loading.gif" width="35px" height="35px"/></div></div>
                                         <div class="page-content">
-                                            <div id="pagination-result">
+                                            <!-- <div id="pagination-result">
                                                 <input type="hidden" name="rowcount" id="rowcount" />
-                                            </div>
+                                            </div> -->
+
+                                            <?php 
+                                                if(!empty($conversations)){
+                                                    foreach($conversations as $key => $value){ ?> 
+                                                        <a class="nav-link" id="user-tab" data-toggle="pill" href="#user" role="tab" aria-controls="user" aria-selected="true" >
+                                                            <span class="d-flex">
+                                                                <span class="profile-picture">
+                                                                    <img src="assets/img/sample_p.jpg" alt="Profile Picture">    
+                                                                </span>
+                                                                <span class="message-highlight">
+                                                                    <span class="user-name">Chris Purcell</span>
+                                                                    <span class="last-m">+12153269570</span>
+                                                                </span>
+                                                            </span>
+                                                            <span class="m-time">4:52 pm</span>
+                                                        </a>
+                                            <?php 
+                                                    }
+                                                }else{ 
+                                            ?>
+                                                        <a class="nav-link" data-toggle="pill" href="#" role="tab" aria-controls="user" aria-selected="true">
+                                                            <span class="d-flex">
+                                                                <span class="message-highlight">
+                                                                    <span class="user-name">No Contacts Found</span> 
+                                                                </span>
+                                                            </span>
+                                                        </a>
+                                            <?php
+                                                } 
+                                            ?>
+                                            
                                         </div>
                                        <!-- Dynamic user list End-->
                                     </div>
@@ -98,7 +126,7 @@
                 $("#overlay").show();
             },
             success: function (data) {
-                $("#pagination-result").html(data);
+                //$("#pagination-result").html(data);
                 setInterval(function () {
                     $("#overlay").hide();
                 }, 500);
@@ -121,7 +149,6 @@
         
         var profileHeader = '';
         var messageBody = '';
-        
         
         $.ajax({
             url: "getapidata.php",
