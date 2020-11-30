@@ -24,4 +24,12 @@
     <!-- <link href="assets/demo/demo.css" rel="stylesheet" /> -->
     
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+      
+      /* User profile css */
+      select#folder{
+        width: 45%!important;
+        height:30%!important;
+      }
+    </style>
   </head>

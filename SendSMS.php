@@ -2,17 +2,78 @@
 include 'config.php';
 include 'connection.php';
 require 'vendor/autoload.php';
-include 'connection.php';
+include 'PHPExcel-1.8/Classes/PHPExcel.php';
 // echo "<pre>";
 // print_r($_POST);
 // exit;
 if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty($_POST['call_routes_id']))
 {
     $message = $_POST['message'];
-    $query_test = "SELECT * FROM numbers where numbers_group_id = {$_POST['group']}";
-    $result_test = mysqli_query($connect, $query_test);
-    $total_rows_test = mysqli_num_rows($result_test);
-    if (count($_POST['call_routes_id']) > 0 && $total_rows_test > 0) {
+    // $query_test = "SELECT * FROM numbers where numbers_group_id = {$_POST['group']}";
+    // $result_test = mysqli_query($connect, $query_test);
+    // $total_rows_test = mysqli_num_rows($result_test);
+
+    $contact_list_query = "SELECT * FROM contact_list WHERE id= {$_POST['contact_list']}";
+    $result_contact_list = mysqli_query($connect,$contact_list_query);
+    $assoc_result_contact_list = mysqli_fetch_assoc($result_contact_list);
+
+    
+    if($assoc_result_contact_list['mapping_status'] != 'Needs to map'){
+
+        $inputFileType = PHPExcel_IOFactory::identify($assoc_result_contact_list['list_path']);
+        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($assoc_result_contact_list['list_path']);
+        $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
+
+        $phone_col = $assoc_result_contact_list['phone'];
+        
+        if (count($_POST['call_routes_id']) > 0) {
+            $abc = serialize($_POST['call_routes_id']);
+            
+            $query_c = "INSERT INTO campaign(campaign_name,campaign_message,campaign_call_route,campaign_route_numbers,campaign_status) VALUES ('{$_POST['campaign_name']}','{$message}','{$_POST['route']}','{$abc}','1')";
+            $ins = mysqli_query($connect, $query_c);
+            $i=0;
+            foreach($allDataInSheet as $key => $value){
+                if($key != 1){
+                    if($value[$phone_col] != ''){
+    
+                        $phone_number = '+1'.$value[$phone_col];
+                        
+                        $sender = $_POST['call_routes_id'][$i];
+                        
+                        $curl = curl_init();
+            
+                        curl_setopt_array($curl, array(
+                            CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/Messages.json",
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 0,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => "Body=".$message."&To=".$phone_number."&From=".$sender,
+                            CURLOPT_HTTPHEADER => array(
+                                "Authorization: Basic ".BASIC_AUTH_KEY,
+                                "Content-Type: application/x-www-form-urlencoded"
+                            ),
+                        ));
+                        $response = curl_exec($curl);
+                        curl_close($curl);
+                    }
+                    $i++;
+                }
+            }
+            header("location: send_message.php?status=1");            
+        }else{
+            header("location: send_message.php?status=0");
+        }
+
+    }else{
+        header("Refresh:0; url=send_message.php?status=3");
+    }   
+    
+    /* if (count($_POST['call_routes_id']) > 0 && $total_rows_test > 0) {
         $abc = serialize($_POST['call_routes_id']);
         // echo "<pre>";
         // print_r($abc);
@@ -57,9 +118,9 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
     }
     else{
     	header("location: send_message.php?status=0");
-    }
+    } */
 }
 else
 {
-    // header("location: send_message.php?status=2");
+    header("location: send_message.php?status=2");
 }

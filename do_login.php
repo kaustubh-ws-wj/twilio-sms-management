@@ -13,6 +13,7 @@
     if (mysqli_num_rows($results) > 0) {
     	while($row=mysqli_fetch_assoc($results)) {
 		    $_SESSION['user_name'] = $row['user_name'];
+		    $_SESSION['user_id'] = $row['id'];
 		}
         header("location: dashboard.php");
     }

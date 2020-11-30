@@ -1,0 +1,37 @@
+    .side-navi ul li a
+    {
+        color:#fff !important;
+        
+    }
+    .side-navi ul
+    {
+        width:100%;
+        
+    }
+    .nav-link .fa
+    {
+
+           padding: .0rem 0.3rem;
+    }
+    .sub_menu
+    {
+        background-color: #181c20;
+    }
+    .sub_menu ul li:hover
+    {
+        background-color: #000;
+    }
+    .side_badge
+    {
+        padding:1em;
+        border-radius: 50%;
+    }
+
+    .nav-item-arrow[data-toggle].collapsed:before {
+    content: " ▾";
+    float: right;
+}
+.nav-item-arrow[data-toggle]:not(.collapsed):before {
+    content: " ▴";
+    float: right;
+}

@@ -1,12 +1,13 @@
 <?php
-  $title = "View Contacts";
+  $title = "Edit Contact";
   include 'inc/head.php';
   include 'connection.php';
   if (isset($_GET['group']) && !empty($_GET['group'])) {
-    $query = "SELECT * FROM numbers where numbers_group_id = {$_GET['group']}";
+    //$query = "SELECT * FROM numbers where numbers_group_id = {$_GET['group']}";
+    $query = "SELECT * FROM contact_list where group_id = {$_GET['group']}";
   }
   else{
-    $query = "SELECT * FROM numbers";
+    $query = "SELECT * FROM contact_list";
   }
   $result = mysqli_query($connect, $query);
 
@@ -68,8 +69,8 @@
               <thead>
                 <tr>
                   <th>List Name</th>
-                  <th>List Path</th>
                   <th>Recipients</th>
+                  <th>Mapping</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
@@ -77,29 +78,28 @@
               <tfoot>
                 <tr>
                   <th>List Name</th>
-                  <th>List Path</th>
                   <th>Recipients</th>
+                  <th>Mapping</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
               </tfoot>
               <tbody>
-                <?php while($row=mysqli_fetch_assoc($result)) {
+                <?php 
                   // echo '<pre>';
                   // print_r($row);
                   // echo '</pre>';
-                  $query_do = "SELECT list_name,list_path,recipients,status FROM contact_list where id = {$row['contact_list_id']}";
+                  // $query_do = "SELECT list_name,list_path,recipients,mapping_status,status, id FROM contact_list";
                   // echo $query_do;
-                  $result_do = mysqli_query($connect, $query_do);
-                  $result_do = mysqli_fetch_assoc($result_do);
-                  
+                  // $result_do = mysqli_query($connect, $query_do);
+                  while($result_do = mysqli_fetch_assoc($result)) {
                 ?>
                   <tr>
                     <td><?=$result_do['list_name']?></td>
-                    <td><?=$result_do['list_path']?></td>
                     <td><?=$result_do['recipients']?></td>
+                    <td><?=$result_do['mapping_status']?></td>
                     <td><?=$result_do['status']?></td>
-                    <td><a href="edit_contact.php?group=<?= $result_do['id'];?>&number=<?= $row['numbers_id']; ?>" class="btn btn-info"> Edit</a> <a href="delete_contact.php?group=<?= $result_do['id'];?>&number=<?= $row['numbers_id']; ?>" class="btn btn-info"> Delete</a></td>
+                    <td><a href="edit_contact.php?id=<?= $result_do['id']; ?>" class="btn btn-info"> Edit</a> <a href="#" class="btn btn-danger"> Delete</a></td>
                   </tr>
                 <?php } ?>
                 

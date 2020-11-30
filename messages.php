@@ -1,4 +1,6 @@
 <link href="assets/css/conversation.css" rel="stylesheet" />
+<!-- bhagyashree -->
+<link href="assets/css/conversationmenu.css" rel="stylesheet" />
 <?php
     $title = "Messages";
     include 'inc/head.php';
@@ -17,7 +19,10 @@
     }catch(RestException $ex){
         header("Refresh:0; url=dashboard.php?error=".$ex->getMessage());
     }
-    
+   
+    $folder_query = "SELECT * FROM folder";
+    $folder_query_result = mysqli_query($connect,$folder_query);
+
 ?>
 
   <body class=" sidebar-mini ">
@@ -39,11 +44,30 @@
                 <div class="container-fluid p-0">
                      <div class="main">
                         <div class="messages bg-white row">
-                            <div class="messages-sidebar col-md-5 col-lg-3 p-0">
+                            <div class="side-navi col-12 col-sm-12 col-md-2 collapse show d-md-flex bg-dark pt-2 pl-0 min-vh-100 p-0" id="sidebar">
+                                <ul class="nav flex-column flex-nowrap overflow-hidden">
+                                    <!-- <li class="nav-item nav-item-arrow">
+                                        <a class="nav-link text-truncate" href="#"><i class="fa fa-inbox fa-lg"></i> <span class="d-none d-sm-inline">Messages</span></a>
+                                    </li> -->
+                                    <li class="nav-item">
+                                        <a class="nav-link nav-item-arrow collapsed text-truncate" href="#submenu1" data-toggle="collapse" data-target="#submenu1"><i class="fa fa-folder fa-lg"></i> <span class="d-none d-sm-inline">Folders</span></a>
+                                        <div class="collapse sub_menu" id="submenu1" aria-expanded="false">
+                                            <ul class="flex-column pl-2 nav">
+                                                <?php while($folders = mysqli_fetch_assoc($folder_query_result)){?>
+                                                <li class="nav-item">
+                                                    <a class="nav-link collapsed py-1" href="#submenu1sub1" data-toggle="collapse" data-target="#submenu1sub1"><i class="fa fa-caret-right" aria-hidden="true"></i><span><?php echo $folders['folder_name'];?></span></a>
+                                                </li>
+                                                <?php } ?>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="messages-sidebar col-md-3 col-lg-3 p-0">
                                 <div class="messages-sidebar-header d-flex justify-content-between">
-                                    <div class="profile-picture">
+                                    <!-- <div class="profile-picture">
                                         <img src="assets/img/sample_p.jpg" alt="Profile Picture">
-                                    </div>
+                                    </div> -->
                                     <div class="search-box">
                                         <form action="#" class="search-form">
                                             <input type="search" class="search-field" placeholder="Search">
@@ -63,18 +87,28 @@
 
                                             <?php 
                                                 if(!empty($conversations)){
-                                                    foreach($conversations as $key => $value){ ?> 
-                                                        <a class="nav-link" id="user-tab" data-toggle="pill" href="#user" role="tab" aria-controls="user" aria-selected="true" >
+                                                    foreach($conversations as $key => $value){  
+                                                        $conversation_array = $value->toArray();
+                                                        $conv_sid = $conversation_array['sid'];
+                                                        $participant = $twilio->conversations->v1->conversations($conv_sid)->participants->read();
+                                                        $from = $participant[0]->messagingBinding['address'];
+                                                        $proxy_address = $participant[0]->messagingBinding['proxy_address'];
+                                                        $txt_time = $participant[0]->dateUpdated->format('H:i');
+                                                        $messages = $twilio->conversations->v1->conversations($conv_sid)->messages->read(1);
+                                                        $last_msg = $messages[0]->body;
+                                            ?>
+                                                        <a class="nav-link" id="user-tab" data-toggle="pill" href="#user" role="tab" aria-controls="user" onClick="getMessages('<?php echo $conv_sid;?>','<?php echo $proxy_address; ?>')" aria-selected="true" >
                                                             <span class="d-flex">
-                                                                <span class="profile-picture">
+                                                                <!-- <span class="profile-picture">
                                                                     <img src="assets/img/sample_p.jpg" alt="Profile Picture">    
-                                                                </span>
+                                                                </span> -->
                                                                 <span class="message-highlight">
-                                                                    <span class="user-name">Chris Purcell</span>
-                                                                    <span class="last-m">+12153269570</span>
+                                                                    <!-- <span class="user-name">Chris Purcell</span> -->
+                                                                    <span class="user-name"><?php echo $from; ?></span>
+                                                                    <span class="last-m"><?php echo $last_msg; ?></span>
                                                                 </span>
                                                             </span>
-                                                            <span class="m-time">4:52 pm</span>
+                                                            <span class="m-time"><?php echo $txt_time; ?></span>
                                                         </a>
                                             <?php 
                                                     }
@@ -97,7 +131,7 @@
                                 </div>
                             </div><!-- messages-sidebar -->
 
-                            <div class="messages-content col-md-7 col-lg-9 p-0">
+                            <div class="messages-content col-md-7 col-lg-7 p-0">
                                 <span id="resultHtml"></span>
                             </div>                            
                         </div><!-- messages -->
@@ -143,7 +177,7 @@
     getresult("getresult.php");
 </script>
 <script>
-    function getMessages(id,conv_sid) {
+    function getMessages(conv_sid,proxy_address) {
         $(".nav-link").removeClass("active");
         $(this).addClass("active");  
         
@@ -153,7 +187,7 @@
         $.ajax({
             url: "getapidata.php",
             type: "POST",
-            data: {"id": id,'conversation_sid':conv_sid},
+            data: {'conversation_sid':conv_sid,'twilio_number':proxy_address},
             beforeSend: function() {
                 $("#overlay").show();
             },

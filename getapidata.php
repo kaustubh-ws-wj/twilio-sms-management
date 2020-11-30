@@ -7,35 +7,30 @@ use Twilio\Rest\Client;
 use Twilio\Exceptions\RestException;
 $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
-if(!empty($_POST['id'])){
+if(!empty($_POST['conversation_sid'])){
 
-	$sql    = "SELECT * from numbers WHERE numbers_id = ".$_POST['id'];
+	$sql    = "SELECT * from numbers WHERE numbers_id = 5";
 	$result = mysqli_query($connect, $sql);
     $row    = mysqli_fetch_assoc($result);
 
+    $proxy_address = $_POST['twilio_number'];
+    $purchased_number = array();
+    $incomingNumber = $twilio->incomingPhoneNumbers->read([], 20);
+    foreach($incomingNumber as $k => $numbers){
+        $purchased_number[] = $numbers->phoneNumber;
+    }
+
     $conversation_sid = $_POST['conversation_sid'];
     
-    $messages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read(20);
+    $messages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
     
     $html = '<div class="messages-content-header">
                 <div class="profile-info">
-                    <div class="profile-picture">
-                        <img src="assets/img/sample_p.jpg" alt="Profile Picture">    
-                    </div>
                     <div class="user-info">
                         <span class="user-name">'.$row['numbers_first_name'].' '.$row['numbers_last_name'].'</span>
                         <span class="user-availability">Online</span>
                     </div>
-                </div>
-                <div class="user-options">
-                    <ul class="global-list d-flex justify-content-between">
-                        <li><a href="#"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-video-camera" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-user-plus" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-star-o" aria-hidden="true"></i></a></li>
-                        <li><a href="#"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></a></li>
-                    </ul>
-                </div>    
+                </div>   
             </div>';
 
     
@@ -44,19 +39,17 @@ if(!empty($_POST['id'])){
                     <div class="tab-pane fade show active" id="user-one" role="tabpanel" aria-labelledby="user-one-tab" style="height: 510px;">';
         if(!empty($messages)){
             foreach ($messages as $key => $value){    
-                if($value->author == $row['numbers_phone_number']){
-                    $html .='<div class="single-message">
-                                <div class="profile-picture">
-                                    <img src="assets/img/sample_p.jpg" alt="Profile Picture">    
-                                </div>
+                if(in_array($value->author,$purchased_number)){
+                    $html .='<div class="single-message self-message text-right">
                                 <div class="user-massage">
                                     <span class="user-name">'.$value->author.'</span>
                                     <p><span class="color">'.$value->body.'</span></p>
                                     <span class="m-time">8:00 am</span>
                                 </div>
                             </div>';
+                    
                 }else{
-                    $html .='<div class="single-message self-message text-right">
+                    $html .='<div class="single-message">
                                 <div class="user-massage">
                                     <span class="user-name">'.$value->author.'</span>
                                     <p><span class="color">'.$value->body.'</span></p>
@@ -79,7 +72,7 @@ if(!empty($_POST['id'])){
                     <form id="conv_msg_form" action="create_conv_message.php" method="POST" class="lt-form">
                         <div class="form-group">
                             <input type="hidden" name="conversation_sid" value="'.$conversation_sid.'">
-                            <input type="hidden" name="author" value="+18325146419">
+                            <input type="hidden" name="author" value="'.$proxy_address.'">
                             <input type="text" class="form-control" required name="body" placeholder="Type Your Message">
                             <button type="submit" id="send" value="Send">Send</button>
                         </div>

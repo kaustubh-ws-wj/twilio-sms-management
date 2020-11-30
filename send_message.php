@@ -11,6 +11,10 @@
   $query_routes = "SELECT * FROM call_routes GROUP by `call_routes_name`";
   $result_routes = mysqli_query($connect, $query_routes);
   
+  //fetch list names
+  $contact_list_query = "SELECT * FROM contact_list";
+  $result_list_query = mysqli_query($connect,$contact_list_query);
+
   $curl = curl_init();
 
   curl_setopt_array($curl, array(
@@ -54,17 +58,19 @@
             ?>
                 <h1 class="text-center color_green">SMS Sent Sccessfully</h1>
             <?php
-              }
-              else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
+              }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
             ?>
                 <h1 class="text-center color_red">Please Select Call Group Contacts</h1>
             <?php
-              }
-              else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
+              }else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
                 <h1 class="text-center color_red">Something went wrong</h1>
             <?php
-              }
+              }else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 3) {
+            ?>
+              <h1 class="text-center color_red">Fileds not mapped yet for this this list.</h1>
+            <?php 
+              } 
             ?>
 
           </div>
@@ -81,13 +87,24 @@
                             <input name="campaign_name" class="form-control" placeholder="Enter Campaign Name" required="">
                           </div>
                         </div>
-                        <div class="col-md-12">
+                        <!-- <div class="col-md-12">
                           <h4 class="card-title">Select Group</h4>
                           <div class="form-group form-file-upload form-file-simple">
                             <select class="form-control gettotalcontacts" name="group" required="">
                                 <option value="" disabled="" selected="">Select</option>
                               <?php while($row=mysqli_fetch_assoc($result)) {  ?>
                                 <option value="<?= $row['add_group_id']; ?>"><?= $row['add_group_name']; ?></option>
+                              <?php } ?>
+                            </select>
+                          </div>
+                        </div> -->
+                        <div class="col-md-12">
+                          <h4 class="card-title">Select List</h4>
+                          <div class="form-group form-file-upload form-file-simple">
+                            <select class="form-control gettotalcontacts" name="contact_list" required="">
+                                <option value="" selected="">Select</option>
+                              <?php while($contact_list_row=mysqli_fetch_assoc($result_list_query)) {  ?>
+                                <option value="<?= $contact_list_row['id']; ?>"><?= $contact_list_row['list_name']; ?></option>
                               <?php } ?>
                             </select>
                           </div>
@@ -112,8 +129,6 @@
                             <textarea rows="4" name="message" class="form-control" placeholder="Write!" required=""></textarea>
                           </div>
                         </div>
-                      
-                      
                     </div>
                   </div>
                 </div>
