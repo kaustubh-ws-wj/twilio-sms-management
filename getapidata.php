@@ -9,11 +9,12 @@ $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
 if(!empty($_POST['conversation_sid'])){
 
-	$sql    = "SELECT * from numbers WHERE numbers_id = 5";
-	$result = mysqli_query($connect, $sql);
-    $row    = mysqli_fetch_assoc($result);
+	// $sql    = "SELECT * from numbers WHERE numbers_id = 5";
+	// $result = mysqli_query($connect, $sql);
+    // $row    = mysqli_fetch_assoc($result);
 
     $proxy_address = $_POST['twilio_number'];
+    $from_number = $_POST['from_number'];
     $purchased_number = array();
     $incomingNumber = $twilio->incomingPhoneNumbers->read([], 20);
     foreach($incomingNumber as $k => $numbers){
@@ -27,7 +28,7 @@ if(!empty($_POST['conversation_sid'])){
     $html = '<div class="messages-content-header">
                 <div class="profile-info">
                     <div class="user-info">
-                        <span class="user-name">'.$row['numbers_first_name'].' '.$row['numbers_last_name'].'</span>
+                        <span class="user-name">'.$_POST['from_number'].'</span>
                         <span class="user-availability">Online</span>
                     </div>
                 </div>   
@@ -44,7 +45,7 @@ if(!empty($_POST['conversation_sid'])){
                                 <div class="user-massage">
                                     <span class="user-name">'.$value->author.'</span>
                                     <p><span class="color">'.$value->body.'</span></p>
-                                    <span class="m-time">8:00 am</span>
+                                    <span style="font-size: 10px;" class="m-time">'. $value->dateUpdated->format('Y-m-d H:i A').'</span>
                                 </div>
                             </div>';
                     
@@ -53,7 +54,7 @@ if(!empty($_POST['conversation_sid'])){
                                 <div class="user-massage">
                                     <span class="user-name">'.$value->author.'</span>
                                     <p><span class="color">'.$value->body.'</span></p>
-                                    <span class="m-time">8:00 am</span>
+                                    <span style="font-size: 10px;" class="m-time">'.$value->dateUpdated->format('Y-m-d H:i A').'</span>
                                 </div>
                             </div>';
                 }
@@ -74,7 +75,7 @@ if(!empty($_POST['conversation_sid'])){
                             <input type="hidden" name="conversation_sid" value="'.$conversation_sid.'">
                             <input type="hidden" name="author" value="'.$proxy_address.'">
                             <input type="text" class="form-control" required name="body" placeholder="Type Your Message">
-                            <button type="submit" id="send" value="Send">Send</button>
+                            <input type="submit" id="send" value="Send">
                         </div>
                     </form>
                 </div>';

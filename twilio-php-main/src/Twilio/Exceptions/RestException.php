@@ -52,7 +52,7 @@ class RestException extends TwilioException {
         return $this->details;
     }
 
-    public function getMessage(): array {
+    public function getMessages(): string {
         return $this->message;
     }
 }

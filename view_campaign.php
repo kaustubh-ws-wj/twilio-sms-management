@@ -64,7 +64,7 @@
                           while($row=mysqli_fetch_assoc($result_campaign_count)) {
                             $query_do = "SELECT * FROM add_group where add_group_id = {$row['campaign_group']}";
                             $result_do = mysqli_query($connect, $query_do);
-                            $row_do=mysqli_fetch_assoc($result_do)
+                            $row_do=mysqli_fetch_assoc($result_do);
                         ?>
                           <tr>
                             <td>
@@ -75,7 +75,7 @@
                             <td><?= $row_do['add_group_name']; ?></td>
                             <td><?= $row['campaign_call_route']; ?></td>
                             <td>
-                              <?php
+                              <?php die;
                                 foreach(unserialize($row['campaign_route_numbers']) as $num)
                                 {
                                     echo $num."<br>";

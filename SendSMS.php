@@ -8,7 +8,7 @@ include 'PHPExcel-1.8/Classes/PHPExcel.php';
 // exit;
 if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty($_POST['call_routes_id']))
 {
-    $message = $_POST['message'];
+    $message_body = $_POST['message'];
     // $query_test = "SELECT * FROM numbers where numbers_group_id = {$_POST['group']}";
     // $result_test = mysqli_query($connect, $query_test);
     // $total_rows_test = mysqli_num_rows($result_test);
@@ -32,38 +32,49 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
             
             $query_c = "INSERT INTO campaign(campaign_name,campaign_message,campaign_call_route,campaign_route_numbers,campaign_status) VALUES ('{$_POST['campaign_name']}','{$message}','{$_POST['route']}','{$abc}','1')";
             $ins = mysqli_query($connect, $query_c);
-            $i=0;
-            foreach($allDataInSheet as $key => $value){
-                if($key != 1){
-                    if($value[$phone_col] != ''){
-    
-                        $phone_number = '+1'.$value[$phone_col];
-                        
-                        $sender = $_POST['call_routes_id'][$i];
-                        
-                        $curl = curl_init();
             
-                        curl_setopt_array($curl, array(
-                            CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/Messages.json",
-                            CURLOPT_RETURNTRANSFER => true,
-                            CURLOPT_ENCODING => "",
-                            CURLOPT_MAXREDIRS => 10,
-                            CURLOPT_TIMEOUT => 0,
-                            CURLOPT_FOLLOWLOCATION => true,
-                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST => "POST",
-                            CURLOPT_POSTFIELDS => "Body=".$message."&To=".$phone_number."&From=".$sender,
-                            CURLOPT_HTTPHEADER => array(
-                                "Authorization: Basic ".BASIC_AUTH_KEY,
-                                "Content-Type: application/x-www-form-urlencoded"
-                            ),
-                        ));
-                        $response = curl_exec($curl);
-                        curl_close($curl);
+
+            foreach($_POST['call_routes_id'] as $i => $number){
+                foreach($allDataInSheet as $key => $value){
+                    if($key != 1){
+                        if($value[$phone_col] != ''){
+        
+                            $phone_number = '+1'.$value[$phone_col];
+                            
+                            $sender = $_POST['call_routes_id'][$i];
+    
+                            $message = $twilio->messages->create($phone_number, // to
+                                [
+                                    "body" => $message_body,
+                                    "messagingServiceSid" => "MG6cd88d0beeaca544176e383fdd0d90c8",
+                                    "from" => $sender
+                                ]);
+    
+                            /* 
+                                $curl = curl_init();
+                                curl_setopt_array($curl, array(
+                                    CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/Messages.json",
+                                    CURLOPT_RETURNTRANSFER => true,
+                                    CURLOPT_ENCODING => "",
+                                    CURLOPT_MAXREDIRS => 10,
+                                    CURLOPT_TIMEOUT => 0,
+                                    CURLOPT_FOLLOWLOCATION => true,
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                    CURLOPT_CUSTOMREQUEST => "POST",
+                                    CURLOPT_POSTFIELDS => "Body=".$message."&To=".$phone_number."&From=".$sender,
+                                    CURLOPT_HTTPHEADER => array(
+                                        "Authorization: Basic ".BASIC_AUTH_KEY,
+                                        "Content-Type: application/x-www-form-urlencoded"
+                                    ),
+                                ));
+                                $response = curl_exec($curl);
+                                curl_close($curl); 
+                            */
+                        }
                     }
-                    $i++;
                 }
             }
+            
             header("location: send_message.php?status=1");            
         }else{
             header("location: send_message.php?status=0");

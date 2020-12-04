@@ -1,6 +1,4 @@
-<link href="assets/css/conversation.css" rel="stylesheet" />
 <!-- bhagyashree -->
-<link href="assets/css/conversationmenu.css" rel="stylesheet" />
 <?php
     $title = "Messages";
     include 'inc/head.php';
@@ -31,6 +29,8 @@
       <?php
         include 'inc/header.php';
       ?>
+      <link href="assets/css/conversation.css" rel="stylesheet" />
+      <link href="assets/css/conversationmenu.css" rel="stylesheet" />
       <div class="main-panel" id="main-panel">
         <!-- Navbar -->
         <?php
@@ -44,18 +44,18 @@
                 <div class="container-fluid p-0">
                      <div class="main">
                         <div class="messages bg-white row">
-                            <div class="side-navi col-12 col-sm-12 col-md-2 collapse show d-md-flex bg-dark pt-2 pl-0 min-vh-100 p-0" id="sidebar">
+                            <div class="side-navi col-12 col-sm-12 col-md-2 collapse show d-md-flex bg-dark pt-2 pl-0 min-vh-80 p-0" id="sidebar">
                                 <ul class="nav flex-column flex-nowrap overflow-hidden">
                                     <!-- <li class="nav-item nav-item-arrow">
                                         <a class="nav-link text-truncate" href="#"><i class="fa fa-inbox fa-lg"></i> <span class="d-none d-sm-inline">Messages</span></a>
                                     </li> -->
                                     <li class="nav-item">
                                         <a class="nav-link nav-item-arrow collapsed text-truncate" href="#submenu1" data-toggle="collapse" data-target="#submenu1"><i class="fa fa-folder fa-lg"></i> <span class="d-none d-sm-inline">Folders</span></a>
-                                        <div class="collapse sub_menu" id="submenu1" aria-expanded="false">
+                                        <div class="collapsed sub_menu" id="submenu1" aria-expanded="false">
                                             <ul class="flex-column pl-2 nav">
-                                                <?php while($folders = mysqli_fetch_assoc($folder_query_result)){?>
-                                                <li class="nav-item">
-                                                    <a class="nav-link collapsed py-1" href="#submenu1sub1" data-toggle="collapse" data-target="#submenu1sub1"><i class="fa fa-caret-right" aria-hidden="true"></i><span><?php echo $folders['folder_name'];?></span></a>
+                                                <?php while($folders = mysqli_fetch_assoc($folder_query_result)){ ?>
+                                                <li class="nav-item" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                    <a class="nav-link collapsed py-1" href="#" data-toggle="collapse" ><i class="fa fa-caret-right" aria-hidden="true"></i><span><?php echo $folders['folder_name'];?></span></a>
                                                 </li>
                                                 <?php } ?>
                                             </ul>
@@ -93,17 +93,13 @@
                                                         $participant = $twilio->conversations->v1->conversations($conv_sid)->participants->read();
                                                         $from = $participant[0]->messagingBinding['address'];
                                                         $proxy_address = $participant[0]->messagingBinding['proxy_address'];
-                                                        $txt_time = $participant[0]->dateUpdated->format('H:i');
+                                                        $txt_time = $participant[0]->dateUpdated->format('Y-m-d H:i');
                                                         $messages = $twilio->conversations->v1->conversations($conv_sid)->messages->read(1);
                                                         $last_msg = $messages[0]->body;
                                             ?>
-                                                        <a class="nav-link" id="user-tab" data-toggle="pill" href="#user" role="tab" aria-controls="user" onClick="getMessages('<?php echo $conv_sid;?>','<?php echo $proxy_address; ?>')" aria-selected="true" >
+                                                        <a class="nav-link ui-widget-content" draggable="true" ondragstart="drag(event)" id="user-tab_<?php echo $key; ?>" converstaionsid="<?php echo $conv_sid;?>" data-toggle="pill" href="#" role="tab" aria-controls="user" onClick="getMessages('<?php echo $conv_sid;?>','<?php echo $proxy_address; ?>','<?php echo $from; ?>')" aria-selected="true" >
                                                             <span class="d-flex">
-                                                                <!-- <span class="profile-picture">
-                                                                    <img src="assets/img/sample_p.jpg" alt="Profile Picture">    
-                                                                </span> -->
                                                                 <span class="message-highlight">
-                                                                    <!-- <span class="user-name">Chris Purcell</span> -->
                                                                     <span class="user-name"><?php echo $from; ?></span>
                                                                     <span class="last-m"><?php echo $last_msg; ?></span>
                                                                 </span>
@@ -148,6 +144,36 @@
       include 'inc/footer.php';
     ?>
 <script>
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("converstaionsid", ev.srcElement.attributes.converstaionsid.nodeValue);
+        ev.dataTransfer.setData("text", ev.target.id);
+        
+        // console.log(ev.srcElement.attributes.converstaionsid.nodeValue);
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        var conv_sid = ev.dataTransfer.getData("converstaionsid");
+        var id = ev.dataTransfer.getData("text");
+        var folder = ev.srcElement.innerText;
+        $('#'+id).css('display','none');
+        // do conversation updates
+        $.ajax({
+            url:'update_conv.php',
+            type:'POST',
+            data:{'conv_sid':conv_sid,'folder':folder},
+            dataType:'JSON',
+            success:function(response){
+                // alert(response);
+                   
+            }
+        });
+    }
+
     function getresult(url) {
         $.ajax({
             url: url,
@@ -177,7 +203,7 @@
     getresult("getresult.php");
 </script>
 <script>
-    function getMessages(conv_sid,proxy_address) {
+    function getMessages(conv_sid,proxy_address,from_number) {
         $(".nav-link").removeClass("active");
         $(this).addClass("active");  
         
@@ -187,7 +213,7 @@
         $.ajax({
             url: "getapidata.php",
             type: "POST",
-            data: {'conversation_sid':conv_sid,'twilio_number':proxy_address},
+            data: {'conversation_sid':conv_sid,'twilio_number':proxy_address,'from_number':from_number},
             beforeSend: function() {
                 $("#overlay").show();
             },

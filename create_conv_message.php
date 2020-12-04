@@ -18,11 +18,10 @@ if((!empty($_POST['conversation_sid']) && $_POST['conversation_sid'] != '') && (
         $message_result = $message->toArray();
         $message_response = json_encode($message->toArray());
         
-        header("Refresh:0; url=list_all_numbers.php?status=1");
+        header("Refresh:0; url=messages.php");
     }catch(RestException $ex){
-        header("Refresh:0; url=list_all_numbers.php?status=0");
+        header("Refresh:0; url=messages.php");
     }
-    
 }else{
-    header("Refresh:0; url=list_all_numbers.php?status=0");
+    header("Refresh:0; url=messages.php");
 }

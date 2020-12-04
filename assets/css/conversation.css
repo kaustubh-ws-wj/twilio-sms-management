@@ -109,7 +109,7 @@ div#overlay img {
           margin-bottom: 0;
           padding-left: 30px; }
         /* line 307, ../scss/layout/_dashboard.scss */
-        .tl-dashboard .main .send-message form .form-group input[type="button"] {
+        .tl-dashboard .main .send-message form .form-group input[type="submit"] {
           position: absolute;
           right: 28px;
           top: 20px;
