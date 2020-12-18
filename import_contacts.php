@@ -47,7 +47,7 @@
                 <div class="card-body">
                   <form action="import_data.php" method="post" name="frmExcelImport" id="frmExcelImport" enctype="multipart/form-data">
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                       <h4 class="card-title">Select CSV</h4>
                       <div class="fileinput fileinput-new text-center" data-provides="fileinput">
                         <div class="fileinput-preview fileinput-exists thumbnail"></div>
@@ -61,7 +61,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                       <h4 class="card-title">Select Group</h4>
                       <div class="form-group form-file-upload form-file-simple">
                         <select class="form-control" name="group" required="">
@@ -72,6 +72,12 @@
                       </div>
                       <div class="form-group form-file-upload form-file-multiple">
                         <input type="submit" value="Import" class="btn btn-warning">
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <h4></h4>
+                      <div class="form-group text-center">
+                        <a class="" href="excel_upload/sample_file.csv" download>Download Sample File</a>
                       </div>
                     </div>
                   </div>

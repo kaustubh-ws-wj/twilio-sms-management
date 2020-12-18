@@ -101,10 +101,10 @@
                         <div class="col-md-12">
                           <h4 class="card-title">Select List</h4>
                           <div class="form-group form-file-upload form-file-simple">
-                            <select class="form-control gettotalcontacts" name="contact_list" required="">
+                            <select class="form-control gettotalcontacts" name="contact_list" id="contact_list" required="">
                                 <option value="" selected="">Select</option>
                               <?php while($contact_list_row=mysqli_fetch_assoc($result_list_query)) {  ?>
-                                <option value="<?= $contact_list_row['id']; ?>"><?= $contact_list_row['list_name']; ?></option>
+                                <option value="<?= $contact_list_row['id']; ?>" data-filepath="<?= $contact_list_row['list_path']; ?>"><?= $contact_list_row['list_name']; ?></option>
                               <?php } ?>
                             </select>
                           </div>
@@ -125,8 +125,10 @@
                         </div>
                         <div class="col-md-12">
                           <h4 class="card-title">Enter Text Message</h4>
-                          <div class="form-group form-file-upload form-file-simple">
-                            <textarea rows="4" name="message" class="form-control" placeholder="Write!" required=""></textarea>
+                          <div class="form-group ">
+                            <textarea rows="4" id="text_message" name="message" class="form-control" placeholder="Write!" required=""></textarea>
+                          </div>
+                          <div class="card-body col-buttons" id="col-buttons">
                           </div>
                         </div>
                     </div>
@@ -182,7 +184,7 @@ $(document).ready(function(){
         $.ajax({
             type: "POST",
             url: "get_numbers.php",
-            data: { id : id } 
+            data: { id : id }, 
         }).done(function(data){
             $('#datatable').show();
             $('.mainbtn').show();
@@ -191,5 +193,32 @@ $(document).ready(function(){
             $("#response").html(data);
         });
     });
+
+    $(".gettotalcontacts").change(function(e){
+      var path = $(".gettotalcontacts option:selected").data('filepath');
+      $.ajax({
+        url:'get_file_cols.php',
+        method:'POST',
+        data:{"filepath":path},
+        success:function(response){
+          var button_html = '';
+          var obj =JSON.parse(response);
+          if(obj.status){
+            var button_obj = obj.buttons;
+            $.each(button_obj,function(i){
+              button_html += '<a href="#" data-col="#'+button_obj[i]+'#" class="btn btn-info btn-sm">'+button_obj[i]+'</a>';
+            });
+            $('.col-buttons').html(button_html);
+          }
+        }
+      });
+    });
 });
+
+    $('#col-buttons').on('click','a',function(){
+      var col = $(this).data('col');
+      var pre_string = $('#text_message').val() + col;
+      $("#text_message").val(pre_string);
+    });
+
 </script>

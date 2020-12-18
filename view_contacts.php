@@ -10,7 +10,7 @@
     $query = "SELECT * FROM contact_list";
   }
   $result = mysqli_query($connect, $query);
-
+  
   $query_g = "SELECT * FROM add_group";
   $result_g = mysqli_query($connect, $query_g);
 ?>
@@ -33,7 +33,7 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">Number Deleted Sccessfully</h1>
+                <h1 class="text-center color_green">List Deleted Sccessfully</h1>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
@@ -52,7 +52,7 @@
                 <div class="row">
                 <div class="col-md-6">
                   <select class="form-control" name="group" required="">
-                    <option>Select</option>
+                    <option value=''>Select</option>
                     <?php while($row_g=mysqli_fetch_assoc($result_g)) {  ?>
                       <option <?=(isset($_GET['group']) && !empty($_GET['group']) && $_GET['group'] == $row_g['add_group_id']) ? 'selected' : ''?> value="<?= $row_g['add_group_id']; ?>"><?= $row_g['add_group_name']; ?></option>
                     <?php } ?>
@@ -99,7 +99,7 @@
                     <td><?=$result_do['recipients']?></td>
                     <td><?=$result_do['mapping_status']?></td>
                     <td><?=$result_do['status']?></td>
-                    <td><a href="edit_contact.php?id=<?= $result_do['id']; ?>" class="btn btn-info"> Edit</a> <a href="#" class="btn btn-danger"> Delete</a></td>
+                    <td><a href="edit_contact.php?id=<?= $result_do['id']; ?>" class="btn btn-info"> Edit</a> <a href="delete_contact.php?id=<?= $result_do['id']; ?>" class="btn btn-danger"> Delete</a></td>
                   </tr>
                 <?php } ?>
                 

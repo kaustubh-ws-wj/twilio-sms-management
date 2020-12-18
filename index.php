@@ -37,6 +37,9 @@
                     <h1 class="text-center color_white">Login</h1>
                   </div>
                   <div class="card-body ">
+                  <?php if (isset($_GET['status']) && $_GET['status'] == 0) {  ?>
+                    <h6 class="description">Invalid Username or Password</h6>
+                  <?php } ?>
                     <div class="input-group no-border form-control-lg">
                       <span class="input-group-prepend">
                         <div class="input-group-text">

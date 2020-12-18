@@ -1,11 +1,14 @@
 <?php
 include 'config.php';
 include 'connection.php';
-require 'vendor/autoload.php';
 include 'PHPExcel-1.8/Classes/PHPExcel.php';
-// echo "<pre>";
-// print_r($_POST);
-// exit;
+require __DIR__ . '/vendor/autoload.php';
+// Use the REST API Client to make requests to the Twilio REST API
+use Twilio\Rest\Client;
+use Twilio\Exceptions\RestException;
+
+$twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
+
 if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty($_POST['call_routes_id']))
 {
     $message_body = $_POST['message'];
@@ -25,31 +28,45 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
         $objPHPExcel = $objReader->load($assoc_result_contact_list['list_path']);
         $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
 
+        // echo '<pre>';print_r($allDataInSheet);die;
+
         $phone_col = $assoc_result_contact_list['phone'];
         
         if (count($_POST['call_routes_id']) > 0) {
             $abc = serialize($_POST['call_routes_id']);
             
-            $query_c = "INSERT INTO campaign(campaign_name,campaign_message,campaign_call_route,campaign_route_numbers,campaign_status) VALUES ('{$_POST['campaign_name']}','{$message}','{$_POST['route']}','{$abc}','1')";
+            $query_c = "INSERT INTO campaign(campaign_name,campaign_message,campaign_call_route,campaign_route_numbers,campaign_status) VALUES ('{$_POST['campaign_name']}','{$message_body}','{$_POST['route']}','{$abc}','1')";
             $ins = mysqli_query($connect, $query_c);
             
-
-            foreach($_POST['call_routes_id'] as $i => $number){
+            //capable to send 120 SMS 
+            $throttle = 120;
+            $sent_count = 0;
+            $sender_pool = count($_POST['call_routes_id']);
+            $next = 0;
+            
+            //foreach($_POST['call_routes_id'] as $i => $number){
                 foreach($allDataInSheet as $key => $value){
-                    if($key != 1){
+                     if($key != 1){
                         if($value[$phone_col] != ''){
         
-                            $phone_number = '+1'.$value[$phone_col];
-                            
-                            $sender = $_POST['call_routes_id'][$i];
-    
+                            $phone_number = '+1'.$value[$phone_col];                            
+                            if($sent_count == 120){
+                               $next++;
+                               $sent_count = 0;
+                            }
+                            $sender = $_POST['call_routes_id'][$next];
+                            //$sender = $number;
+                            foreach($allDataInSheet[1] as $col => $cell_val){
+                                $message_body = str_replace("#".$cell_val."#",$value[$col],$message_body);
+                            }
+
                             $message = $twilio->messages->create($phone_number, // to
                                 [
                                     "body" => $message_body,
                                     "messagingServiceSid" => "MG6cd88d0beeaca544176e383fdd0d90c8",
                                     "from" => $sender
                                 ]);
-    
+                            $sent_count++;
                             /* 
                                 $curl = curl_init();
                                 curl_setopt_array($curl, array(
@@ -73,7 +90,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                         }
                     }
                 }
-            }
+            //}
             
             header("location: send_message.php?status=1");            
         }else{

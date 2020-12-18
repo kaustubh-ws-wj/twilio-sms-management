@@ -75,7 +75,7 @@
                             <td><?= $row_do['add_group_name']; ?></td>
                             <td><?= $row['campaign_call_route']; ?></td>
                             <td>
-                              <?php die;
+                              <?php
                                 foreach(unserialize($row['campaign_route_numbers']) as $num)
                                 {
                                     echo $num."<br>";

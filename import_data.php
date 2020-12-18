@@ -36,7 +36,7 @@ if(move_uploaded_file($_FILES['file']['tmp_name'],"excel_upload/".$image))
         // exit();
 
         //INSERT Query for the List contacts
-        $sql = "INSERT INTO contact_list(group_id,list_name,list_path,description,recipients,status,mapping_status) VALUES('{$_POST['group']}',{$image}','{$inputFileName}','','{$recipients}','Active','Needs to map')";
+        $sql = "INSERT INTO contact_list(group_id,list_name,list_path,description,recipients,status,mapping_status) VALUES('{$_POST['group']}','{$image}','{$inputFileName}','','{$recipients}','Active','Needs to map')";
         mysqli_query($connect, $sql);
         $last_id = $connect->insert_id;
         

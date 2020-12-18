@@ -34,6 +34,8 @@ error_log('---Request End---');
 			//$conversation = $twilio->conversations->v1->conversations($conversationSid)->update(["attributes" => "{'folder':'Inbox'}"]);
 			$sql = "INSERT INTO conversations (response) values ('$post')";
 			mysqli_query($connect, $sql);
+			$conversationSid = $_POST['ConversationSid'];
+			$conversation = $twilio->conversations->v1->conversations($conversationSid)->update(["attributes" => json_encode(array('folder'=>'Inbox'))]);
 			http_response_code(200);
 			break;
 		case 'onConversationAdd':

@@ -18,6 +18,6 @@
         header("location: dashboard.php");
     }
     else{
-        header("location: index.php");
+        header("Refresh:0; url=index.php?status=0");
     }
 ?>
