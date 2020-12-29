@@ -256,9 +256,9 @@
             <h6 class="title title-up">Add Group</h6>
           </div>
           <div class="modal-body">
-            <form action="insert_group.php" method="post">
+              <form action="insert_group.php" method="post">
                 <div class="col-md-6">
-                  <lable class="card-title">Group Name</label>
+                  <label class="card-title">Group Name</label>
                   <div class="form-group form-file-upload form-file-simple">
                     <input type="text" class="form-control" name="group_name" required="">
                   </div>
@@ -266,12 +266,12 @@
                     <input type="submit" value="Add" class="btn btn-warning">
                   </div> -->
                 </div>
-            </form>
           </div>
           <div class="modal-footer">
             <input type="submit" name="group_submit" class="btn btn-default" value="Submit">
             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
           </div>
+          </form>
         </div>
       </div>
     </div>
