@@ -59,12 +59,12 @@
                               </a>
                           </li>
                         
-                          <li >
+                          <!-- <li >
                               <a href="purchase_number.php">
                                   <span class="sidebar-mini-icon">BPN</span>
                                   <span class="sidebar-normal"> Buy Phone Number </span>
                               </a>
-                          </li>
+                          </li> -->
                           
                           <li >
                               <a href="list_all_numbers.php">
@@ -127,12 +127,12 @@
                     <div class="collapse " id="mapsExamplesss">
                         <ul class="nav">
                         
-                          <li >
+                          <!-- <li >
                               <a href="add_group.php">
                                   <span class="sidebar-mini-icon">AG</span>
                                   <span class="sidebar-normal"> Add Group </span>
                               </a>
-                          </li>
+                          </li> -->
                         
                           <li >
                               <a href="import_contacts.php">
@@ -141,12 +141,12 @@
                               </a>
                           </li>
                           
-                          <li >
+                          <!-- <li >
                               <a href="view_contacts.php">
                                   <span class="sidebar-mini-icon">VC</span>
                                   <span class="sidebar-normal"> View Contacts </span>
                               </a>
-                          </li>
+                          </li> -->
                         
                       </ul>
                   </div>

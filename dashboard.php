@@ -29,12 +29,12 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">Group Deleted Sccessfully</h1>
+                <h6 class="text-center color_green">Group Deleted Sccessfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
-                <h1 class="text-center color_red">Something went Wrong</h1>
+                <h6 class="text-center color_red">Something went Wrong</h6>
             <?php
               }
             ?>

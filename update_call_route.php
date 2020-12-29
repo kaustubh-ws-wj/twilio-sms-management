@@ -1,6 +1,8 @@
 <?php
 	include 'connection.php';
-	
+	// echo "<pre>";
+    // print_r($_POST);
+    // exit();
     $query_d = "Delete FROM call_routes WHERE `call_routes_name` =  '{$_POST['route_name']}'";
     $ins_d = mysqli_query($connect, $query_d); 
     // echo "<pre>";

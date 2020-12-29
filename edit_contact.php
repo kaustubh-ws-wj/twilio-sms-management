@@ -203,7 +203,7 @@
                       </div>
                       <div class="col-6 col-md-1">
                         <div class="form-group form-file-upload form-file-multiple">
-                          <a href="view_contacts.php" class="btn btn-dark">back</a>
+                          <a href="import_contacts.php" class="btn btn-dark">back</a>
                         </div>
                       </div>
                     </div>

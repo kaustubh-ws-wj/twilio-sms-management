@@ -32,22 +32,22 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">Folder Added Sccessfully</h1>
+                <h6 class="text-center color_green">Folder Added Sccessfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
-                <h1 class="text-center color_red">Something went Wrong</h1>
+                <h6 class="text-center color_red">Something went Wrong</h6>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 3) {
             ?>
-                <h1 class="text-center color_green">Folder Deleted Sccessfully</h1>
+                <h6 class="text-center color_green">Folder Deleted Sccessfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 4) {
             ?>
-                <h1 class="text-center color_green">Folder Updated Sccessfully</h1>
+                <h6 class="text-center color_green">Folder Updated Sccessfully</h6>
             <?php
               }
             ?>
@@ -71,7 +71,7 @@
                   
                   <div class="row">
                     <div class="col-md-6">
-                      <h4 class="card-title">Enter Folder Name</h4>
+                      <label class="card-title">Enter Folder Name</label>
                       <div class="form-group form-file-upload form-file-simple">
                         <input type="text" class="form-control" name="folder_name" value="<?=@$result_get_one_folder['folder_name']?>" required="">
                         <input type="hidden" class="form-control" name="folder_id" value="<?=@$result_get_one_folder['folder_id']?>">

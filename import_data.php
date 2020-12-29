@@ -98,10 +98,10 @@ if(move_uploaded_file($_FILES['file']['tmp_name'],"excel_upload/".$image))
                 //}
             //}
             
-            header("Refresh:0; url=import_contacts.php?status=1");
+            header("Refresh:0; url=import_contacts.php?status=2");
         }
         else{
-            header("Refresh:0; url=import_contacts.php?status=2");
+            header("Refresh:0; url=import_contacts.php?status=4");
         }
     }
     else{

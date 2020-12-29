@@ -22,5 +22,7 @@
     <script src="assets/js/now-ui-dashboard.minaa26.js?v=1.5.0" type="text/javascript"></script>
     <script src="assets/demo/demo.js"></script>
     <script src="assets/demo/jquery.sharrre.js"></script>
+    <script src="assets/js/jquery.selectlistactions.js"></script>
+    <script src="assets/js/selectlistjs.js"></script>
   </body>
 </html>

@@ -24,17 +24,17 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">Call Routes Added Successfully</h1>
+                <h6 class="text-center color_green">Call Routes Added Successfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
             ?>
-                <h1 class="text-center color_green">Call Routes Deleted Successfully</h1>
+                <h6 class="text-center color_green">Call Routes Deleted Successfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
-                <h1 class="text-center color_red">Something went wrong</h1>
+                <h6 class="text-center color_red">Something went wrong</h6>
             <?php
               }
             ?>

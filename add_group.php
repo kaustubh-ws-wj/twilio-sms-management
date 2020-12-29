@@ -21,12 +21,12 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">Group Added Sccessfully</h1>
+                <h6 class="text-center color_green">Group Added Sccessfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
-                <h1 class="text-center color_red">Something went Wrong</h1>
+                <h6 class="text-center color_red">Something went Wrong</h6>
             <?php
               }
             ?>
@@ -36,20 +36,20 @@
               <div class="card">
                 <div class="card-body">
                   <form action="insert_group.php" method="post">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <h4 class="card-title">Enter Group Name</h4>
-                      <div class="form-group form-file-upload form-file-simple">
-                        <input type="text" class="form-control" name="group_name" required="">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <h4 class="card-title">Enter Group Name</h4>
+                        <div class="form-group form-file-upload form-file-simple">
+                          <input type="text" class="form-control" name="group_name" required="">
+                        </div>
+                        <div class="form-group form-file-upload form-file-multiple">
+                          <input type="submit" value="Add" class="btn btn-warning">
+                        </div>
                       </div>
-                      <div class="form-group form-file-upload form-file-multiple">
-                        <input type="submit" value="Add" class="btn btn-warning">
+                      <div class="col-md-6">
+                        
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      
-                    </div>
-                  </div>
                   </form>
                 </div>
               </div>

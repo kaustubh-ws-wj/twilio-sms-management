@@ -53,7 +53,7 @@
                         <h5 class="title">User Profile</h5>
                      </div>
                      <div class="card-body">
-                        <form action="update_profile.php" method="POST">
+                        <form action="update_profile.php" method="POST" enctype="multipart/form-data">
                         <?php
                             if (isset($_SESSION["message"]) && !empty($_SESSION["message"]) && $_SESSION["message"] == 'success') {
                             ?>
@@ -69,7 +69,9 @@
                                     <input type="text" class="form-control" name="first_name"  placeholder="First Name" value="<?= $row['first_name'] ?>" required>
                                  </div>
                               </div>
-                              <div class="col-md-4 pl-1">
+                           </div>
+                           <div class="row">
+                              <div class="col-md-4 pr-1">
                                  <div class="form-group">
                                     <label>Last Name</label>
                                     <input type="text" class="form-control" name="last_name" placeholder="Last Name"  value="<?= $row['last_name'] ?>" required>

@@ -4,9 +4,9 @@
 
     $ins = mysqli_query($connect, $query);
     if ($ins == 1) {
-    	header("Refresh:0; url=view_contacts.php?status=1");
+    	header("Refresh:0; url=import_contacts.php?status=7");
     }
     else{
-    	header("Refresh:0; url=view_contacts.php?status=0");
+    	header("Refresh:0; url=import_contacts.php?status=0");
     }
 ?>

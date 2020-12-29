@@ -9,21 +9,22 @@ $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
 if(!empty($_POST['conversation_sid'])){
 
-	// $sql    = "SELECT * from numbers WHERE numbers_id = 5";
-	// $result = mysqli_query($connect, $sql);
-    // $row    = mysqli_fetch_assoc($result);
+	$sql    = "SELECT phone_number from purchased_numbers";
+	$result = mysqli_query($connect, $sql);
+    $purchased_number = mysqli_fetch_array($result);
 
     $proxy_address = $_POST['twilio_number'];
     $from_number = $_POST['from_number'];
-    $purchased_number = array();
-    $incomingNumber = $twilio->incomingPhoneNumbers->read([], 20);
-    foreach($incomingNumber as $k => $numbers){
-        $purchased_number[] = $numbers->phoneNumber;
-    }
-
+    //$purchased_number = array();
+    //$incomingNumber = $twilio->incomingPhoneNumbers->read([], 20);
+    //foreach($incomingNumber as $k => $numbers){
+        //$purchased_number[] = $numbers->phoneNumber;
+    //}
+    
     $conversation_sid = $_POST['conversation_sid'];
     
     $messages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
+    
     
     $html = '<div class="messages-content-header">
                 <div class="profile-info">
@@ -39,6 +40,18 @@ if(!empty($_POST['conversation_sid'])){
         $html .='<div class="messages-content-body">
                     <div class="tab-pane fade show active" id="user-one" role="tabpanel" aria-labelledby="user-one-tab" style="height: 510px;">';
         if(!empty($messages)){
+
+            $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
+            $campaing_message_array = $campaign_messages_result[0]->toArray();
+
+            $html .='<div class="single-message self-message text-right">
+                            <div class="user-massage">
+                                <span class="user-name">'.$campaing_message_array['from'].'</span>
+                                <p><span class="color">'.$campaing_message_array['body'].'</span></p>
+                                <span style="font-size: 10px;" class="m-time">'. $campaing_message_array['dateUpdated']->format('Y-m-d H:i A').'</span>
+                            </div>
+                        </div>';
+
             foreach ($messages as $key => $value){    
                 if(in_array($value->author,$purchased_number)){
                     $html .='<div class="single-message self-message text-right">

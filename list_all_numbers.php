@@ -44,7 +44,7 @@
 
     curl_close($curl); */
     $result = $incomingPhoneNumbers;
-
+    // echo '<pre>';print_r($result);die;
 ?>
 
   <body class=" sidebar-mini ">
@@ -65,25 +65,25 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">Number Sccessfully Purchased</h1>
+              <h1 class="text-center color_green">Number Sccessfully Purchased</h1>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
-                <h1 class="text-center color_red">Nothing Found</h1>
+              <h1 class="text-center color_red">Nothing Found</h1>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
             ?>
-                <h1 class="text-center color_red">Unable to purchase this number</h1>
+              <h1 class="text-center color_red">Unable to purchase this number</h1>
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 3) {
             ?>
-                <h1 class="text-center color_green">Number Release Successfully!!</h1>
+              <h1 class="text-center color_green">Number Release Successfully!!</h1>
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 4) {
-                ?>
-                    <h1 class="text-center color_red">Something Went Wrong !!</h1>
+            ?>
+              <h1 class="text-center color_red">Something Went Wrong !!</h1>
             <?php
               }
             ?>
