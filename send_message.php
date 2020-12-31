@@ -56,22 +56,26 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">SMS Sent Sccessfully</h1>
+                <h6 class="text-center color_green">SMS Sent Sccessfully</h6>
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
             ?>
-                <h1 class="text-center color_red">Please Select Call Group Contacts</h1>
+                <h6 class="text-center color_red">Please Select Call Group Contacts</h6>
             <?php
-              }else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
+              }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
-                <h1 class="text-center color_red">Something went wrong</h1>
+                <h6 class="text-center color_red">Something went wrong</h6>
             <?php
-              }else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 3) {
+              }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 3) {
             ?>
-              <h1 class="text-center color_red">Fileds not mapped yet for this this list.</h1>
+              <h6 class="text-center color_red">Fileds not mapped yet for this this list.</h6>
             <?php 
-              } 
+              } else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 4) {
             ?>
+              <h6 class="text-center color_red">CSV file dont have any numbers.</h6>
+            <?php 
+              }
+             ?>
 
           </div>
           <form action="SendSMS.php" method="post">

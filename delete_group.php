@@ -7,9 +7,9 @@
     $ins_do = mysqli_query($connect, $query_do);
     
     if ($ins == 1 && $ins_do == 1) {
-    	header("Refresh:0; url=dashboard.php?status=1");
+    	header("Refresh:0; url=import_contacts.php?status=1");
     }
     else{
-    	header("Refresh:0; url=dashboard.php?status=0");
+    	header("Refresh:0; url=import_contacts.php?status=0");
     }
 ?>

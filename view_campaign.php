@@ -47,42 +47,32 @@
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table class="table table-shopping">
+                    <table class="table table-striped table-bordered" cellspacing="0" id="datatable2">
                       <thead class="">
-                        <th  class="text-center" >
-                        </th>
-                        <th >ID</th>
-                        <th >Name</th>
-                        <th >Message</th>
-                        <th >Group</th>
-                        <th >Call Route/Group</th>
-                        <th >Call Route/Group Numbers</th>
-                        <th >Date</th>
+                        <!-- <th >ID</th> -->
+                        <th>Name</th>
+                        <th>Date</th>
+                        <!-- <th >Group</th> -->
+                        <th>Call Route/Group</th>
+                        <th>Total</th>
+                        <th>Sent</th>
+                        <th>Costs</th>
                       </thead>
                       <tbody>
                         <?php 
                           while($row=mysqli_fetch_assoc($result_campaign_count)) {
-                            $query_do = "SELECT * FROM add_group where add_group_id = {$row['campaign_group']}";
-                            $result_do = mysqli_query($connect, $query_do);
-                            $row_do=mysqli_fetch_assoc($result_do);
+                            // $query_do = "SELECT * FROM add_group where add_group_id = {$row['campaign_group']}";
+                            // $result_do = mysqli_query($connect, $query_do);
+                            // $row_do=mysqli_fetch_assoc($result_do);
                         ?>
                           <tr>
-                            <td>
-                            </td>
-                            <td><?= $row['campaign_id']; ?></td>
+                            <!-- <td><?= $row['campaign_id']; ?></td> -->
                             <td><?= $row['campaign_name']; ?></td>
-                            <td><?= $row['campaign_message']; ?></td>
-                            <td><?= $row_do['add_group_name']; ?></td>
+                            <td><?=date("Y-m-d h:i:s A",strtotime($row['createdon']))?></td>
                             <td><?= $row['campaign_call_route']; ?></td>
-                            <td>
-                              <?php
-                                foreach(unserialize($row['campaign_route_numbers']) as $num)
-                                {
-                                    echo $num."<br>";
-                                }
-                              ?>
-                            </td>
-                            <td><?=date("l jS \of F Y h:i:s A",strtotime($row['createdon']))?></td>
+                            <td><?= $row['total']; ?></td>
+                            <td><?= $row['total_sent']; ?></td>
+                            <td><?= $row['cost']; ?></td>
                         </tr>
                         <?php
                          }
@@ -101,3 +91,6 @@
     <?php
       include 'inc/footer.php';
     ?>
+    <script>
+      var table = $('#datatable2').DataTable();
+    </script>
