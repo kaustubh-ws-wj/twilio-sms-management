@@ -46,7 +46,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                 $sender_pool = count($_POST['call_routes_id']);
                 $next = 0;
                 $tot_sent_sms = 0;
-                
+                $cost = 0.00;
                 //foreach($_POST['call_routes_id'] as $i => $number){
                     foreach($allDataInSheet as $key => $value){
                         if($key != 1){
@@ -93,6 +93,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                                 */
                                 
                                 $status = $message->status;
+                                $cost = $cost + $message->price;
                                 if($status == 'sent'){
                                     $tot_sent_sms++;
                                 }
@@ -100,7 +101,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                         }
                     }
 
-                    $querys = "UPDATE `campaign` SET `total_sent` = {$tot_sent_sms} WHERE campaign_id = {$last_id}";
+                    $querys = "UPDATE `campaign` SET `total_sent` = {$tot_sent_sms}, `cost` = {$cost} WHERE campaign_id = {$last_id}";
                     $res = mysqli_query($connect,$querys);
                 //}
                 

@@ -156,17 +156,17 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">Group Added Sccessfully</h1>
+                <h6 class="text-center color_green">Group Added Successfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
-                <h1 class="text-center color_red">Nothing Found</h1>
+                <h6 class="text-center color_red">Nothing Found</h6>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
             ?>
-                <h1 class="text-center color_red">Unable to purchase this number</h1>
+                <h6 class="text-center color_red">Unable to purchase this number</h6>
             <?php
               }
             ?>

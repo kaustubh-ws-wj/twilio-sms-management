@@ -16,8 +16,17 @@
           <div class="user">
             <div class="photo" style="visibility:hidden;"></div>
             <div class="info">
-              <a><span>Chris Purcell</span></a>
+                <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != ''){ 
+                    $user_details_query = "SELECT first_name,last_name FROM signup WHERE id={$_SESSION['user_id']}";
+                    $user_details_exe = mysqli_query($connect,$user_details_query);
+                    $user_details = mysqli_fetch_all($user_details_exe,MYSQLI_ASSOC);
+                    $first_name = $user_details[0]['first_name'];
+                    $last_name = $user_details[0]['last_name'];
+                
+                    ?>
+              <a><span><?php echo $first_name.' '. $last_name ?></span></a>
               <div class="clearfix"></div>
+              <?php } ?>
             </div>
           </div>
           <ul class="nav">

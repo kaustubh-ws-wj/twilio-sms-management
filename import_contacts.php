@@ -45,7 +45,7 @@
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
             ?>
-              <h6 class="text-center color_green">Data Imported Sccessfully</h6>
+              <h6 class="text-center color_green">Data Imported Successfully</h6>
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 3) {
             ?>
@@ -57,15 +57,15 @@
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 5) {
             ?>
-              <h6 class="text-center color_red">Data mapped Sccessfully.</h6>
+              <h6 class="text-center color_red">Data mapped Successfully.</h6>
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 6) {
             ?>
-              <h6 class="text-center color_green">Fields not mapped successfully.</h6>
+              <h6 class="text-center color_green">Fields not mapped Successfully.</h6>
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 7) {
             ?>
-              <h6 class="text-center color_red">List Deleted Sccessfully</h6>
+              <h6 class="text-center color_red">List Deleted Successfully</h6>
             <?php
               }
             ?>

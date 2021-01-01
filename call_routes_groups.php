@@ -161,8 +161,20 @@ require 'vendor/autoload.php';
                                     $sql_folder = "SELECT * FROM folder";
                                     $result_folder = mysqli_query($connect, $sql_folder);
                                     while($row_folder = mysqli_fetch_assoc($result_folder)){
+                                    $selected = '';
+                                    if(isset($_GET['name']) && !empty($_GET['name']) && isset($_GET['type']) && !empty($_GET['type']) && $_GET['type'] == 'edit')
+                                    {
+                                        $folder_id_query = "SELECT * FROM call_routes WHERE `call_routes_name` = '{$_GET['name']}'";
+                                        $folder_id_exe = mysqli_query($connect,$folder_id_query);
+                                        $folder_id_result = mysqli_fetch_all($folder_id_exe,MYSQLI_ASSOC);
+                                        $folder_id = $folder_id_result[0]['folder_id'];
+                                        if($row_folder['folder_id'] == $folder_id){
+                                          $selected = "selected";
+                                        }
+                                    }
+
                                 ?>
-                                <option value="<?= $row_folder['folder_id'] ?>"><?= $row_folder['folder_name'] ?></option>
+                                <option value="<?= $row_folder['folder_id'] ?>" <?php echo $selected; ?>><?= $row_folder['folder_name'] ?></option>
                                 <?php }?>
                             </select>
                           </div>

@@ -13,7 +13,9 @@
     if (mysqli_num_rows($results) > 0) {
     	while($row=mysqli_fetch_assoc($results)) {
 		    $_SESSION['user_name'] = $row['user_name'];
-		    $_SESSION['user_id'] = $row['id'];
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['first_name'] = $row['first_name'];
+		    $_SESSION['last_name'] = $row['last_name'];
 		}
         header("location: dashboard.php");
     }

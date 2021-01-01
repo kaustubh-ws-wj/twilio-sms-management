@@ -32,9 +32,17 @@ error_log('---Request End---');
 	    case 'onConversationAdded':
 			//Perform Conversation Add Operation to Update attribute with default Folder name.
 			//$conversation = $twilio->conversations->v1->conversations($conversationSid)->update(["attributes" => "{'folder':'Inbox'}"]);
+
 			$sql = "INSERT INTO conversations (response) values ('$post')";
 			mysqli_query($connect, $sql);
 			$conversationSid = $_POST['ConversationSid'];
+
+			$twilio_number = $_POST["MessagingBinding_ProxyAddress"];
+			$get_folder_query = "SELECT folder_name FROM call_routes WHERE call_routes_number = '$twilio_number'";
+			$get_folder_result = mysqli_query($connect, $get_folder_query);
+			$folder_name = mysqli_fetch_all($get_folder_result,MYSQLI_ASSOC);
+			$folder = $folder_name[0]['folder_name'];
+
 			$conversation = $twilio->conversations->v1->conversations($conversationSid)->update(["attributes" => json_encode(array('folder'=>'Inbox'))]);
 			http_response_code(200);
 			break;

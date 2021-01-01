@@ -82,11 +82,14 @@
           <div class="row">
             <div class="col-md-12">
               <div class="card">
+                <div class="card-header text-center">
+                  <h4 class="card-title">Create Campaign</h4>
+                </div>
                 <div class="card-body">
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6 ml-auto mr-auto">
                         <div class="col-md-12">
-                          <h4 class="card-title">Enter Campaign Name</h4>
+                          <label class="card-title">Enter Campaign Name</label>
                           <div class="form-group form-file-upload form-file-simple">
                             <input name="campaign_name" class="form-control" placeholder="Enter Campaign Name" required="">
                           </div>
@@ -103,7 +106,7 @@
                           </div>
                         </div> -->
                         <div class="col-md-12">
-                          <h4 class="card-title">Select List</h4>
+                          <label class="card-title">Select List</label>
                           <div class="form-group form-file-upload form-file-simple">
                             <select class="form-control gettotalcontacts" name="contact_list" id="contact_list" required="">
                                 <option value="" selected="">Select</option>
@@ -113,11 +116,9 @@
                             </select>
                           </div>
                         </div>
-                    </div>
                     
-                    <div class="col-md-6">
                         <div class="col-md-12">
-                          <h4 class="card-title">Select Call Route/Group</h4>
+                          <label class="card-title">Select Call Route/Group</label>
                           <div class="form-group form-file-upload form-file-simple">
                             <select class="form-control getroutes" name="route" required="">
                                 <option value="" disabled="" selected="">Select</option>
@@ -128,7 +129,7 @@
                           </div>
                         </div>
                         <div class="col-md-12">
-                          <h4 class="card-title">Enter Text Message</h4>
+                          <label class="card-title">Enter Text Message</label>
                           <div class="form-group ">
                             <textarea rows="4" id="text_message" name="message" class="form-control" placeholder="Write!" required=""></textarea>
                           </div>
@@ -160,8 +161,7 @@
                       <th>Status</th>
                     </tr>
                   </tfoot>
-                  <tbody id="response">
-                  </tbody>
+                  <tbody id="response"></tbody>
                 </table>
               <div class="form-group form-file-upload form-file-multiple">
                 <input type="submit" value="Send SMS" class="btn btn-warning pull-right mainbtn">

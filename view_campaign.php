@@ -29,12 +29,12 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">Group Deleted Sccessfully</h1>
+                <h6 class="text-center color_green">Campaign Deleted Successfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
-                <h1 class="text-center color_red">Something went Wrong</h1>
+                <h6 class="text-center color_red">Something went Wrong</h6>
             <?php
               }
             ?>
@@ -49,14 +49,13 @@
                   <div class="table-responsive">
                     <table class="table table-striped table-bordered" cellspacing="0" id="datatable2">
                       <thead class="">
-                        <!-- <th >ID</th> -->
                         <th>Name</th>
                         <th>Date</th>
-                        <!-- <th >Group</th> -->
                         <th>Call Route/Group</th>
                         <th>Total</th>
                         <th>Sent</th>
                         <th>Costs</th>
+                        <th>Action</th>
                       </thead>
                       <tbody>
                         <?php 
@@ -66,13 +65,13 @@
                             // $row_do=mysqli_fetch_assoc($result_do);
                         ?>
                           <tr>
-                            <!-- <td><?= $row['campaign_id']; ?></td> -->
                             <td><?= $row['campaign_name']; ?></td>
                             <td><?=date("Y-m-d h:i:s A",strtotime($row['createdon']))?></td>
                             <td><?= $row['campaign_call_route']; ?></td>
                             <td><?= $row['total']; ?></td>
                             <td><?= $row['total_sent']; ?></td>
                             <td><?= $row['cost']; ?></td>
+                            <td><a href="delete_campaign.php?id=<?= $row['campaign_id']; ?>" class="btn btn-danger" title="Delete Campaign"> <i class="fa fa-trash" aria-hidden="true"></i></a></td>
                         </tr>
                         <?php
                          }
@@ -92,5 +91,7 @@
       include 'inc/footer.php';
     ?>
     <script>
-      var table = $('#datatable2').DataTable();
+      var table = $('#datatable2').DataTable({
+        "lengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]],
+        "order": [[1, "desc" ]]});
     </script>
