@@ -116,15 +116,16 @@
               $phone_price_response = $phone_price_json->toArray();
               
               foreach ($phone_price_response['phoneNumberPrices'] as $key => $value) {
-                if($value['number_type'] == 'local'){
+                $type_check = ($type_check == 'toll_free') ? str_replace("_"," ",$type_check) : $type_check;
+                if($value['number_type'] == $type_check){
                   $price = $value['base_price'];
                 }
-                if($value['number_type'] == 'toll free'){
-                  $price = $value['base_price'];
-                }
-                if($value['number_type'] == 'mobile'){
-                  $price = $value['base_price'];
-                }
+                // if($value['number_type'] == 'toll free'){
+                //   $price = $value['base_price'];
+                // }
+                // if($value['number_type'] == 'mobile'){
+                //   $price = $value['base_price'];
+                // }
               }
           }
       }
@@ -387,7 +388,7 @@
                               <td><?= $val['friendlyName']; ?></td>
                               <td><?= $type_check; ?></td>
                               <td><?php if(isset($val['capabilities']['SMS']) == true){ echo 'SMS '; }if(isset($val['capabilities']['MMS']) == true){ echo 'MMS '; }if(isset($val['capabilities']['voice']) == true){ echo 'VOICE ';}if(isset($val['capabilities']['fax']) == true){ echo 'FAX ';} ?></td>
-                              <td><?= $price; ?></td>
+                              <td>$<?= $price; ?></td>
                               <!-- <td><?= $val->friendlyName; ?></td> -->
                               <!-- <td><?= $val->friendlyName; ?></td> -->
                               <td>
@@ -396,7 +397,7 @@
                                     <input type="hidden" value="<?= $_POST["country_code"]; ?>" name="country_code">
                                     <input type="hidden" value="<?= $_POST["country_code"]; ?>" name="region">
                                     <input type="hidden" value="<?= $price; ?>" name="monthly_rental">
-                                    <input type="hidden" value="<?= $type_check; ?>" name="type">
+                                    <input type="hidden" value="<?= ($type_check == 'toll free') ? str_replace(" ","_",$type_check): $type_check; ?>" name="type">
                                     <input type="button" class="btn btn-success confirm_purchase" value="Buy Now">
                                   </form>
                               </td>

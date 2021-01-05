@@ -65,25 +65,25 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-              <h1 class="text-center color_green">Number Sccessfully Purchased</h1>
+              <h6 class="text-center color_green">Number Purchased Sccessfully</h6>
             <?php
               }
-              else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
+              else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
-              <h1 class="text-center color_red">Nothing Found</h1>
+              <h6 class="text-center color_red">Nothing Found</h6>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
             ?>
-              <h1 class="text-center color_red">Unable to purchase this number</h1>
+              <h6 class="text-center color_red">Unable to purchase this number</h6>
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 3) {
             ?>
-              <h1 class="text-center color_green">Number Release Successfully!!</h1>
+              <h6 class="text-center color_green">Number Released Successfully!!</h6>
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 4) {
             ?>
-              <h1 class="text-center color_red">Something Went Wrong !!</h1>
+              <h6 class="text-center color_red">Something Went Wrong !!</h6>
             <?php
               }
             ?>
@@ -132,7 +132,7 @@
                             <td><?= $value->origin; ?></td>
                             <td><?= $row['type']; ?></td>
                             <td><?= $value->phoneNumber; ?></td>
-                            <td><?= $row['monthly_rental']; ?></td>
+                            <td>$<?= $row['monthly_rental']; ?></td>
                             <td><?= $value->dateCreated->format('Y-m-d H:i:s'); ?></td>
                             <td>
                               <form method="POST">
