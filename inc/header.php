@@ -32,18 +32,13 @@
           <ul class="nav">
             <li  class="active" >
               <a href="dashboard.php">
-                <i class="now-ui-icons design_app"></i>
+                <i class="now-ui-icons design_palette"></i>
                 <p>Dashboard</p>
               </a>
             </li>
             <li>  
                 <a data-toggle="collapse" href="#mapsExamples" >
-                    
-                    <i class="now-ui-icons loader_gear"></i>
-                    
-                    <p>
-                        Phone Management <b class="caret"></b>
-                    </p>
+                    <i class="now-ui-icons business_badge"></i><p>Phone Management <b class="caret"></b></p>
                 </a>
 
                 <div class="collapse " id="mapsExamples">
@@ -81,7 +76,7 @@
             </li>
             <li>  
                 <a data-toggle="collapse" href="#supression" >
-                    <i class="now-ui-icons loader_gear"></i>
+                    <i class="now-ui-icons design_vector"></i>
                     <p>Suppression<b class="caret"></b></p>
                 </a>
 
@@ -117,18 +112,10 @@
                             
                 <!--        </ul>-->
                 <!--    </div>-->
-            <!--</li>-->
-              
+            <!--</li>-->              
             <li>
-
-                
                 <a data-toggle="collapse" href="#mapsExamplesss" >
-                    
-                    <i class="now-ui-icons objects_globe"></i>
-                    
-                    <p>
-                        Contact Management <b class="caret"></b>
-                    </p>
+                    <i class="now-ui-icons files_single-copy-04"></i><p>Contact Management <b class="caret"></b></p>
                 </a>
 
                 <div class="collapse " id="mapsExamplesss">
@@ -162,14 +149,9 @@
             </li>
             <li>
                 <a data-toggle="collapse" href="#mapsExamplessss" >
-                    
-                    <i class="now-ui-icons ui-2_chat-round"></i>
-                    
-                    <p>
-                        Campaign Management <b class="caret"></b>
-                    </p>
+                    <i class="now-ui-icons objects_spaceship"></i>
+                    <p>Campaign Management <b class="caret"></b></p>
                 </a>
-
                 <div class="collapse " id="mapsExamplessss">
                     <ul class="nav">
                     

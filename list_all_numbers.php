@@ -160,7 +160,7 @@
                 <div class="col-md-12 text-center">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title text-center"> Nothng Found!</h4>
+                            <h4 class="card-title text-center"> Nothing Found!</h4>
                         </div>
                     </div>
                 </div>

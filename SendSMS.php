@@ -47,6 +47,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                 $next = 0;
                 $tot_sent_sms = 0;
                 $cost = 0.00;
+                $suppress_count = 0; 
                 //foreach($_POST['call_routes_id'] as $i => $number){
                     foreach($allDataInSheet as $key => $value){
                         if($key != 1){
@@ -54,8 +55,8 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
             
                                 $phone_number = '+1'.$value[$phone_col];                            
                                 if($sent_count == 120){
-                                $next++;
-                                $sent_count = 0;
+                                    $next++;
+                                    $sent_count = 0;
                                 }
                                 $sender = $_POST['call_routes_id'][$next];
                                 //$sender = $number;
@@ -63,39 +64,46 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                                     $message_body = str_replace("#".$cell_val."#",$value[$col],$message_body);
                                 }
 
-                                $message = $twilio->messages->create($phone_number, // to
-                                    [
-                                        "body" => $message_body,
-                                        "messagingServiceSid" => "MG6cd88d0beeaca544176e383fdd0d90c8",
-                                        "from" => $sender
-                                    ]);
+                                $check_suppression_query = "SELECT * FROM suppression WHERE suppression = {$phone_number} LIMIT 1";
+                                $check_suppression_exe = mysqli_query($connect,$check_suppression_query);
+                                $check_suppression_rows = mysqli_num_rows($check_suppression_exe); 
+                                if($check_suppression_rows > 0){
+                                    $suppress_count++;
+                                }else{
+                                    $message = $twilio->messages->create($phone_number, // to
+                                        [
+                                            "body" => $message_body,
+                                            "messagingServiceSid" => "MG6cd88d0beeaca544176e383fdd0d90c8",
+                                            "from" => $sender
+                                        ]);
 
-                                $sent_count++;
-                                /* 
-                                    $curl = curl_init();
-                                    curl_setopt_array($curl, array(
-                                        CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/Messages.json",
-                                        CURLOPT_RETURNTRANSFER => true,
-                                        CURLOPT_ENCODING => "",
-                                        CURLOPT_MAXREDIRS => 10,
-                                        CURLOPT_TIMEOUT => 0,
-                                        CURLOPT_FOLLOWLOCATION => true,
-                                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                                        CURLOPT_CUSTOMREQUEST => "POST",
-                                        CURLOPT_POSTFIELDS => "Body=".$message."&To=".$phone_number."&From=".$sender,
-                                        CURLOPT_HTTPHEADER => array(
-                                            "Authorization: Basic ".BASIC_AUTH_KEY,
-                                            "Content-Type: application/x-www-form-urlencoded"
-                                        ),
-                                    ));
-                                    $response = curl_exec($curl);
-                                    curl_close($curl); 
-                                */
-                                
-                                $status = $message->status;
-                                $cost = $cost + $message->price;
-                                if($status == 'sent'){
-                                    $tot_sent_sms++;
+                                    $sent_count++;
+                                    /* 
+                                        $curl = curl_init();
+                                        curl_setopt_array($curl, array(
+                                            CURLOPT_URL => "https://api.twilio.com/2010-04-01/Accounts/".ACCOUNT_SID."/Messages.json",
+                                            CURLOPT_RETURNTRANSFER => true,
+                                            CURLOPT_ENCODING => "",
+                                            CURLOPT_MAXREDIRS => 10,
+                                            CURLOPT_TIMEOUT => 0,
+                                            CURLOPT_FOLLOWLOCATION => true,
+                                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                            CURLOPT_CUSTOMREQUEST => "POST",
+                                            CURLOPT_POSTFIELDS => "Body=".$message."&To=".$phone_number."&From=".$sender,
+                                            CURLOPT_HTTPHEADER => array(
+                                                "Authorization: Basic ".BASIC_AUTH_KEY,
+                                                "Content-Type: application/x-www-form-urlencoded"
+                                            ),
+                                        ));
+                                        $response = curl_exec($curl);
+                                        curl_close($curl); 
+                                    */
+                                    
+                                    $status = $message->status;
+                                    $cost = $cost + $message->price;
+                                    if($status == 'sent'){
+                                        $tot_sent_sms++;
+                                    }
                                 }
                             }
                         }

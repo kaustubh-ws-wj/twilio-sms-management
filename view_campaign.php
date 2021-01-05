@@ -53,6 +53,7 @@
                         <th>Date</th>
                         <th>Call Route/Group</th>
                         <th>Total</th>
+                        <th>Suppression</th>
                         <th>Sent</th>
                         <th>Costs</th>
                         <th>Action</th>
@@ -66,9 +67,10 @@
                         ?>
                           <tr>
                             <td><?= $row['campaign_name']; ?></td>
-                            <td><?=date("Y-m-d h:i:s A",strtotime($row['createdon']))?></td>
+                            <td><?= date("Y-m-d h:i:s A",strtotime($row['createdon']))?></td>
                             <td><?= $row['campaign_call_route']; ?></td>
                             <td><?= $row['total']; ?></td>
+                            <td><?= $row['suppression']; ?></td>
                             <td><?= $row['total_sent']; ?></td>
                             <td><?= $row['cost']; ?></td>
                             <td><a href="delete_campaign.php?id=<?= $row['campaign_id']; ?>" class="btn btn-danger" title="Delete Campaign"> <i class="fa fa-trash" aria-hidden="true"></i></a></td>
