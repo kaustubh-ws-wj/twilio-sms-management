@@ -137,7 +137,7 @@
                             <td>
                               <form method="POST">
                                 <input type="hidden" name="pn_sid" value="<?php echo $value->sid; ?>">
-                                <input type="submit" class="btn btn-warning" id="release-number" value="Realese">
+                                <input type="submit" class="btn btn-warning" id="release-number" value="Release">
                               </form>
                             </td>
                         </tr>

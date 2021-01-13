@@ -47,7 +47,7 @@
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 4) {
             ?>
-                <h6 class="text-center color_green">Folder Updated Sccessfully</h6>
+                <h6 class="text-center color_green">Folder Updated Successfully</h6>
             <?php
               }
             ?>
@@ -111,15 +111,17 @@
                       </thead>
                       <tbody>
                       <?php 
+                        $i = 1;
                         while($row=mysqli_fetch_assoc($result_get_group_count)) {
                       ?>
                           <tr>
                             <td></td>
-                            <td><?= $row['folder_id']; ?></td>
+                            <td><?= $i ?></td>
                             <td><?= $row['folder_name']; ?></td>
-                            <td><a href="add_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info"> Edit</a> <a href="delete_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info"> Delete</a></td>
+                            <td><a href="add_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info <?= ($row['folder_id'] == 8)?'disabled':'' ?>"> Edit</a> <a href="delete_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info <?= ($row['folder_id'] == 8)?'disabled':'' ?>"> Delete</a></td>
                         </tr>
                         <?php
+                        $i++;
                          }
                         ?>
                       </tbody>

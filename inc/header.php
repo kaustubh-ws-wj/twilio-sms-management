@@ -4,7 +4,7 @@
           -->
         <div class="logo">
           <a href="#" class="simple-text logo-mini">STS</a>
-          <a href="#" class="simple-text logo-normal">Simple Text Solution</a>
+          <a href="#" class="simple-text logo-normal">Simple Text Solutions</a>
           <div class="navbar-minimize">
             <!-- <button id="minimizeSidebar" class="btn btn-outline-white btn-icon btn-round">
             <i class="now-ui-icons text_align-center visible-on-sidebar-regular"></i>
