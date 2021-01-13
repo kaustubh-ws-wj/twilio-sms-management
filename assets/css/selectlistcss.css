@@ -23,7 +23,6 @@
 select#lstBox1, #lstBox2 {
     height: 206px;
 }
-a.disabled {
-    pointer-events: none;
-    cursor: default;
+.none{
+    display: none;
 }

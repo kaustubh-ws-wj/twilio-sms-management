@@ -118,7 +118,7 @@
                             <td></td>
                             <td><?= $i ?></td>
                             <td><?= $row['folder_name']; ?></td>
-                            <td><a href="add_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info <?= ($row['folder_id'] == 8)?'disabled':'' ?>"> Edit</a> <a href="delete_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info <?= ($row['folder_id'] == 8)?'disabled':'' ?>"> Delete</a></td>
+                            <td><a href="add_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info <?= ($row['folder_id'] == 8)?'none':'' ?>"> Edit</a> <a href="delete_folder.php?fid=<?= $row['folder_id']; ?>" class="btn btn-info <?= ($row['folder_id'] == 8)?'none':'' ?>"> Delete</a></td>
                         </tr>
                         <?php
                         $i++;
