@@ -87,6 +87,14 @@
                               </div>
                            </div>
                            <div class="row">
+                              <div class="col-md-4">
+                                 <div class="form-group">
+                                    <label for="exampleInputEmail1">Notification Email</label>
+                                    <input type="email" class="form-control" name="notification_email" placeholder="Notification Email" value="<?= $row['notification_email'] ?>" required>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row">
                               <div class="col-md-3">
                                  <div class="form-group">
                                     <label for="exampleInputPhone">Phone Number</label>

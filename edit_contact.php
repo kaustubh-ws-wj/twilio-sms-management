@@ -62,17 +62,17 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">Data mapped Sccessfully.</h1>
+                <h6 class="text-center color_green">Data mapped Sccessfully.</h6>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
             ?>
-                <h1 class="text-center color_red">Something went wrong.</h1>
+                <h6 class="text-center color_red">Something went wrong.</h6>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
             ?>
-                <h1 class="text-center color_red">Fields not mapped successfully.</h1>
+                <h6 class="text-center color_red">Fields not mapped successfully.</h6>
             <?php
               }
             ?>

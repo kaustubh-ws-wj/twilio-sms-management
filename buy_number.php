@@ -39,6 +39,11 @@
             echo json_encode(array('status'=>'error','response'=>json_encode($incoming_phone_number->toArray())));
         }else{
             //Insert to purchased number
+
+            $twilio->messaging->v1->services("MG6cd88d0beeaca544176e383fdd0d90c8")
+                                      ->phoneNumbers
+                                      ->create($incoming_phone_number->sid);
+
             $date_created = $incoming_phone_number->dateCreated->format('Y-m-d H:i:s');
             $date_updated = $incoming_phone_number->dateUpdated->format('Y-m-d H:i:s');
             $query = "INSERT INTO purchased_numbers(pn_sid,address_sid,identity_sid,friendly_name,phone_number,region,type,monthly_rental,origin,voice,sms,mms,date_created,date_updated,status,response) 

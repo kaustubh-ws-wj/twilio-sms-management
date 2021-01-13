@@ -46,7 +46,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                 $sender_pool = count($_POST['call_routes_id']);
                 $next = 0;
                 $tot_sent_sms = 0;
-                $cost = 0.00;
+                $cost = 0.0000;
                 $suppress_count = 0; 
                 //foreach($_POST['call_routes_id'] as $i => $number){
                     foreach($allDataInSheet as $key => $value){

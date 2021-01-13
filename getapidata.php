@@ -11,15 +11,15 @@ if(!empty($_POST['conversation_sid'])){
 
 	$sql    = "SELECT phone_number from purchased_numbers";
 	$result = mysqli_query($connect, $sql);
-    $purchased_number = mysqli_fetch_array($result);
+    //$purchased_number = mysqli_fetch_array($result);
 
     $proxy_address = $_POST['twilio_number'];
     $from_number = $_POST['from_number'];
-    //$purchased_number = array();
-    //$incomingNumber = $twilio->incomingPhoneNumbers->read([], 20);
-    //foreach($incomingNumber as $k => $numbers){
-        //$purchased_number[] = $numbers->phoneNumber;
-    //}
+    $purchased_number = array();
+    $incomingNumber = $twilio->incomingPhoneNumbers->read([], 20);
+    foreach($incomingNumber as $k => $numbers){
+        $purchased_number[] = $numbers->phoneNumber;
+    }
     
     $conversation_sid = $_POST['conversation_sid'];
     
