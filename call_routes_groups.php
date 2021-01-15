@@ -48,7 +48,7 @@ require 'vendor/autoload.php';
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h6 class="text-center color_green">SMS Sent Sccessfully</h6>
+                <h6 class="text-center color_green">SMS Sent successfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
@@ -92,7 +92,7 @@ require 'vendor/autoload.php';
                                 $call_route_numbers_build = mysqli_query($connect, $call_route_numbers_query);
                                 while($call_route_numbers_row = mysqli_fetch_assoc($call_route_numbers_build)){
                               ?>
-                                <option value="<?php echo $call_route_numbers_row['call_routes_number']; ?>" selected><?php echo $call_route_numbers_row['call_routes_number']; ?></option>
+                                <option value="<?= $call_route_numbers_row['call_routes_number']; ?>" selected><?= $call_route_numbers_row['call_routes_number']; ?></option>
                               <?php 
                                 }
                               ?>
@@ -112,7 +112,7 @@ require 'vendor/autoload.php';
                                 $numbers_count = mysqli_num_rows($call_route_numbers_build);
                                   if($numbers_count == 0){
                               ?>
-                                <option value="<?php echo $value->phone_number; ?>"><?php echo $value->phone_number; ?></option>
+                                <option value="<?= $value->phone_number; ?>"><?= $value->phone_number; ?></option>
                               <?php 
                                   }
                                 }

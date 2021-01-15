@@ -12,9 +12,20 @@
 
   if(isset($_POST) && isset($_POST['pn_sid']) && $_POST['pn_sid'] != ''){
     $pn_sid = $_POST['pn_sid'];
+    $phone_number = $_POST['phone_number'];
     try{
       $twilio->incomingPhoneNumbers($pn_sid)->delete();
+
+      // Change status from `purchased_numbers` 
+      $query = "UPDATE purchased_numbers SET status='realised' WHERE pn_sid={$pn_sid}";
+      $result = mysqli_query($connect, $query);
+
+      // Delete a number from `call_routes` 
+      $query = "DELETE FROM call_routes WHERE phone_number={$phone_number}";
+      $result = mysqli_query($connect, $query);
+
       header("Refresh:0; url=list_all_numbers.php?status=3");
+      
     }catch(RestException $ex){
       header("Refresh:0; url=list_all_numbers.php?status=4");
     }
@@ -65,7 +76,7 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-              <h6 class="text-center color_green">Number Purchased Sccessfully</h6>
+              <h6 class="text-center color_green">Number Purchased Successfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 0) {
@@ -120,7 +131,7 @@
                             //fetch stored purchased numbers
                             $i = 1;
                             foreach ($result as $key => $value) {
-                            $query = "SELECT type,region,monthly_rental FROM purchased_numbers WHERE pn_sid = '{$value->sid}'";
+                            $query = "SELECT phone_number,type,region,monthly_rental FROM purchased_numbers WHERE pn_sid = '{$value->sid}'";
                             $result = mysqli_query($connect, $query);
                             $row = mysqli_fetch_assoc($result);
                         ?>
@@ -136,7 +147,8 @@
                             <td><?= $value->dateCreated->format('Y-m-d H:i:s'); ?></td>
                             <td>
                               <form method="POST">
-                                <input type="hidden" name="pn_sid" value="<?php echo $value->sid; ?>">
+                                <input type="hidden" name="pn_sid" value="<?= $value->sid; ?>">
+                                <input type="hidden" name="phone_number" value="<?= $row['phone_number']; ?>">
                                 <input type="submit" class="btn btn-warning" id="release-number" value="Release">
                               </form>
                             </td>

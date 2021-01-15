@@ -21,7 +21,7 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">Group Added Sccessfully</h1>
+                <h1 class="text-center color_green">Group Added successfully</h1>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {

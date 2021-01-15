@@ -32,7 +32,7 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h6 class="text-center color_green">Folder Added Sccessfully</h6>
+                <h6 class="text-center color_green">Folder Added successfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
@@ -42,7 +42,7 @@
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 3) {
             ?>
-                <h6 class="text-center color_green">Folder Deleted Sccessfully</h6>
+                <h6 class="text-center color_green">Folder Deleted successfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 4) {

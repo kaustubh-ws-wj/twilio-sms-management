@@ -29,7 +29,7 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h6 class="text-center color_green">Group Deleted Sccessfully</h6>
+                <h6 class="text-center color_green">Group Deleted successfully</h6>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {

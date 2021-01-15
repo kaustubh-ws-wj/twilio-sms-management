@@ -179,10 +179,7 @@
                   <div class="table-responsive">
                     <table id="datatable1" class="table table-striped table-bordered" cellspacing="0">
                       <thead class="">
-                        
-                        <th >ID</th>
                         <th >Name</th>
-                        <th >Total Contact</th>
                         <th >Action</th>
                       </thead>
                       <tbody>
@@ -197,10 +194,8 @@
                             $result_do = mysqli_num_rows($result_do);
                         ?>
                           <tr>
-                            
-                            <td><?= $row['add_group_id']; ?></td>
                             <td><?= $row['add_group_name']; ?></td>
-                            <td><?=$result_do?></td>
+                            <!-- <td><?=$result_do?></td> -->
                             <td>
                               <a href="view_contacts.php?group=<?= $row['add_group_id']; ?>" class="btn btn-info"> View</a>
                               <a href="delete_group.php?group=<?= $row['add_group_id']; ?>" class="btn btn-info"> Delete</a>

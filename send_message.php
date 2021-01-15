@@ -56,7 +56,7 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h6 class="text-center color_green">SMS Sent Sccessfully</h6>
+                <h6 class="text-center color_green">SMS Sent Successfully</h6>
             <?php
               }else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {
             ?>
@@ -164,7 +164,7 @@
                   <tbody id="response"></tbody>
                 </table>
               <div class="form-group form-file-upload form-file-multiple">
-                <input type="submit" value="Send SMS" class="btn btn-warning pull-right mainbtn">
+                <input type="submit" value="Send Campaign" class="btn btn-warning pull-right mainbtn">
               </div>
               </div>
             </div>

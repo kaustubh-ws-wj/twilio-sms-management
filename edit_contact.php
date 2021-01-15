@@ -62,7 +62,7 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h6 class="text-center color_green">Data mapped Sccessfully.</h6>
+                <h6 class="text-center color_green">Data mapped successfully.</h6>
             <?php
               }
               else if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 2) {

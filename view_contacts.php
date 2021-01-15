@@ -33,7 +33,7 @@
             <?php
               if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
             ?>
-                <h1 class="text-center color_green">List Deleted Sccessfully</h1>
+                <h1 class="text-center color_green">List Deleted successfully</h1>
             <?php
               }
               else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
