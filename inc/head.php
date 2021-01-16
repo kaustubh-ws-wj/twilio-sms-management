@@ -3,7 +3,8 @@
     if (!isset($_SESSION['user_name']) && empty($_SESSION['user_name'])) {
         header("location: index.php");
     }
-    ini_set('max_execution_time', 0);
+    ini_set('max_execution_time', 5000);
+    // set_time_limit(0);
 ?>
 <!DOCTYPE html>
 <html lang="en">

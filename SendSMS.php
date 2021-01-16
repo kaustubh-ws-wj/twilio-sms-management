@@ -1,4 +1,5 @@
 <?php
+ini_set('max_execution_time', 5000);
 include 'config.php';
 include 'connection.php';
 include 'PHPExcel-1.8/Classes/PHPExcel.php';
@@ -48,6 +49,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                 $tot_sent_sms = 0;
                 $cost = 0.0000;
                 $suppress_count = 0; 
+                $not_send = 0;
                 //foreach($_POST['call_routes_id'] as $i => $number){
                     foreach($allDataInSheet as $key => $value){
                         if($key != 1){
@@ -70,14 +72,26 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                                 if($check_suppression_rows > 0){
                                     $suppress_count++;
                                 }else{
-                                    $message = $twilio->messages->create($phone_number, // to
+
+                                    try{
+                                        $message = $twilio->messages->create($phone_number, // to
                                         [
                                             "body" => $message_body,
                                             "messagingServiceSid" => "MG6cd88d0beeaca544176e383fdd0d90c8",
                                             "from" => $sender
                                         ]);
+                                        $sent_count++;
 
-                                    $sent_count++;
+                                        $status = $message->status;
+                                        $cost = $cost + $message->price;
+                                        if($status == 'sent'){
+                                            $tot_sent_sms++;
+                                        }
+                                    }
+                                    catch(RestException $e){
+                                        echo 'Message: ' .$e->getMessage();
+                                    }
+                                    
                                     /* 
                                         $curl = curl_init();
                                         curl_setopt_array($curl, array(
@@ -98,12 +112,6 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                                         $response = curl_exec($curl);
                                         curl_close($curl); 
                                     */
-                                    
-                                    $status = $message->status;
-                                    $cost = $cost + $message->price;
-                                    if($status == 'sent'){
-                                        $tot_sent_sms++;
-                                    }
                                 }
                             }
                         }

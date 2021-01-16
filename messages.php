@@ -65,7 +65,7 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="messages-sidebar col-md-3 col-lg-3 p-0">
+                            <div class="messages-sidebar col-md-3 col-lg-3 p-0" style="height:80vh;overflow-y:scroll">
                                 <div class="messages-sidebar-header d-flex justify-content-between">
                                     <!-- <div class="profile-picture">
                                         <img src="assets/img/sample_p.jpg" alt="Profile Picture">

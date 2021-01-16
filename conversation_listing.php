@@ -19,7 +19,7 @@ function date_compare($a, $b)
 }    
 
 //try{
-    $conversations = $twilio->conversations->v1->conversations->read(20);
+    $conversations = $twilio->conversations->v1->conversations;
     if(!empty($conversations)){
         foreach($conversations as $key => $value){
             $conversation_array = $value->toArray();

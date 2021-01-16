@@ -49,7 +49,7 @@ error_log('---Request End---');
             mysqli_query($connect, $sql);
             // {"RetryCount":"0","EventType":"onMessageAdded","Attributes":"{}","DateCreated":"2021-01-11T15:18:18.310Z","Author":"+16103162324","Index":"0","MessageSid":"IM91dd7dbac17847b4ace86450180bcd39","ParticipantSid":"MB14cf856e712a45e3a46afffad20bcf62","Body":"1018","AccountSid":"AC529db4ea06aba0a1ed7356e28d6b0dbb","Source":"SMS","ConversationSid":"CHcbf9398587e445589de80b077992f041"}
             $smsBody = $_POST['Body'];
-            $date = $_POST['DateCreated']->format('Y-m-d h:i:s A');
+            $date = $_POST['DateCreated'];
             $from = $_POST['Author'];
             
             $query = "SELECT notification_email FROM signup";
@@ -77,9 +77,8 @@ error_log('---Request End---');
                 $reciEmail = $notif_email[0]['notification_email'];
 				
 				 sendMailSMS($_POST['From'],$_POST['To'],$smsBody,$date,$reciEmail);
-				 //demo($_POST['From'],$_POST['To'],$smsBody,$date,$reciEmail);
-				
-			}
+                 //demo($_POST['From'],$_POST['To'],$smsBody,$date,$reciEmail);
+            }
 			http_response_code(200);
 			exit();
 	}
