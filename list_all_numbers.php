@@ -131,7 +131,7 @@
                             //fetch stored purchased numbers
                             $i = 1;
                             foreach ($result as $key => $value) {
-                            $query = "SELECT phone_number,type,region,monthly_rental FROM purchased_numbers WHERE pn_sid = '{$value->sid}'";
+                            $query = "SELECT phone_number,type,region,monthly_rental FROM purchased_numbers WHERE pn_sid = '{$value->sid}' AND status='in-use'";
                             $result = mysqli_query($connect, $query);
                             $row = mysqli_fetch_assoc($result);
                         ?>

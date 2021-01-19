@@ -19,7 +19,7 @@ function date_compare($a, $b)
 }    
 
 //try{
-    $conversations = $twilio->conversations->v1->conversations;
+    $conversations = $twilio->conversations->v1->conversations->read();
     if(!empty($conversations)){
         foreach($conversations as $key => $value){
             $conversation_array = $value->toArray();
@@ -27,7 +27,7 @@ function date_compare($a, $b)
             if(!empty($attributes)){
                 if($attributes['folder'] == $folder_name){
                     $conv_sid = $conversation_array['sid'];
-                    $participant = $twilio->conversations->v1->conversations($conv_sid)->participants->read(20);
+                    $participant = $twilio->conversations->v1->conversations($conv_sid)->participants->read();
                     $from = $participant[0]->messagingBinding['address'];
                     $proxy_address = $participant[0]->messagingBinding['proxy_address'];
                     $txt_time = $participant[0]->dateUpdated->format('Y-m-d H:i');
@@ -55,7 +55,7 @@ function date_compare($a, $b)
             }
         }
     }else{
-            $status = 'error';
+        $status = 'error';
     }
 //}catch(RestException $ex){}
 usort($list, 'date_compare');

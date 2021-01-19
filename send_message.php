@@ -78,7 +78,7 @@
              ?>
 
           </div>
-          <form action="SendSMS.php" method="post">
+        <form action="SendSMS.php" method="post">
           <div class="row">
             <div class="col-md-12">
               <div class="card">

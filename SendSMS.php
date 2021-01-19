@@ -29,7 +29,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
         $objPHPExcel = $objReader->load($assoc_result_contact_list['list_path']);
         $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
 
-        //echo '<pre>';echo count($allDataInSheet);die;
+        // echo '<pre>';print_r($allDataInSheet);die;
 
         $phone_col = $assoc_result_contact_list['phone'];
         if(count($allDataInSheet) > 1){
@@ -50,6 +50,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                 $cost = 0.0000;
                 $suppress_count = 0; 
                 $not_send = 0;
+                $digit_incre = 0;
                 //foreach($_POST['call_routes_id'] as $i => $number){
                     foreach($allDataInSheet as $key => $value){
                         if($key != 1){
@@ -60,12 +61,18 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                                     $next++;
                                     $sent_count = 0;
                                 }
+                                if ($digit_incre < $total_customer_number) {
+                                    $digit_incre++;
+                                }
                                 $sender = $_POST['call_routes_id'][$next];
                                 //$sender = $number;
+                                // echo 'post msg -> '.$message_body;
+                                unset($new_body);
+                                $new_body = $message_body;
                                 foreach($allDataInSheet[1] as $col => $cell_val){
-                                    $message_body = str_replace("#".$cell_val."#",$value[$col],$message_body);
-                                }
-
+                                    $new_body = str_replace("#".$cell_val."#",$value[$col],$new_body);
+                                }                               
+                                
                                 $check_suppression_query = "SELECT * FROM suppression WHERE suppression = {$phone_number} LIMIT 1";
                                 $check_suppression_exe = mysqli_query($connect,$check_suppression_query);
                                 $check_suppression_rows = mysqli_num_rows($check_suppression_exe); 
@@ -76,7 +83,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                                     try{
                                         $message = $twilio->messages->create($phone_number, // to
                                         [
-                                            "body" => $message_body,
+                                            "body" => $new_body,
                                             "messagingServiceSid" => "MG6cd88d0beeaca544176e383fdd0d90c8",
                                             "from" => $sender
                                         ]);
@@ -116,7 +123,6 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                             }
                         }
                     }
-
                     $querys = "UPDATE `campaign` SET `total_sent` = {$tot_sent_sms}, `cost` = {$cost} WHERE campaign_id = {$last_id}";
                     $res = mysqli_query($connect,$querys);
                 //}

@@ -20,6 +20,8 @@
     $folder_query = "SELECT * FROM folder";
     $folder_query_result = mysqli_query($connect,$folder_query);
 
+    $trash = "SELECT * FROM folder where folder_name = 'trash'";
+    $trash_result = mysqli_query($connect,$trash);
 ?>
 
   <body class=" sidebar-mini ">
@@ -55,11 +57,18 @@
                                                 <li class="nav-item" ondrop="drop(event)" ondragover="allowDrop(event)">
                                                     <a class="nav-link collapsed py-1 folder" data-num="0" data-name="Inbox" data-toggle="collapse" ><i class="fa fa-address-card" aria-hidden="true"></i><span>Inbox</span></a>
                                                 </li>
-                                                <?php while($folders = mysqli_fetch_assoc($folder_query_result)){ ?>
-                                                <li class="nav-item" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                                    <a class="nav-link collapsed py-1 folder" data-num="<?php echo $folders['folder_id']; ?>" data-name="<?php echo $folders['folder_name']; ?>" data-toggle="collapse" ><i class="fa fa-caret-right" aria-hidden="true"></i><span><?php echo $folders['folder_name'];?></span></a>
-                                                </li>
-                                                <?php } ?>
+                                                <?php while($folders = mysqli_fetch_assoc($folder_query_result)){ 
+                                                    if ($folders['folder_id'] != 8) {                                                       
+                                                ?>
+                                                    <li class="nav-item" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                        <a class="nav-link collapsed py-1 folder" data-num="<?= $folders['folder_id']; ?>" data-name="<?= $folders['folder_name']; ?>" data-toggle="collapse" ><i class="fa fa-caret-right" aria-hidden="true"></i><span><?= $folders['folder_name'];?></span></a>
+                                                    </li>
+                                                <?php } }
+                                                while($trash = mysqli_fetch_assoc($trash_result)){ ?>
+                                                    <li class="nav-item" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                        <a class="nav-link collapsed py-1 folder" data-num="<?= $trash['folder_id']; ?>" data-name="<?= $trash['folder_name']; ?>" data-toggle="collapse" ><i class="fa fa-caret-right" aria-hidden="true"></i><span><?= $trash['folder_name'];?></span></a>
+                                                    </li>
+                                                <?php }?>
                                             </ul>
                                         </div>
                                     </li>
@@ -149,9 +158,6 @@
     <?php
       include 'inc/footer.php';
     ?>
-
-
-
 <script>
     
     $('.folder').on('click',function(){
@@ -200,7 +206,6 @@
             }
         });
     });
-
 
     function allowDrop(ev) {
         ev.preventDefault();
