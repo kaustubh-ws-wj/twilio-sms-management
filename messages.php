@@ -23,7 +23,17 @@
     $trash = "SELECT * FROM folder where folder_name = 'trash'";
     $trash_result = mysqli_query($connect,$trash);
 ?>
-
+  <style>
+    #overlay_main {
+        background: url('assets/img/loading.gif') no-repeat center center;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 9999999;
+    }
+  </style>
   <body class=" sidebar-mini ">
     <!-- End Google Tag Manager (noscript) -->
     <div class="wrapper ">
@@ -39,12 +49,13 @@
           include 'inc/nav.php';
         ?>
         <!-- End Navbar -->
+        <div id="overlay_main" style="display:none;"></div>
         <div class="content">
           <div class="tl-section">
             <div class="tl-dashboard bg-color">
                 <div class="container-fluid p-0">
                      <div class="main">
-                        <div class="messages bg-white row">
+                     <div class="messages bg-white row">
                             <div class="side-navi col-12 col-sm-12 col-md-2 collapse show d-md-flex bg-dark pt-2 pl-0 p-0" id="sidebar" style="height:80vh;">
                                 <ul class="nav flex-column flex-nowrap overflow-hidden">
                                     <!-- <li class="nav-item nav-item-arrow">
@@ -69,6 +80,9 @@
                                                         <a class="nav-link collapsed py-1 folder" data-num="<?= $trash['folder_id']; ?>" data-name="<?= $trash['folder_name']; ?>" data-toggle="collapse" ><i class="fa fa-caret-right" aria-hidden="true"></i><span><?= $trash['folder_name'];?></span></a>
                                                     </li>
                                                 <?php }?>
+                                                <li class="nav-item pt-4">
+                                                    <a class="nav-link collapsed py-1 downloadCSV" data-toggle="collapse" >Download <i class="fa fa-download" aria-hidden="true"></i></a>
+                                                </li>
                                             </ul>
                                         </div>
                                     </li>
@@ -234,6 +248,26 @@
             }
         });
     }
+
+    $('.downloadCSV').on('click',function(){ 
+        $.ajax({
+            url:'downloadcsv.php',
+            type:'POST',
+            data:{'csv':1},
+            beforeSend: function () {
+                $("#overlay_main").show();
+            },
+            success:function(){
+                window.location = 'messages.csv';
+                // window.href('messages.csv')
+            },
+            complete:function(response){
+                    $("#overlay_main").hide();
+                    $('.folder_list').css('pointer-events','');
+            }
+
+        });
+    });
 
     /* function getresult(url) {
         $.ajax({

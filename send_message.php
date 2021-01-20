@@ -91,7 +91,7 @@
                         <div class="col-md-12">
                           <label class="card-title">Enter Campaign Name</label>
                           <div class="form-group form-file-upload form-file-simple">
-                            <input name="campaign_name" class="form-control" placeholder="Enter Campaign Name" required="">
+                            <input name="campaign_name" class="form-control" placeholder="Enter Campaign Name" required>
                           </div>
                         </div>
                         <!-- <div class="col-md-12">
