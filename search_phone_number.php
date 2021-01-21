@@ -365,6 +365,7 @@
                       <table class="table table-shopping">
                         <thead class="">
                           <th  class="text-center" ></th>
+                          <th>Select</th>
                           <th >#</th>
                           <th >Country</th>
                           <th >Number</th>
@@ -383,6 +384,7 @@
                           ?>  
                             <tr>
                               <td></td>
+                              <td><input type="checkbox" name="mul-check" class="mul-check"></td>
                               <td><?= $i; ?></td>
                               <td><?= $val['isoCountry']; ?></td>
                               <td><?= $val['friendlyName']; ?></td>

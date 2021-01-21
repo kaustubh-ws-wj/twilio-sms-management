@@ -257,11 +257,12 @@
             beforeSend: function () {
                 $("#overlay_main").show();
             },
-            success:function(){
-                window.location = 'messages.csv';
+            success:function(response){
+                // console.log(response);
+                window.location = `downloadcsv/${response}`;
                 // window.href('messages.csv')
             },
-            complete:function(response){
+            complete:function(){
                     $("#overlay_main").hide();
                     $('.folder_list').css('pointer-events','');
             }

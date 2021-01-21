@@ -9,7 +9,7 @@
     $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
     if (isset($_POST['csv'])) {
-        $list[] = array('txt_time'=>'txt_time','from'=>'from','folder'=>'folder','last_msg'=>'last_msg');
+        $list[] = array('Time'=>'Time','Incoming phone'=>'Incoming phone','Folder'=>'Folder','Message'=>'Message');
         $conversations = $twilio->conversations->v1->conversations->read();
         if(!empty($conversations)){
             foreach($conversations as $key => $value){
@@ -29,18 +29,20 @@
                 }
             }
         }
-
-        $csv_name = "messages.csv";
         
-        if (!@is_dir($csv_name)) {
-            @mkdir($csv_name, 0777, TRUE);
-        }
-        $file = fopen($csv_name,"w");
+        $csv_name = "messages".date('d-h-i-s').".csv";
+        
+        // if (!@is_dir($csv_name)) {
+        //     @mkdir($csv_name, 0777, TRUE);
+        // }
+        $file = fopen("downloadcsv/{$csv_name}","w");
         
         foreach ($list as $row) {
             fputcsv($file, $row);
         }
         fclose($file);
+
+        echo $csv_name;
         
     }
 
