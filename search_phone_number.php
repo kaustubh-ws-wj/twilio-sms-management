@@ -384,7 +384,7 @@
                           ?>  
                             <tr>
                               <td></td>
-                              <td><input type="checkbox" name="mul-check" class="mul-check"></td>
+                              <td><input type="checkbox" value="<?= $val['phoneNumber']; ?>"  class="mul-check"></td>
                               <td><?= $i; ?></td>
                               <td><?= $val['isoCountry']; ?></td>
                               <td><?= $val['friendlyName']; ?></td>
@@ -410,6 +410,14 @@
                           ?>
                         </tbody>
                       </table>
+                      <form action="buy_number.php" method="POST">
+                        <input type="hidden"  name="phoneNumbers" class="multiple_number">
+                        <input type="hidden" value="<?= $_POST["country_code"]; ?>" name="country_code">
+                        <input type="hidden" value="<?= $_POST["country_code"]; ?>" name="region">
+                        <input type="hidden" value="<?= $price; ?>" name="monthly_rental">
+                        <input type="hidden" value="<?= ($type_check == 'toll free') ? str_replace(" ","_",$type_check): $type_check; ?>" name="type">
+                        <input type="button" class="btn btn-success confirm_purchase" value="Buy Multiple">
+                      </form>
                     </div>
                   </div>
                 </div>
@@ -441,6 +449,16 @@
     ?>
     <?php //if(!isset($_SERVER['REQUEST'])){ ?>
     <script>
+    $(document).ready(function(){
+      $('.mul-check').change(function() {
+        var numbers = [];
+        $(".mul-check:input:checked").each(function() {
+          numbers.push($(this).val());
+        });
+        $('.multiple_number').val(numbers);
+      });
+    });
+
     $(".advance_content").hide();
       var input = document.querySelector("#phone");
       var iti;
@@ -516,7 +534,6 @@
               }
               if('toll_free' in response.subresource_uris){
                 //set check box for toll_free
-                console.log('toll-free');
                 $('#type_toll_free').prop('checked', true);
                 $('#type_toll_free').prop('disabled', false);
                 $('#type_toll_free').parent().parent().removeClass('disabled');

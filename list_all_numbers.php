@@ -14,13 +14,13 @@
     $pn_sid = $_POST['pn_sid'];
     $phone_number = $_POST['phone_number'];
     try{
-      $twilio->incomingPhoneNumbers($pn_sid)->delete();
+      // $twilio->incomingPhoneNumbers($pn_sid)->delete();
 
       // Change status from `purchased_numbers` 
-      $query = "UPDATE purchased_numbers SET status='realised' WHERE pn_sid={$pn_sid}";
+      $query = "UPDATE purchased_numbers SET status='realised' WHERE pn_sid='{$pn_sid}'";
       $result = mysqli_query($connect, $query);
 
-      // Delete a number from `call_routes` 
+      // Delete a number from `call_routes`
       $query = "DELETE FROM call_routes WHERE phone_number={$phone_number}";
       $result = mysqli_query($connect, $query);
 
@@ -31,9 +31,6 @@
     }
     
   }
-  
-
-
   $incomingPhoneNumbers = $twilio->incomingPhoneNumbers->read([], 20); 
     /* $curl = curl_init();
 

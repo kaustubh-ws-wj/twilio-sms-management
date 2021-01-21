@@ -55,4 +55,34 @@
             }
         }
     }
+
+    if(isset($_POST) && $_POST['phoneNumbers'] != ''){ 
+        $phone_number =  (explode(",",$_POST['phoneNumbers']));
+        foreach($phone_number as $phone_number ){
+            $incoming_phone_number = $twilio->incomingPhoneNumbers->create(["phoneNumber" => $phone_number]);
+            $result = $incoming_phone_number->toArray();
+            $response = json_encode($incoming_phone_number->toArray());
+            
+            if(isset($result['code'])){
+                echo json_encode(array('status'=>'error','response'=>json_encode($incoming_phone_number->toArray())));
+            }else{
+                //Insert to purchased number
+
+                $twilio->messaging->v1->services("MG6cd88d0beeaca544176e383fdd0d90c8")
+                                        ->phoneNumbers
+                                        ->create($incoming_phone_number->sid);
+
+                $date_created = $incoming_phone_number->dateCreated->format('Y-m-d H:i:s');
+                $date_updated = $incoming_phone_number->dateUpdated->format('Y-m-d H:i:s');
+                $query = "INSERT INTO purchased_numbers(pn_sid,address_sid,identity_sid,friendly_name,phone_number,region,type,monthly_rental,origin,voice,sms,mms,date_created,date_updated,status,response) 
+                VALUES ('{$incoming_phone_number->sid}','{$incoming_phone_number->addressSid}','{$incoming_phone_number->identitySid}','{$incoming_phone_number->friendlyName}','{$incoming_phone_number->phoneNumber}','{$_POST['region']}','{$_POST['type']}','{$_POST['monthly_rental']}','{$incoming_phone_number->origin}','{$incoming_phone_number->capabilities['voice']}','{$incoming_phone_number->capabilities['sms']}','{$incoming_phone_number->capabilities['mms']}','{$date_created}','{$date_updated}','{$incoming_phone_number->status}','{$response}')";
+                $result = mysqli_query($connect, $query);
+            }
+        }
+        if($$result){
+            header("Refresh:0; url=list_all_numbers.php?status=1");
+        }else{
+            header("Refresh:0; url=list_all_numbers.php?status=0");
+        }
+    }
 ?>
