@@ -206,6 +206,8 @@
     $('.folder').on('click',function(){
         var folder = $(this).data('num');
         var folder_name = $(this).data('name');
+        $('.mul-checkbox').hide();
+        $('.move-info-sec').hide();
         var list = "";
         $('.folder_list').css('pointer-events','none');
         //call conversation
@@ -222,7 +224,7 @@
                 var obj_list = JSON.parse(obj.list);
                 if(obj_list.length > 0){
                     $.each(obj_list,function(i){
-                        list += "<input type='checkbox' value='"+obj_list[i].conv_sid+"' converstaionsid='"+obj_list[i].conv_sid+"' id='user-tab_"+i+"' class='mul-checkbox' style=' float: left; display:none'>"
+                        list += "<input type='checkbox' value='"+obj_list[i].conv_sid+"' converstaionsid='"+obj_list[i].conv_sid+"' id='user-box_"+i+"' data-number='"+i+"' class='mul-checkbox' style=' float: left; display:none'>"
                             +"<a class='nav-link ui-widget-content' draggable='true' ondragstart='drag(event)' id='user-tab_"+i+"' converstaionsid='"+obj_list[i].conv_sid+"' data-toggle='pill' href='#' role='tab' aria-controls='user' onClick='getMessages(\""+obj_list[i].conv_sid+"\",\""+obj_list[i].proxy_address+"\",\""+obj_list[i].from+"\")' aria-selected='true' >"
                                 +"<span class='d-flex'>"
                                     +"<span class='message-highlight'>"
@@ -326,8 +328,12 @@
     $('.select-floder').on('click',function () {
         if (selectedFolder != '') {
             var cid = [];
+            var ids = [];
+            var nums = [];
             $(".mul-checkbox:input:checked").each(function() {
                 cid.push($(this).val());
+                ids.push($(this).attr('id'));
+                nums.push($(this).data('number'));
             })
             if (cid.length == 0) {
                 alert('please select conversation');
@@ -338,7 +344,12 @@
                     data:{'cid':cid,'selectedFolder':selectedFolder},
                     datatype:'Json',
                     success:function(response){
-                        alert(response);
+                        ids.forEach(function(item) {
+                            $(`#${item}`).css('display','none');
+                        })
+                        nums.forEach(function(i){
+                            $(`#user-tab_${i}`).css('display','none');
+                        })
                     }
                 })
             }
