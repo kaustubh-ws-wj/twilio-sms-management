@@ -66,7 +66,7 @@
             if(isset($result['code'])){
                 echo json_encode(array('status'=>'error','response'=>json_encode($incoming_phone_number->toArray())));
             }else{
-                //Insert to purchased number
+                //Insert to purchased number 
 
                 $twilio->messaging->v1->services("MG6cd88d0beeaca544176e383fdd0d90c8")
                                         ->phoneNumbers

@@ -1,4 +1,5 @@
 <?php
+ 
     $title = "Messages";
     include 'inc/head.php';
     include 'connection.php';
@@ -19,6 +20,8 @@
    
     $folder_query = "SELECT * FROM folder";
     $folder_query_result = mysqli_query($connect,$folder_query);
+
+    $move_folder_query_result = mysqli_query($connect,$folder_query);
 
     $trash = "SELECT * FROM folder where folder_name = 'trash'";
     $trash_result = mysqli_query($connect,$trash);
@@ -94,12 +97,37 @@
                                         <img src="assets/img/sample_p.jpg" alt="Profile Picture">
                                     </div> -->
                                     <div class="search-box">
-                                        <form action="#" class="search-form">
-                                            <input type="search" class="search-field" placeholder="Search">
-                                            <input type="submit" class="search-submit" value="Search">
-                                        </form>
+                                        <div class="row">
+                                            <form action="#" class="search-form">
+                                                <input type="search" class="search-field" placeholder="Search">
+                                                <input type="submit" class="search-submit" value="Search">
+                                            </form>
+                                            <button class="btn btn-primary ml-2 move-conv">move</button>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="move-info-sec" style="display:none">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input class="ml-2" type="checkbox" value="" id="select-all">
+                                            <label class="pt-4"  for="select-all">Select All</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="btn-group ">
+                                            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span>Folders  </button>
+                                                <div class="dropdown-menu folder-list">
+                                                    <?php while($m_folder = mysqli_fetch_assoc($move_folder_query_result)){ ?>
+                                                        <a class="dropdown-item" href="javascript:void(0)"><?= $m_folder['folder_name'] ?></a>
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                        <button class="select-floder btn btn-primary">Move</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
                                 <div class="messages-sidebar-body">
                                     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                        <!-- Dynamic user list Start-->
@@ -107,6 +135,7 @@
                                             <img src="assets/img/loading.gif" width="35px" height="35px"/>
                                         </div>
                                         <div class="page-content" id="conversation_list">
+                                        
                                             <!-- <div id="pagination-result">
                                                 <input type="hidden" name="rowcount" id="rowcount" />
                                             </div> -->
@@ -193,7 +222,8 @@
                 var obj_list = JSON.parse(obj.list);
                 if(obj_list.length > 0){
                     $.each(obj_list,function(i){
-                        list += "<a class='nav-link ui-widget-content' draggable='true' ondragstart='drag(event)' id='user-tab_"+i+"' converstaionsid='"+obj_list[i].conv_sid+"' data-toggle='pill' href='#' role='tab' aria-controls='user' onClick='getMessages(\""+obj_list[i].conv_sid+"\",\""+obj_list[i].proxy_address+"\",\""+obj_list[i].from+"\")' aria-selected='true' >"
+                        list += "<input type='checkbox' value='"+obj_list[i].conv_sid+"' converstaionsid='"+obj_list[i].conv_sid+"' id='user-tab_"+i+"' class='mul-checkbox' style=' float: left; display:none'>"
+                            +"<a class='nav-link ui-widget-content' draggable='true' ondragstart='drag(event)' id='user-tab_"+i+"' converstaionsid='"+obj_list[i].conv_sid+"' data-toggle='pill' href='#' role='tab' aria-controls='user' onClick='getMessages(\""+obj_list[i].conv_sid+"\",\""+obj_list[i].proxy_address+"\",\""+obj_list[i].from+"\")' aria-selected='true' >"
                                 +"<span class='d-flex'>"
                                     +"<span class='message-highlight'>"
                                         +"<span class='user-name'>"+obj_list[i].from+"</span>"
@@ -268,6 +298,53 @@
             }
 
         });
+    });
+
+    $('#select-all').click(function(event) {   
+        if(this.checked) {
+            $(':checkbox').each(function() {
+                this.checked = true;                        
+            });
+        } else {
+            $(':checkbox').each(function() {
+                this.checked = false;                       
+            });
+        }
+    });
+
+    $('.move-conv').on('click',function(){
+        $('.mul-checkbox').toggle();
+        $('.move-info-sec').toggle();
+    })
+
+    var selectedFolder = '';
+
+    $('.folder-list a').on('click', function(){
+        selectedFolder = $(this).text();
+    });
+
+    $('.select-floder').on('click',function () {
+        if (selectedFolder != '') {
+            var cid = [];
+            $(".mul-checkbox:input:checked").each(function() {
+                cid.push($(this).val());
+            })
+            if (cid.length == 0) {
+                alert('please select conversation');
+            }else{
+                $.ajax({
+                    url:'update_conv.php',
+                    type:'POST',
+                    data:{'cid':cid,'selectedFolder':selectedFolder},
+                    datatype:'Json',
+                    success:function(response){
+                        alert(response);
+                    }
+                })
+            }
+        }else{
+            alert('please select folder');
+        }
     });
 
     /* function getresult(url) {

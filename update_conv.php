@@ -20,7 +20,20 @@ if(isset($_POST) && isset($_POST['conv_sid']) && !empty($_POST['conv_sid']) && !
     }catch(RestException $ex){
         echo json_encode(array('message'=>$ex->getMessages()));
     }
-}else{
-    echo json_encode(array('message'=>'Invalid Parameters'));
+}
+
+if(isset($_POST) && isset($_POST['cid']) && !empty($_POST['cid']) && !empty($_POST['selectedFolder'])){ 
+    $cid = $_POST['cid'];
+    $folder = $_POST['selectedFolder'];
+    foreach($cid as $conversation_sid){
+        try{
+            $conversation = $twilio->conversations->v1->conversations($conversation_sid)->update(["attributes" => json_encode(array('folder'=>$folder))]);
+            $conversation_array = $conversation->toArray();
+            
+        }catch(RestException $ex){
+            echo json_encode(array('message'=>$ex->getMessages()));
+        }
+    }
+    echo json_encode($conversation_array);
 }
 
