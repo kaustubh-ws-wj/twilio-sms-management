@@ -198,6 +198,13 @@
                                 <span class="sidebar-normal"> Messages </span>
                             </a>
                         </li>
+
+                        <li >
+                            <a href="individual-messages.php">
+                                <span class="sidebar-mini-icon">MSG</span>
+                                <span class="sidebar-normal">  Individual message </span>
+                            </a>
+                        </li>
                     
                     </ul>
                 </div>

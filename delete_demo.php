@@ -1,5 +1,9 @@
 <?php 
 
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 include 'config.php';
 require_once ("connection.php");
 require __DIR__ . '/vendor/autoload.php';
@@ -14,6 +18,7 @@ use Twilio\Exceptions\RestException;
 
 $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
+if ($_POST) {
 $eventType = $_POST['EventType'];
 $body = $_POST['Body'];
 $post = json_encode($_POST);
@@ -58,7 +63,7 @@ error_log('---Request End---');
             $reciEmail = $notif_email[0]['notification_email'];
 
             $participant = $twilio->conversations->v1->conversations($conversationSid)->participants($participantSid)->fetch();
-            $to = $participant->messagingBinding['address']; 
+            $to = $participant->messagingBinding['address'];  
 
             sendMailSMS($from,$to,$smsBody,$date,$reciEmail);
             http_response_code(200);
@@ -82,43 +87,68 @@ error_log('---Request End---');
 			http_response_code(200);
 			exit();
 	}
-	
-	    
+}
+function sendMailSMS($fromNumber,$toNumber,$smsBody,$date,$reciEmail){
+    $sender = 'services@simpletextsolutions.com';
+    $senderName = 'SimpleTextSolutions';
+    $recipient = 'cpbuyerslist@gmail.com';
+    $usernameSmtp = 'services@simpletextsolutions.com';
+    $passwordSmtp = 'pPk8mlm4hZAE';
+    $configurationSet = 'ConfigSet';
+    $host = 'mail.simpletextsolutions.com';
+    // $sender = 'webdeveloperswj@gmail.com';
+    // $senderName = 'sender name';
+    // $recipient = 'surajoshi1994@gmail.com';
+    // $usernameSmtp = 'webdeveloperswj@gmail.com';
+    // $passwordSmtp = 'WjWebDev45681$';
+    // $configurationSet = 'ConfigSet';
+    // $host = 'smtp.gmail.com'; 
+    $port = 587;
+    $subject = 'SMS from '.$fromNumber;
+    $bodyText =  "";
+    $bodyHtml = '<p>'.$smsBody.'</p><hr><p> From : '.$fromNumber.'  To :'.$toNumber.' <br> '.$date.'</p>';
+    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        // $mail->SMTPDebug = 2;
+        $mail->setFrom($sender, $senderName);
+        $mail->Username   = $usernameSmtp;
+        $mail->Password   = $passwordSmtp;
+        $mail->Host       = $host;
+        $mail->Port       = $port;
+        $mail->SMTPAuth   = true;
+        $mail->SMTPSecure = 'tls';
+        $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
+        $mail->addAddress($recipient);
+        $mail->isHTML(true);
+        $mail->Subject    = $subject;
+        $mail->Body       = $bodyHtml;
+        $mail->AltBody    = $bodyText;
+        $mail->Send();
+    } catch (phpmailerException $e) {
+        echo 'Message: ' .$e->getMessage();
+    } catch (Exception $e) {
+        echo 'Message: ' .$e->getMessage();
+    }
+}
+?>
 
-			function sendMailSMS($fromNumber,$toNumber,$smsBody,$date,$reciEmail){
-                $sender = 'services@simpletextsolutions.com';
-                $senderName = 'SimpleTextSolutions';
-                $recipient = 'cpbuyerslist@gmail.com';
-                $usernameSmtp = 'services@simpletextsolutions.com';
-                $passwordSmtp = 'pPk8mlm4hZAE';
-                $configurationSet = 'ConfigSet';
-                $host = 'mail.simpletextsolutions.com';
-                $port = 587;
-                $subject = 'SMS from '.$fromNumber;
-                $bodyText =  "";
-                $bodyHtml = '<p>'.$smsBody.'</p><hr><p> From : '.$fromNumber.'  To :'.$toNumber.' <br> '.$date.'</p>';
-                $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-                try {
-                    $mail->isSMTP();
-                    // $mail->SMTPDebug = 2;
-                    $mail->setFrom($sender, $senderName);
-                    $mail->Username   = $usernameSmtp;
-                    $mail->Password   = $passwordSmtp;
-                    $mail->Host       = $host;
-                    $mail->Port       = $port;
-                    $mail->SMTPAuth   = true;
-                    $mail->SMTPSecure = 'tls';
-                    $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
-                    $mail->addAddress($recipient);
-                    $mail->isHTML(true);
-                    $mail->Subject    = $subject;
-                    $mail->Body       = $bodyHtml;
-                    $mail->AltBody    = $bodyText;
-                    $mail->Send();
-                } catch (phpmailerException $e) {
-                    
-                } catch (Exception $e) {
-                
-                  
-                }
-    		}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="POST">
+        <input type="hideen" name="EventType" value="onMessageAdded">
+        <input type="hideen" name="Body" value="Email">
+        <input type="hideen" name="ConversationSid" value="CH94d78173e3fd4c1c8c22ef70004ce61f"> 
+        <input type="hideen" name="ParticipantSid" value="MB134dbba0e0c242458bef39686109284c"> 
+        <input type="hideen" name="DateCreated" value="2021-01-27T04:42:09.712Z">
+        <input type="hideen" name="Author" value="+16103162324"> 
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
