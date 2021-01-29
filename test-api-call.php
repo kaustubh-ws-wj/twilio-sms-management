@@ -86,11 +86,11 @@ error_log('---Request End---');
 	    
 
 			function sendMailSMS($fromNumber,$toNumber,$smsBody,$date,$reciEmail){
-                $sender = 'services@simpletextsolutions.com';
+                $sender = 'admin@simpletextsolutions.com';
                 $senderName = 'SimpleTextSolutions';
                 $recipient = 'cpbuyerslist@gmail.com';
-                $usernameSmtp = 'services@simpletextsolutions.com';
-                $passwordSmtp = 'pPk8mlm4hZAE';
+                $usernameSmtp = 'admin@simpletextsolutions.com';
+                $passwordSmtp = 'tFl&njH5H8@R'; 
                 $configurationSet = 'ConfigSet';
                 $host = 'mail.simpletextsolutions.com';
                 $port = 587;

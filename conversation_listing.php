@@ -1,4 +1,9 @@
 <?php 
+
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 include 'config.php';
 require_once ("connection.php");
 require __DIR__ . '/vendor/autoload.php';
@@ -28,13 +33,16 @@ function date_compare($a, $b)
             $attributes = json_decode($conversation_array['attributes'],true);
             if(!empty($attributes)){
                 if($attributes['folder'] == $folder_name){
+                    
                     $conv_sid = $conversation_array['sid'];
-                    $participant = $twilio->conversations->v1->conversations($conv_sid)->participants->read();
-                    $from = $participant[0]->messagingBinding['address'];
-                    $proxy_address = $participant[0]->messagingBinding['proxy_address'];
-                    $txt_time = $participant[0]->dateUpdated->format('Y-m-d H:i');
-                    $messages = $twilio->conversations->v1->conversations($conv_sid)->messages->read(1);
-                    $last_msg = $messages[0]->body;
+                    $participant = $twilio->conversations->v1->conversations($conv_sid)->participants->read(1);
+                    if(!empty($participant[0]->messagingBinding['address'])){
+                        $from = $participant[0]->messagingBinding['address'];
+                        $proxy_address = $participant[0]->messagingBinding['proxy_address'];
+                        $txt_time = $participant[0]->dateUpdated->format('Y-m-d H:i');
+                        $messages = $twilio->conversations->v1->conversations($conv_sid)->messages->read(1);
+                        $last_msg = $messages[0]->body;
+                    }
 
                     $list[] = array('conv_sid'=>$conv_sid,'from'=>$from,'proxy_address'=>$proxy_address,'txt_time'=>$txt_time,'last_msg'=>$last_msg);
 
@@ -63,4 +71,4 @@ function date_compare($a, $b)
 usort($list, 'date_compare');
 echo json_encode(array('status'=> $status,'list'=> json_encode($list)));
 
-
+?>

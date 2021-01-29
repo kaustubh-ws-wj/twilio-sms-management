@@ -10,8 +10,7 @@ use Twilio\Exceptions\RestException;
 
 $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
-if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty($_POST['call_routes_id']))
-{
+if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty($_POST['call_routes_id'])){
     $message_body = $_POST['message'];
     // $query_test = "SELECT * FROM numbers where numbers_group_id = {$_POST['group']}";
     // $result_test = mysqli_query($connect, $query_test);

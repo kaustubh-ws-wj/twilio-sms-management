@@ -7,6 +7,9 @@
 
     $query = "SELECT * FROM call_routes GROUP by `call_routes_name`";
     $result = mysqli_query($connect, $query);
+
+    $sql = "SELECT * FROM individual_messages";
+    $data = mysqli_query($connect, $sql);
     
     use Twilio\Rest\Client;
     use Twilio\Exceptions\RestException;
@@ -27,8 +30,18 @@
             ?>
             <div class="content">
                 <div class="show_status">
-                
-                
+                <?php
+                    if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] == 1) {
+                ?>
+                    <h6 class="text-center color_green">Message has been send successfully</h6>
+                <?php
+                }
+                    else if (isset($_GET['status']) && empty($_GET['status']) && $_GET['status'] == 0) {
+                ?>
+                    <h6 class="text-center color_red">Something went Wrong</h6>
+                <?php
+                }
+                ?>               
                 </div>
                 <div class="row">
                     <div class="col-md-12">
@@ -49,12 +62,14 @@
                                             <th >Status</th>
                                         </thead>
                                         <tbody>
-                                            <td>01</td>
-                                            <td>01</td>
-                                            <td>01</td>
-                                            <td>01</td>
-                                            <td>01</td>
-                                            <td>01</td>
+                                        <?php while($im = mysqli_fetch_assoc($data)){ ?>
+                                            <td></td>
+                                            <td><?= $im['msg_body'] ?></td>
+                                            <td><?= $im['recipient_number'] ?></td>
+                                            <td><?= $im['sender_number'] ?></td>
+                                            <td><?= $im['date'] ?></td>
+                                            <td><?= $im['status'] ?></td>
+                                        <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -74,14 +89,14 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form action="individual-functions.php" method="POST">
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">Recipient Number</label>
-                        <input type="text" class="form-control" name="" id="recipient-name">
+                        <input type="text" class="form-control" name="recipient_number" id="recipient-name" required>
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlSelect1">Call Route Name</label>
-                        <select class="form-control route_name" name="route_name" id="route_name">
+                        <select class="form-control route_name" name="route_name" id="route_name" required>
                             <option value="0">-- Select --</option>
                             <?php while($row = mysqli_fetch_assoc($result)){ ?>
                                 <option value="<?= $row['call_routes_name'] ?>"><?= $row['call_routes_name'] ?></option>
@@ -90,15 +105,14 @@
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlSelect1">Sender Number</label>
-                        <select class="form-control" name="sender_number" id="sender_number">
-                            <option>1</option>
+                        <select class="form-control" name="sender_number" id="sender_number" required>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">Message:</label>
-                        <textarea class="form-control" id="message-text"></textarea>
+                        <textarea class="form-control" name="message" id="message-text" required></textarea>
                     </div>
-                    <button type="button" class="btn btn-primary float-right">Send</button>
+                    <input type="submit" class="btn btn-primary float-right" name="send_msg" value="Send">
                 </form>
             </div>
             <div class="modal-footer">
@@ -116,13 +130,16 @@
          $(document).ready(function(){
             $('.route_name').on('change', function(){
                 var routeName = $(this).val();
-
                 $.ajax({
                     type: 'POST',
                     url: 'individual-functions.php',
                     data: {"routeName":routeName},
                     success: function(data) {
-                        console.log(data);
+                        $('#sender_number').html('');
+                        var datas = $.parseJSON(data);
+                        $.each(datas, function(index, value) {
+                            $('#sender_number').append($("<option></option>").val(value.call_routes_number).text(value.call_routes_number));
+                        }); 
                     }
                 })
             });
