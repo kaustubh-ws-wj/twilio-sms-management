@@ -229,7 +229,7 @@
                                 +"<span class='d-flex'>"
                                     +"<span class='message-highlight'>"
                                         +"<span class='user-name'>"+obj_list[i].from+"</span>"
-                                        +"<span class='last-m'>"+obj_list[i].last_msg+"</span>"
+                                        +"<span class='last-m'>"+obj_list[i].last_msg.substring(0,30)+"</span>"
                                     +"</span>"
                                 +"</span>"
                                 +"<span class='m-time'>"+obj_list[i].txt_time+"</span>"
@@ -430,4 +430,13 @@
     $('form#send').on('focus',function(){
         alert();
     });
+
+    function countChar(val) {
+        var len = val.value.length;
+        if (len >= 160) {
+            $('.text-warning').text('you have exceeded 160 charcters limit'); 
+        } else {
+            $('#current-count').text(160 - len);
+        }
+    };
 </script>

@@ -87,7 +87,8 @@ if(!empty($_POST['conversation_sid'])){
                         <div class="form-group">
                             <input type="hidden" name="conversation_sid" value="'.$conversation_sid.'">
                             <input type="hidden" name="author" value="'.$proxy_address.'">
-                            <input type="text" class="form-control" required name="body" placeholder="Type Your Message">
+                            <input type="text" class="form-control" required name="body" placeholder="Type Your Message" onkeyup="countChar(this)">
+                            <small id="message-text" class="form-text text-muted text-warning"> <span id="current-count">160</span> remaining out of 160</small>
                             <input type="submit" id="send" value="Send">
                         </div>
                     </form>

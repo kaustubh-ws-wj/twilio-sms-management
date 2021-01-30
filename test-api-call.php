@@ -76,7 +76,7 @@ error_log('---Request End---');
                 $notif_email = mysqli_fetch_all($get_notif_email_result,MYSQLI_ASSOC);
                 $reciEmail = $notif_email[0]['notification_email'];
 				
-				 sendMailSMS($_POST['From'],$_POST['To'],$smsBody,$date,$reciEmail);
+				//  sendMailSMS($_POST['From'],$_POST['To'],$smsBody,$date,$reciEmail);
                  //demo($_POST['From'],$_POST['To'],$smsBody,$date,$reciEmail);
             }
 			http_response_code(200);

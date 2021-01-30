@@ -131,7 +131,8 @@
                         <div class="col-md-12">
                           <label class="card-title">Enter Text Message</label>
                           <div class="form-group ">
-                            <textarea rows="4" id="text_message" name="message" class="form-control" placeholder="Write!" required=""></textarea>
+                            <textarea rows="4" id="text_message" name="message" class="form-control" placeholder="Write!" onkeyup="countChar(this)" required=""></textarea>
+                            <small id="message-text" class="form-text text-muted text-warning"> <span id="current-count">160</span> remaining out of 160</small>
                           </div>
                           <div class="card-body col-buttons" id="col-buttons">
                           </div>
@@ -224,5 +225,14 @@ $(document).ready(function(){
       var pre_string = $('#text_message').val() + col;
       $("#text_message").val(pre_string);
     });
+
+    function countChar(val) {
+      var len = val.value.length;
+      if (len >= 160) {
+        $('.text-warning').text('you have exceeded 160 charcters limit'); 
+      } else {
+        $('#current-count').text(160 - len);
+      }
+    };
 
 </script>

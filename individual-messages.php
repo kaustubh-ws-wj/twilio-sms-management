@@ -48,7 +48,7 @@
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Send New</button>
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title"> All Purchased Numbers</h4>
+                                <h4 class="card-title"> All Individual Message History</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -85,7 +85,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Individual Message</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
@@ -127,7 +127,7 @@
     ?>
     
     <script>
-         $(document).ready(function(){
+        $(document).ready(function(){
             $('.route_name').on('change', function(){
                 var routeName = $(this).val();
                 $.ajax({
