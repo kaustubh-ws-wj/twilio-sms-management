@@ -431,7 +431,31 @@
         alert();
     });
 
-    function countChar(val) {
+    $(document).on('click', '#send', function(){
+        var body = $('#f_body').val();
+        var author = $('#f_author').val();
+        var conversation_sid = $('#f_conversation_sid').val();
+        $.ajax({
+            url:'send-ajax-msg.php',
+            type:'POST',
+            data:{'body':body,'author':author,'conversation_sid':conversation_sid},
+            beforeSend: function() {
+                $("#overlay_m").show();
+            },
+            success: function(data) {
+                $("#resultHtml .latest-msg").append(data);
+                $("#resultHtml #f_body").val('');
+                $('.text-warning').text('<span id="current-count">160</span> remaining out of 160'); 
+            },
+            error: function() {},
+            complete:function(response){
+                $("#overlay_m").hide();
+            }
+        })
+    })
+    
+
+    function countChar(val='') {
         var len = val.value.length;
         if (len >= 160) {
             $('.text-warning').text('you have exceeded 160 charcters limit'); 

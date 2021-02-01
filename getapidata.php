@@ -24,8 +24,7 @@ if(!empty($_POST['conversation_sid'])){
     $conversation_sid = $_POST['conversation_sid'];
     
     $messages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
-    
-    
+   
     $html = '<div class="messages-content-header">
                 <div class="profile-info">
                     <div class="user-info">
@@ -42,6 +41,7 @@ if(!empty($_POST['conversation_sid'])){
         if(!empty($messages)){
 
             $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
+            
             $campaing_message_array = $campaign_messages_result[0]->toArray();
 
             $html .='<div class="single-message self-message text-right">
@@ -79,21 +79,20 @@ if(!empty($_POST['conversation_sid'])){
                                 </div>
                             </div>';
         }
-        
+        $html .= '<div class="latest-msg"> </div>';
         $html .=    '</div>
                 </div>';
         $html.='<div class="send-message">
-                    <form id="conv_msg_form" action="create_conv_message.php" method="POST" class="lt-form">
-                        <div class="form-group">
-                            <input type="hidden" name="conversation_sid" value="'.$conversation_sid.'">
-                            <input type="hidden" name="author" value="'.$proxy_address.'">
-                            <input type="text" class="form-control" required name="body" placeholder="Type Your Message" onkeyup="countChar(this)">
+                    <div class="form-group">
+                        <div class="iconsa">
+                            <input type="hidden" name="conversation_sid" id="f_conversation_sid" value="'.$conversation_sid.'">
+                            <input type="hidden" name="author" id="f_author" value="'.$proxy_address.'">
+                            <input type="text" class="form-control" id="f_body" name="body" placeholder="Type Your Message" onkeyup="countChar(this)" required>
                             <small id="message-text" class="form-text text-muted text-warning"> <span id="current-count">160</span> remaining out of 160</small>
-                            <input type="submit" id="send" value="Send">
+                            <input type="submit"  id="send" value="Send">  
                         </div>
-                    </form>
+                    </div>
                 </div>';
 
 echo $html;
 }?>
-
