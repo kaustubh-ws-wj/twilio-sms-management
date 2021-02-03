@@ -63,12 +63,14 @@
                                         </thead>
                                         <tbody>
                                         <?php while($im = mysqli_fetch_assoc($data)){ ?>
+                                        <tr>
                                             <td></td>
                                             <td><?= $im['msg_body'] ?></td>
                                             <td><?= $im['recipient_number'] ?></td>
                                             <td><?= $im['sender_number'] ?></td>
                                             <td><?= $im['date'] ?></td>
                                             <td><?= $im['status'] ?></td>
+                                        <tr>
                                         <?php } ?>
                                         </tbody>
                                     </table>

@@ -25,6 +25,16 @@
 
     $trash = "SELECT * FROM folder where folder_name = 'trash'";
     $trash_result = mysqli_query($connect,$trash);
+
+    $unread_folder=array();
+    $unread_folder_conid=array();
+    $notification_dot = "SELECT folder,conversationSid FROM unread where status = '1' ";
+    $dot = mysqli_query($connect,$notification_dot);
+    while($dots = mysqli_fetch_assoc($dot)){
+        array_push($unread_folder,$dots['folder']);
+        array_push($unread_folder_conid,$dots['conversationSid']);
+    }
+    
 ?>
   <style>
     #overlay_main {
@@ -35,6 +45,17 @@
         height: 100%;
         width: 100%;
         z-index: 9999999;
+    }
+    .dot{
+          height: 12px;
+          width: 12px;
+          background-color: #f96332;
+          border-radius: 50%;
+          float: right;
+          margin: 7px 10px 0 0;
+        }
+    .side-navi ul li a{
+        float:left;
     }
   </style>
   <body class=" sidebar-mini ">
@@ -74,13 +95,15 @@
                                                 <?php while($folders = mysqli_fetch_assoc($folder_query_result)){ 
                                                     if ($folders['folder_id'] != 8) {                                                       
                                                 ?>
-                                                    <li class="nav-item" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                    <li class="nav-item <?= $folders['folder_name']; ?>" ondrop="drop(event)" ondragover="allowDrop(event)">
                                                         <a class="nav-link collapsed py-1 folder" data-num="<?= $folders['folder_id']; ?>" data-name="<?= $folders['folder_name']; ?>" data-toggle="collapse" ><i class="fa fa-caret-right" aria-hidden="true"></i><span><?= $folders['folder_name'];?></span></a>
+                                                        <span class="li-dot <?=(in_array($folders['folder_name'],$unread_folder))?'dot':'' ?>"></span>
                                                     </li>
                                                 <?php } }
                                                 while($trash = mysqli_fetch_assoc($trash_result)){ ?>
-                                                    <li class="nav-item" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                    <li class="nav-item <?= $trash['folder_name']; ?>" ondrop="drop(event)" ondragover="allowDrop(event)">
                                                         <a class="nav-link collapsed py-1 folder" data-num="<?= $trash['folder_id']; ?>" data-name="<?= $trash['folder_name']; ?>" data-toggle="collapse" ><i class="fa fa-caret-right" aria-hidden="true"></i><span><?= $trash['folder_name'];?></span></a>
+                                                        <span class="li-dot <?= (in_array($trash['folder_name'],$unread_folder))?'dot':'' ?>"></span>
                                                     </li>
                                                 <?php }?>
                                                 <li class="nav-item pt-4">
@@ -222,10 +245,13 @@
             success:function(response){
                 var obj = JSON.parse(response);
                 var obj_list = JSON.parse(obj.list);
+                var js_array = [<?php echo '"'.implode('","', $unread_folder_conid).'"' ?>];
+                console.log(js_array);
                 if(obj_list.length > 0){
                     $.each(obj_list,function(i){
+                        var dot = (js_array.includes(obj_list[i].conv_sid)) ? "dot" : "";
                         list += "<input type='checkbox' value='"+obj_list[i].conv_sid+"' converstaionsid='"+obj_list[i].conv_sid+"' id='user-box_"+i+"' data-number='"+i+"' class='mul-checkbox' style=' float: left; display:none'>"
-                            +"<a class='nav-link ui-widget-content' draggable='true' ondragstart='drag(event)' id='user-tab_"+i+"' converstaionsid='"+obj_list[i].conv_sid+"' data-toggle='pill' href='#' role='tab' aria-controls='user' onClick='getMessages(\""+obj_list[i].conv_sid+"\",\""+obj_list[i].proxy_address+"\",\""+obj_list[i].from+"\")' aria-selected='true' >"
+                            +"<a class='nav-link ui-widget-content convs' draggable='true' ondragstart='drag(event)' id='user-tab_"+i+"' converstaionsid='"+obj_list[i].conv_sid+"' data-toggle='pill' href='#' role='tab' aria-controls='user' onClick='getMessages(\""+obj_list[i].conv_sid+"\",\""+obj_list[i].proxy_address+"\",\""+obj_list[i].from+"\")' aria-selected='true' >"
                                 +"<span class='d-flex'>"
                                     +"<span class='message-highlight'>"
                                         +"<span class='user-name'>"+obj_list[i].from+"</span>"
@@ -233,6 +259,7 @@
                                     +"</span>"
                                 +"</span>"
                                 +"<span class='m-time'>"+obj_list[i].txt_time+"</span>"
+                                +"<span class='unread-msg "+dot+"'> </span>"
                             +"</a>";
                     });
                 }else{
@@ -390,7 +417,6 @@
     function getMessages(conv_sid,proxy_address,from_number) {
         $(".nav-link").removeClass("active");
         $(this).addClass("active");  
-        
         var profileHeader = '';
         var messageBody = '';
         
@@ -403,6 +429,7 @@
             },
             success: function(data) {
                 $("#resultHtml").html(data);
+                addredot();
             },
             error: function() {},
             complete:function(response){
@@ -454,6 +481,30 @@
         })
     })
     
+    $(document).on('click', '.convs', function(){
+        $(this).find('.unread-msg').removeClass("dot");
+    });
+
+    function addredot(){
+        $.ajax({
+            url:"individual-functions.php",
+            type: "POST",
+            dateType: "Json",
+            data:{notiFolder:'true'},
+            success: function(data){
+                var obj = JSON.parse(data);
+                objs = obj[0];
+                $('.li-dot').removeClass("dot");
+                for(var i=0; i < objs.length; i++){
+                    var folderName = objs[i];
+                    if (folderName != undefined || folderName != 'undefined' || typeof(folderName) != "undefined" || typeof(folderName) != undefined) {
+                        console.log(folderName);
+                        $('.'+folderName).find('.li-dot').addClass("dot");
+                    }
+                }
+            }
+        })
+    }
 
     function countChar(val='') {
         var len = val.value.length;

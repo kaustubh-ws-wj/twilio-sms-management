@@ -39,5 +39,17 @@
         }
     }
 
+    if(isset($_POST['notiFolder'])){
+        $unread_folder=array();
+        $notification_dot = "SELECT folder FROM unread where status = '1' GROUP BY folder ";
+        $dot = mysqli_query($connect,$notification_dot);
+        $i = 0;
+        while($dots = mysqli_fetch_assoc($dot)){
+            $unread_folder[$i] = $dots['folder'];
+            $i++;
+        }
+        echo json_encode(array($unread_folder));
+    }
+
 
 ?>

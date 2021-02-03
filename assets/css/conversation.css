@@ -140,6 +140,14 @@ div#overlay_m img {
           width: 30px;
           padding: 5px;
         }
+        .dot{
+          height: 15px;
+          width: 15px;
+          background-color: #e81717;
+          border-radius: 50%;
+          float: right;
+          margin: 7px 10px 0 0;
+        }
     /* line 335, ../scss/layout/_dashboard.scss */
     .tl-dashboard .main .db-action {
       padding: 15px 0 0; }

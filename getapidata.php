@@ -22,19 +22,20 @@ if(!empty($_POST['conversation_sid'])){
     }
     
     $conversation_sid = $_POST['conversation_sid'];
+
+    $query = "UPDATE `unread` SET `status` = '0' WHERE `unread`.`conversationSid` = '${conversation_sid}'";
+    $returndata = mysqli_query($connect, $query);
     
     $messages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
    
-    $html = '<div class="messages-content-header">
-                <div class="profile-info">
-                    <div class="user-info">
-                        <span class="user-name">'.$_POST['from_number'].'</span>
-                        <span class="user-availability">Online</span>
-                    </div>
-                </div>   
-            </div>';
-
-    
+        $html = '<div class="messages-content-header">
+                    <div class="profile-info">
+                        <div class="user-info">
+                            <span class="user-name">'.$_POST['from_number'].'</span>
+                            <span class="user-availability">Online</span>
+                        </div>
+                    </div>   
+                </div>';
         
         $html .='<div class="messages-content-body">
                     <div class="tab-pane fade show active" id="user-one" role="tabpanel" aria-labelledby="user-one-tab" style="height: 510px;">';
@@ -93,6 +94,5 @@ if(!empty($_POST['conversation_sid'])){
                         </div>
                     </div>
                 </div>';
-
-echo $html;
+        echo $html;
 }?>

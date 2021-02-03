@@ -10,11 +10,15 @@ use Twilio\Exceptions\RestException;
 $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
 $participantSid = 'MBdc0adf037b4342fa9d3a4e471b5ff0a2';
-$conversationSid = 'CH21f6d4b4a9e74e1da2f8be0785cb9d5b';
+$conversationSid = 'CH4f4cfc1203d147528eea0dd80d1a3222';
 
 
-$participant = $twilio->conversations->v1->conversations($conversationSid)->messages->read();
-echo "hello";
-echo "<pre>";
-print_r($participant);  
+$participant = $twilio->conversations->v1->conversations($conversationSid)->fetch();
+$attr = json_decode($participant->attributes, true);
+$folder = $attr['folder'];
+
+$sql = "INSERT INTO `unread` ( `folder`, `conversationSid`, `fromNumber`, `status`) VALUES ('${folder}','${conversationSid}', '1234567890', '1')";
+echo $sql;
+// mysqli_query($connect, $sql);
+
 ?>

@@ -51,6 +51,13 @@ error_log('---Request End---');
             $smsBody = $_POST['Body'];
             $date = $_POST['DateCreated'];
             $from = $_POST['Author'];
+
+            $participant = $twilio->conversations->v1->conversations($conversationSid)->fetch();
+            $attr = json_decode($participant->attributes, true);
+            $folder = $attr['folder'];
+
+            $sql = "INSERT INTO `unread` ( `folder`, `conversationSid`, `fromNumber`, `status`) VALUES ('${folder}','${conversationSid}', '${from}', '1')";
+            mysqli_query($connect, $sql);
             
             $query = "SELECT notification_email FROM signup";
             $get_notif_email_result = mysqli_query($connect, $query);
