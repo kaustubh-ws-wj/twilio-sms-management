@@ -27,19 +27,24 @@ error_log('---Request End---');
 	    case 'onConversationAdded':
 			//Perform Conversation Add Operation to Update attribute with default Folder name.
 			//$conversation = $twilio->conversations->v1->conversations($conversationSid)->update(["attributes" => "{'folder':'Inbox'}"]);
-
-			$sql = "INSERT INTO conversations (response) values ('$post')";
-			mysqli_query($connect, $sql);
-			$conversationSid = $_POST['ConversationSid'];
+            $conversationSid = $_POST['ConversationSid'];
+            $date = $_POST['DateCreated'];
+            $MessagingBinding_ProxyAddress = $_POST['MessagingBinding_ProxyAddress'];
+            $MessagingBinding_Address = $_POST['MessagingBinding_Address'];
+            
 
 			$twilio_number = $_POST["MessagingBinding_ProxyAddress"];
 			$get_folder_query = "SELECT folder_name FROM call_routes WHERE call_routes_number = '$twilio_number'";
 			$get_folder_result = mysqli_query($connect, $get_folder_query);
 			$folder_name = mysqli_fetch_all($get_folder_result,MYSQLI_ASSOC);
-			$folder = $folder_name[0]['folder_name'];
+            $folder = $folder_name[0]['folder_name'];
 
-			$conversation = $twilio->conversations->v1->conversations($conversationSid)->update(["attributes" => json_encode(array('folder'=>$folder))]);
-			http_response_code(200);
+            $sql = "INSERT INTO `conversations` ( `ConversationSid`, `DateCreated`, `lastMsg`, `MessagingBinding_ProxyAddress`, `MessagingBinding_Address`, `folder`, `msgadded`, `response`) VALUES ( '$conversationSid', '$date', '', '$MessagingBinding_ProxyAddress', '$MessagingBinding_Address', '$folder', '0', '$post')";
+            mysqli_query($connect, $sql);
+
+            $conversation = $twilio->conversations->v1->conversations($conversationSid)->update(["attributes" => json_encode(array('folder'=>$folder))]);
+            http_response_code(200);
+            
             break;
 
         case 'onMessageAdded':    
@@ -47,7 +52,7 @@ error_log('---Request End---');
             $participantSid = $_POST['ParticipantSid'];
             $sql = "INSERT INTO conversations (response) values ('$post')";
             mysqli_query($connect, $sql);
-            // {"RetryCount":"0","EventType":"onMessageAdded","Attributes":"{}","DateCreated":"2021-01-11T15:18:18.310Z","Author":"+16103162324","Index":"0","MessageSid":"IM91dd7dbac17847b4ace86450180bcd39","ParticipantSid":"MB14cf856e712a45e3a46afffad20bcf62","Body":"1018","AccountSid":"AC529db4ea06aba0a1ed7356e28d6b0dbb","Source":"SMS","ConversationSid":"CHcbf9398587e445589de80b077992f041"}
+        
             $smsBody = $_POST['Body'];
             $date = $_POST['DateCreated'];
             $from = $_POST['Author'];
@@ -58,7 +63,20 @@ error_log('---Request End---');
 
             $sql = "INSERT INTO `unread` ( `folder`, `conversationSid`, `fromNumber`, `status`) VALUES ('${folder}','${conversationSid}', '${from}', '1')";
             mysqli_query($connect, $sql);
-            
+
+            $consql  = "SELECT ConversationSid FROM conversations WHERE msgadded = '0'";
+            $cids = mysqli_query($connect,$consql);
+
+            while($cid = mysqli_fetch_assoc($cids)){
+                $cidss = $cid['ConversationSid'];
+
+                $messages = $twilio->conversations->v1->conversations($cidss)->messages->read(1);
+                $last_msg = $messages[0]->body;
+
+                $setquer = "UPDATE `conversations` SET `lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
+                $msgupdate = mysqli_query($connect,$setquer);
+            }
+
             $query = "SELECT notification_email FROM signup";
             $get_notif_email_result = mysqli_query($connect, $query);
             $notif_email = mysqli_fetch_all($get_notif_email_result,MYSQLI_ASSOC);
@@ -68,6 +86,8 @@ error_log('---Request End---');
             $to = $participant->messagingBinding['address']; 
 
             sendMailSMS($from,$to,$smsBody,$date,$reciEmail);
+
+
             http_response_code(200);
             break;
             

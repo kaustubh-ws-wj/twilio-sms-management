@@ -15,7 +15,7 @@ define('BASIC_AUTH_KEY',base64_encode(ACCOUNT_SID.":".AUTH_TOKEN));
 
 
 define('ACCOUNT_SID','AC529db4ea06aba0a1ed7356e28d6b0dbb');
-define('AUTH_TOKEN','d9fb49ac5cb311a2ce1a565d3caec059');
+define('AUTH_TOKEN','4a0ca7ba68f3daf00eaeefeeb17da816');
 $username = 'AC529db4ea06aba0a1ed7356e28d6b0dbb';
-$auth_token = 'd9fb49ac5cb311a2ce1a565d3caec059';
+$auth_token = '4a0ca7ba68f3daf00eaeefeeb17da816';
 define('BASIC_AUTH_KEY',base64_encode(ACCOUNT_SID.":".AUTH_TOKEN));

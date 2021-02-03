@@ -9,16 +9,17 @@ use Twilio\Rest\Client;
 use Twilio\Exceptions\RestException;
 $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
-$participantSid = 'MBdc0adf037b4342fa9d3a4e471b5ff0a2';
-$conversationSid = 'CH4f4cfc1203d147528eea0dd80d1a3222';
+$sql  = "SELECT ConversationSid FROM conversations WHERE msgadded = '0'";
+$cids = mysqli_query($connect,$sql);
 
+while($cid = mysqli_fetch_assoc($cids)){
+    $cidss = $cid['ConversationSid'];
 
-$participant = $twilio->conversations->v1->conversations($conversationSid)->fetch();
-$attr = json_decode($participant->attributes, true);
-$folder = $attr['folder'];
+    $messages = $twilio->conversations->v1->conversations($cidss)->messages->read(1);
+    $last_msg = $messages[0]->body;
 
-$sql = "INSERT INTO `unread` ( `folder`, `conversationSid`, `fromNumber`, `status`) VALUES ('${folder}','${conversationSid}', '1234567890', '1')";
-echo $sql;
-// mysqli_query($connect, $sql);
+    $query = "UPDATE `conversations` SET `lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
+    $msgupdate = mysqli_query($connect,$query);
+}
 
-?>
+?> 
