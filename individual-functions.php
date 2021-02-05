@@ -51,5 +51,14 @@
         echo json_encode(array($unread_folder));
     }
 
+    if(isset($_POST['authid'])){
+        $authid = $_POST['authid'];
+        $querys = "UPDATE `authid` SET `authid`='$authid' WHERE `id` = 1";
+        $auth = mysqli_query($connect,$querys);
+        if($auth){
+            header("location: user_profile.php?status=1"); 
+        }
+    }
+
 
 ?>

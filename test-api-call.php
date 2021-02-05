@@ -50,8 +50,8 @@ error_log('---Request End---');
         case 'onMessageAdded':    
             $conversationSid = $_POST['ConversationSid'];
             $participantSid = $_POST['ParticipantSid'];
-            $sql = "INSERT INTO conversations (response) values ('$post')";
-            mysqli_query($connect, $sql);
+            // $sql = "INSERT INTO conversations (response) values ('$post')";
+            // mysqli_query($connect, $sql);
         
             $smsBody = $_POST['Body'];
             $date = $_POST['DateCreated'];
@@ -87,7 +87,6 @@ error_log('---Request End---');
 
             sendMailSMS($from,$to,$smsBody,$date,$reciEmail);
 
-
             http_response_code(200);
             break;
             
@@ -108,9 +107,8 @@ error_log('---Request End---');
             }
 			http_response_code(200);
 			exit();
-	}
-	
-	    
+    }
+    
 
 			function sendMailSMS($fromNumber,$toNumber,$smsBody,$date,$reciEmail){
                 $sender = 'admin@simpletextsolutions.com';

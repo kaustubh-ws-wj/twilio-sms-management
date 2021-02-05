@@ -191,7 +191,7 @@
                                                         <!-- <a class="nav-link" data-toggle="pill" href="#" role="tab" aria-controls="user" aria-selected="true">
                                                             <span class="d-flex">
                                                                 <span class="message-highlight">
-                                                                    <span class="user-name">No Contacts Found</span> 
+                                                                    <span class="user-name">No Contacts Found</span>
                                                                 </span>
                                                             </span>
                                                         </a> -->
@@ -274,8 +274,8 @@
                 $('#conversation_list').html(list);
                 
             },complete:function(response){
-                    $("#overlay").hide();
-                    $('.folder_list').css('pointer-events','');
+                $("#overlay").hide();
+                $('.folder_list').css('pointer-events','');
             }
         });
     });
