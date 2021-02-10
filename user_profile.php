@@ -3,7 +3,7 @@
    include 'inc/head.php';
    include 'connection.php';
    if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
-     $query = "SELECT * FROM signup where id = {$_SESSION['user_id']}";
+      $query = "SELECT * FROM signup where id = {$_SESSION['user_id']}";
    }
    $result = mysqli_query($connect, $query);
    $row = mysqli_fetch_assoc($result);
@@ -20,7 +20,7 @@
             $page_name = "View Contacts";
             include 'inc/nav.php';
             ?>
-         <!-- End Navbar -->
+         <!-- End Navbarr -->
          <div class="content">
             <div class="show_status">
               
@@ -96,7 +96,7 @@
                               </div>
                            </div>
                            <div class="row">
-                              <div class="col-md-3">
+                              <div class="col-md-4">
                                  <div class="form-group">
                                     <label for="exampleInputPhone">Phone Number</label>
                                     <input type="tel" class="form-control" name="phone_number" value="<?= $row['phone_number'] ?>" required>
@@ -104,7 +104,7 @@
                               </div>
                            </div>
                            <div class="row">
-                              <div class="col-md-6">
+                              <div class="col-md-4">
                                  <div class="form-group">
                                     <label>Default Folder</label><br>
                                     <select id="folder" name="default_folder" class="form-control" required>

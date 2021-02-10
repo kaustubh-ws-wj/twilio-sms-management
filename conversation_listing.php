@@ -27,7 +27,7 @@ $sql = "SELECT * FROM conversations where folder = '$folder_name'";
 $con_arry = mysqli_query($connect,$sql);
 
 while($conv = mysqli_fetch_assoc($con_arry)){ 
-    $list[] = array('conv_sid'=>$conv['ConversationSid'],'from'=>$conv['MessagingBinding_Address'],'proxy_address'=>$conv['MessagingBinding_ProxyAddress'],'txt_time'=>$conv['DateCreated'],'last_msg'=>$conv['lastMsg']);
+    $list[] = array('conv_sid'=>$conv['ConversationSid'],'from'=>$conv['MessagingBinding_Address'],'proxy_address'=>$conv['MessagingBinding_ProxyAddress'],'txt_time'=>date_format(new DateTime($conv['DateCreated']),'Y-m-d h:i:s A'),'last_msg'=>$conv['lastMsg']);
 }
 
 $status = 'found';

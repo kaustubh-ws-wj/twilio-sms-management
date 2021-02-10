@@ -45,13 +45,13 @@ if(!empty($_POST['conversation_sid'])){
             
             $campaing_message_array = $campaign_messages_result[0]->toArray();
 
-            $html .='<div class="single-message self-message text-right">
-                            <div class="user-massage">
-                                <span class="user-name">'.$campaing_message_array['from'].'</span>
-                                <p><span class="color">'.$campaing_message_array['body'].'</span></p>
-                                <span style="font-size: 10px;" class="m-time">'. $campaing_message_array['dateUpdated']->format('Y-m-d H:i A').'</span>
-                            </div>
-                        </div>';
+            // $html .='<div class="single-message self-message text-right">
+            //                 <div class="user-massage">
+            //                     <span class="user-name">'.$campaing_message_array['from'].'</span>
+            //                     <p><span class="color">'.$campaing_message_array['body'].'</span></p>
+            //                     <span style="font-size: 10px;" class="m-time">'. $campaing_message_array['dateUpdated']->format('Y-m-d H:i A').'</span>
+            //                 </div>
+            //             </div>';
 
             foreach ($messages as $key => $value){    
                 if(in_array($value->author,$purchased_number)){

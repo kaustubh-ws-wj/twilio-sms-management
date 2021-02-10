@@ -9,17 +9,32 @@ use Twilio\Rest\Client;
 use Twilio\Exceptions\RestException;
 $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
-$sql  = "SELECT ConversationSid FROM conversations WHERE msgadded = '0'";
-$cids = mysqli_query($connect,$sql);
+$proxy_address = "+12675783409";
+$from_number = "+13476055623";
+$conversation_sid = "CH11e5625a66394b46ba5b2f67b565b305";
 
-while($cid = mysqli_fetch_assoc($cids)){
-    $cidss = $cid['ConversationSid'];
+// $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
 
-    $messages = $twilio->conversations->v1->conversations($cidss)->messages->read(1);
-    $last_msg = $messages[0]->body;
+$messages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
 
-    $query = "UPDATE `conversations` SET `lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
-    $msgupdate = mysqli_query($connect,$query);
-}
+echo "<pre>";
+// print_r($campaign_messages_result);
+
+// echo "-------------------------------------------------";
+
+print_r($messages);
+
+// $sql  = "SELECT ConversationSid FROM conversations WHERE msgadded = '0'";
+// $cids = mysqli_query($connect,$sql);
+
+// while($cid = mysqli_fetch_assoc($cids)){
+//     $cidss = $cid['ConversationSid'];
+
+//     $messages = $twilio->conversations->v1->conversations($cidss)->messages->read(1);
+//     $last_msg = $messages[0]->body;
+
+//     $query = "UPDATE `conversations` SET `lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
+//     $msgupdate = mysqli_query($connect,$query);
+// }
 
 ?> 

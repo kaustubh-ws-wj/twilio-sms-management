@@ -64,17 +64,18 @@ error_log('---Request End---');
             $sql = "INSERT INTO `unread` ( `folder`, `conversationSid`, `fromNumber`, `status`) VALUES ('${folder}','${conversationSid}', '${from}', '1')";
             mysqli_query($connect, $sql);
 
-            $consql  = "SELECT ConversationSid FROM conversations WHERE msgadded = '0'";
+            $consql  = "SELECT ConversationSid FROM conversations WHERE msgadded = '0' AND ConversationSid != ''";
             $cids = mysqli_query($connect,$consql);
 
             while($cid = mysqli_fetch_assoc($cids)){
                 $cidss = $cid['ConversationSid'];
+                if (!empty($cidss)) {
+                    $messages = $twilio->conversations->v1->conversations($cidss)->messages->read(1);
+                    $last_msg = $messages[0]->body;
 
-                $messages = $twilio->conversations->v1->conversations($cidss)->messages->read(1);
-                $last_msg = $messages[0]->body;
-
-                $setquer = "UPDATE `conversations` SET `lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
-                $msgupdate = mysqli_query($connect,$setquer);
+                    $setquer = "UPDATE `conversations` SET `lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
+                    $msgupdate = mysqli_query($connect,$setquer);
+                }
             }
 
             $query = "SELECT notification_email FROM signup";
