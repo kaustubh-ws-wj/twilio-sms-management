@@ -70,10 +70,11 @@ error_log('---Request End---');
             while($cid = mysqli_fetch_assoc($cids)){
                 $cidss = $cid['ConversationSid'];
                 if (!empty($cidss)) {
-                    $messages = $twilio->conversations->v1->conversations($cidss)->messages->read(1);
-                    $last_msg = $messages[0]->body;
+                    $messages = $twilio->conversations->v1->conversations($cidss)->messages->read();
+                    $i = count($messages);
+                    $last_msg = $messages[--$i]->body;
 
-                    $setquer = "UPDATE `conversations` SET `lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
+                    $setquer = "UPDATE `conversations` SET `DateCreated`='$date',`lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
                     $msgupdate = mysqli_query($connect,$setquer);
                 }
             }

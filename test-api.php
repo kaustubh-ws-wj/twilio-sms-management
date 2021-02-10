@@ -11,7 +11,7 @@ $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
 $proxy_address = "+12675783409";
 $from_number = "+13476055623";
-$conversation_sid = "CH11e5625a66394b46ba5b2f67b565b305";
+$conversation_sid = "CH8557e22c9bbf4a97ba4770e5d639b177";
 
 // $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
 
@@ -21,8 +21,8 @@ echo "<pre>";
 // print_r($campaign_messages_result);
 
 // echo "-------------------------------------------------";
-
-print_r($messages);
+$i = count($messages);
+print_r($messages[--$i]->dateUpdated);
 
 // $sql  = "SELECT ConversationSid FROM conversations WHERE msgadded = '0'";
 // $cids = mysqli_query($connect,$sql);

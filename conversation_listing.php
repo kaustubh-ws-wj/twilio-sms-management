@@ -23,7 +23,7 @@ function date_compare($a, $b){
 
 $folder_name = $_POST['folder_name'];
 $list = [];
-$sql = "SELECT * FROM conversations where folder = '$folder_name'";
+$sql = "SELECT * FROM conversations where folder = '$folder_name' ORDER BY DateCreated DESC";
 $con_arry = mysqli_query($connect,$sql);
 
 while($conv = mysqli_fetch_assoc($con_arry)){ 
