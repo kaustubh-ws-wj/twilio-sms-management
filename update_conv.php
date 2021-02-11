@@ -16,6 +16,10 @@ if(isset($_POST) && isset($_POST['conv_sid']) && !empty($_POST['conv_sid']) && !
     try{
         $conversation = $twilio->conversations->v1->conversations($conversation_sid)->update(["attributes" => json_encode(array('folder'=>$folder))]);
         $conversation_array = $conversation->toArray();
+
+        $sql = "UPDATE `conversations` SET `folder`='$folder' WHERE `ConversationSid` = '$conversation_sid'";
+        $res = mysqli_query($connect,$sql);
+
         echo json_encode($conversation_array);
     }catch(RestException $ex){
         echo json_encode(array('message'=>$ex->getMessages()));
@@ -29,11 +33,15 @@ if(isset($_POST) && isset($_POST['cid']) && !empty($_POST['cid']) && !empty($_PO
         try{
             $conversation = $twilio->conversations->v1->conversations($conversation_sid)->update(["attributes" => json_encode(array('folder'=>$folder))]);
             $conversation_array = $conversation->toArray();
+
+            $sql = "UPDATE `conversations` SET `folder`='$folder' WHERE `ConversationSid` = '$conversation_sid'";
+            $res = mysqli_query($connect,$sql);
             
         }catch(RestException $ex){
             echo json_encode(array('message'=>$ex->getMessages()));
         }
     }
+    
     echo json_encode($conversation_array);
 }
 

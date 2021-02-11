@@ -1,5 +1,5 @@
 <?php
-ini_set('max_execution_time', 5000);
+ini_set('max_execution_time', 6000);
 include 'config.php';
 include 'connection.php';
 include 'PHPExcel-1.8/Classes/PHPExcel.php';
