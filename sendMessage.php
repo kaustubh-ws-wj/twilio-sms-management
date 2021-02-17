@@ -12,7 +12,7 @@ if(isset($_POST['phone_number']) && isset($_POST['message'])){
               $response = $client->messages->create(
                   '+18335751890', #from
                   ['+'.$_POST['phone_number']], #to
-                  $_POST['message'],#message
+                  $_POST['message'] #message
                 );
  			echo "Message Sent Successfully...";
         }

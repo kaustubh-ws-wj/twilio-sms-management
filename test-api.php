@@ -15,8 +15,15 @@ $conversation_sid = "CHb8021e07777e459e88b87cfac49e6e2a";
 
 // $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
 
-$messages = $twilio->conversations->v1->conversations($conversation_sid)->fetch();
+// $messages = $twilio->conversations->v1->conversations($conversation_sid)->fetch();
 
+$smessages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
+$i = count($smessages);
+$last_msgs = $smessages[--$i]->body;
+$date = '2021-02-11T04:31:21.679Z';
+
+$setquerys = "UPDATE `conversations` SET `DateCreated`='$date',`lastMsg`='$last_msgs' WHERE `ConversationSid`='$conversation_sid'";
+echo $setquerys;
 echo "<pre>";
 // print_r($campaign_messages_result);
 
@@ -38,7 +45,7 @@ print_r($messages);
 //     $last_msg = $messages[0]->body;
 
 //     $query = "UPDATE `conversations` SET `lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
-//     $msgupdate = mysqli_query($connect,$query);
+//     $msgupdate = mysqli_query($connect,$query); 
 // }
 
 ?> 
