@@ -45,30 +45,46 @@ if(!empty($_POST['conversation_sid'])){
             
             $campaing_message_array = $campaign_messages_result[0]->toArray();
 
+            $o = new ReflectionObject($campaing_message_array['dateUpdated']);
+            $p = $o->getProperty('date');
+            $odates = $p->getValue($campaing_message_array['dateUpdated']);
+            $dateone = new DateTime($odates, new DateTimeZone('UTC'));
+            $dateone->setTimezone(new DateTimeZone('America/New_York'));
+
             $html .='<div class="single-message self-message text-right">
                             <div class="user-massage">
                                 <span class="user-name">'.$campaing_message_array['from'].'</span>
                                 <p><span class="color">'.$campaing_message_array['body'].'</span></p>
-                                <span style="font-size: 10px;" class="m-time">'. $campaing_message_array['dateUpdated']->format('Y-m-d H:i A').'</span>
+                                <span style="font-size: 10px;" class="m-time">'. $dateone->format('Y-m-d H:i:s').'</span>
                             </div>
                         </div>';
 
             foreach ($messages as $key => $value){    
                 if(in_array($value->author,$purchased_number)){
+                    $o = new ReflectionObject($value->dateUpdated);
+                    $p = $o->getProperty('date');
+                    $odate =  $p->getValue($value->dateUpdated);
+                    $date = new DateTime($odate, new DateTimeZone('UTC'));
+                    $date->setTimezone(new DateTimeZone('America/New_York'));
                     $html .='<div class="single-message self-message text-right">
                                 <div class="user-massage">
                                     <span class="user-name">'.$value->author.'</span>
                                     <p><span class="color">'.$value->body.'</span></p>
-                                    <span style="font-size: 10px;" class="m-time">'. $value->dateUpdated->format('Y-m-d H:i A').'</span>
+                                    <span style="font-size: 10px;" class="m-time">'. $date->format('Y-m-d H:i:s').'</span>
                                 </div>
                             </div>';
                     
                 }else{
+                    $o = new ReflectionObject($value->dateUpdated);
+                    $p = $o->getProperty('date');
+                    $odate =  $p->getValue($value->dateUpdated);
+                    $date = new DateTime($odate, new DateTimeZone('UTC'));
+                    $date->setTimezone(new DateTimeZone('America/New_York'));
                     $html .='<div class="single-message">
                                 <div class="user-massage">
                                     <span class="user-name">'.$value->author.'</span>
                                     <p><span class="color">'.$value->body.'</span></p>
-                                    <span style="font-size: 10px;" class="m-time">'.$value->dateUpdated->format('Y-m-d H:i A').'</span>
+                                    <span style="font-size: 10px;" class="m-time">'.$date->format('Y-m-d H:i:s').'</span>
                                 </div>
                             </div>';
                 }

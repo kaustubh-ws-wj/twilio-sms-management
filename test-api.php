@@ -17,18 +17,26 @@ $conversation_sid = "CHb8021e07777e459e88b87cfac49e6e2a";
 
 // $messages = $twilio->conversations->v1->conversations($conversation_sid)->fetch();
 
-$smessages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
-$i = count($smessages);
-$last_msgs = $smessages[--$i]->body;
-$date = '2021-02-11T04:31:21.679Z';
+// $smessages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
 
-$setquerys = "UPDATE `conversations` SET `DateCreated`='$date',`lastMsg`='$last_msgs' WHERE `ConversationSid`='$conversation_sid'";
-echo $setquerys;
+$campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
+$campaing_message_array = $campaign_messages_result[0]->toArray();
+
+
+// $i = count($smessages);
+// $last_msgs = $smessages[--$i]->body;
+// $date = '2021-02-11T04:31:21.679Z';
+
+// $setquerys = "UPDATE `conversations` SET `DateCreated`='$date',`lastMsg`='$last_msgs' WHERE `ConversationSid`='$conversation_sid'";
+// echo $setquerys;
 echo "<pre>";
 // print_r($campaign_messages_result);
 
 // echo "-------------------------------------------------";
-print_r($messages);
+print_r($campaing_message_array);
+$o = new ReflectionObject($campaing_message_array['dateUpdated']);
+$p = $o->getProperty('date');
+echo  $p->getValue($campaing_message_array['dateUpdated']);
 // $i = count($messages);
 // $last_msg = $messages[--$i]->body;
 // $date = '2021-02-11T04:31:21.679Z';
