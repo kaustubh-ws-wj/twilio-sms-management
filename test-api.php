@@ -9,15 +9,18 @@ use Twilio\Rest\Client;
 use Twilio\Exceptions\RestException;
 $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
-$proxy_address = "+12675783409";
-$from_number = "+13476055623";
+$proxy_address = "+12675783087";
+$from_number = "+18627725532";
 $conversation_sid = "CHb8021e07777e459e88b87cfac49e6e2a";
 
 // $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
 
 // $messages = $twilio->conversations->v1->conversations($conversation_sid)->fetch();
 
-// $smessages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
+$smessages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
+echo "<pre>";
+print_r($smessages);
+die;
 
 $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
 $campaing_message_array = $campaign_messages_result[0]->toArray();
@@ -34,9 +37,9 @@ echo "<pre>";
 
 // echo "-------------------------------------------------";
 print_r($campaing_message_array);
-$o = new ReflectionObject($campaing_message_array['dateUpdated']);
-$p = $o->getProperty('date');
-echo  $p->getValue($campaing_message_array['dateUpdated']);
+// $o = new ReflectionObject($campaing_message_array['dateUpdated']);
+// $p = $o->getProperty('date');
+// echo  $p->getValue($campaing_message_array['dateUpdated']);
 // $i = count($messages);
 // $last_msg = $messages[--$i]->body;
 // $date = '2021-02-11T04:31:21.679Z';

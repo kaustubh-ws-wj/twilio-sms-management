@@ -454,6 +454,7 @@
             }
         });
     }
+    
     $('form#send').on('focus',function(){
         alert();
     });
@@ -509,9 +510,9 @@
     function countChar(val='') {
         var len = val.value.length;
         if (len >= 160) {
-            $('.text-warning').text('you have exceeded 160 charcters limit'); 
+            $('.text-warning').text('you have exceeded 160 characters limit'); 
         } else {
-            $('#current-count').text(160 - len);
+            $('.text-warning').text(`${160 - len} remaining out of 160`); 
         }
     };
 </script>

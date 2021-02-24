@@ -58,6 +58,10 @@ error_log('---Request End---');
             $date = $_POST['DateCreated'];
             $from = $_POST['Author'];
 
+            $dateutc = new DateTime($date, new DateTimeZone('UTC'));
+            $dateutc->setTimezone(new DateTimeZone('America/New_York'));
+            $dateny = $dateutc->format('Y-m-d H:i:s');
+
             $participant = $twilio->conversations->v1->conversations($conversationSid)->fetch();
             $attr = json_decode($participant->attributes, true);
             $folder = $attr['folder'];
@@ -74,16 +78,16 @@ error_log('---Request End---');
                     $messages = $twilio->conversations->v1->conversations($cidss)->messages->read();
                     $i = count($messages);
                     $last_msg = $messages[--$i]->body;
-                    $setquer = "UPDATE `conversations` SET `DateCreated`='$date',`lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
+                    $setquer = "UPDATE `conversations` SET `DateCreated`='$dateny',`lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
                     $msgupdate = mysqli_query($connect,$setquer);
                 }
             }
 
-            $smessages = $twilio->conversations->v1->conversations($cidss)->messages->read();
+            $smessages = $twilio->conversations->v1->conversations($conversationSid)->messages->read();
             $i = count($smessages);
             $last_msgs = $smessages[--$i]->body;
 
-            $setquerys = "UPDATE `conversations` SET `DateCreated`='$date',`lastMsg`='$last_msgs' WHERE `ConversationSid`='$cidss'";
+            $setquerys = "UPDATE `conversations` SET `DateCreated`='$dateny',`lastMsg`='$last_msgs' WHERE `ConversationSid`='$conversationSid'";
             $msgupdate = mysqli_query($connect,$setquerys);
             
             $query = "SELECT notification_email FROM signup";

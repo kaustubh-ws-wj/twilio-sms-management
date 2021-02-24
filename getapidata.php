@@ -41,29 +41,29 @@ if(!empty($_POST['conversation_sid'])){
                     <div class="tab-pane fade show active" id="user-one" role="tabpanel" aria-labelledby="user-one-tab" style="height: 510px;">';
         if(!empty($messages)){
 
-            $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
+            // $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
             
-            $campaing_message_array = $campaign_messages_result[0]->toArray();
+            // $campaing_message_array = $campaign_messages_result[0]->toArray();
 
-            $o = new ReflectionObject($campaing_message_array['dateUpdated']);
-            $p = $o->getProperty('date');
-            $odates = $p->getValue($campaing_message_array['dateUpdated']);
-            $dateone = new DateTime($odates, new DateTimeZone('UTC'));
-            $dateone->setTimezone(new DateTimeZone('America/New_York'));
+            // $o = new ReflectionObject($campaing_message_array['dateUpdated']);
+            // $p = $o->getProperty('date');
+            // $odates = $p->getValue($campaing_message_array['dateUpdated']);
+            // $dateone = new DateTime($odates, new DateTimeZone('UTC'));
+            // $dateone->setTimezone(new DateTimeZone('America/New_York'));
 
-            $html .='<div class="single-message self-message text-right">
-                            <div class="user-massage">
-                                <span class="user-name">'.$campaing_message_array['from'].'</span>
-                                <p><span class="color">'.$campaing_message_array['body'].'</span></p>
-                                <span style="font-size: 10px;" class="m-time">'. $dateone->format('Y-m-d H:i:s').'</span>
-                            </div>
-                        </div>';
+            // $html .='<div class="single-message self-message text-right">
+            //                 <div class="user-massage">
+            //                     <span class="user-name">'.$campaing_message_array['from'].'</span>
+            //                     <p><span class="color">'.$campaing_message_array['body'].'</span></p>
+            //                     <span style="font-size: 10px;" class="m-time">'. $dateone->format('Y-m-d H:i:s').'</span>
+            //                 </div>
+            //             </div>';
 
             foreach ($messages as $key => $value){    
                 if(in_array($value->author,$purchased_number)){
-                    $o = new ReflectionObject($value->dateUpdated);
+                    $o = new ReflectionObject($value->dateCreated);
                     $p = $o->getProperty('date');
-                    $odate =  $p->getValue($value->dateUpdated);
+                    $odate =  $p->getValue($value->dateCreated);
                     $date = new DateTime($odate, new DateTimeZone('UTC'));
                     $date->setTimezone(new DateTimeZone('America/New_York'));
                     $html .='<div class="single-message self-message text-right">
@@ -73,11 +73,10 @@ if(!empty($_POST['conversation_sid'])){
                                     <span style="font-size: 10px;" class="m-time">'. $date->format('Y-m-d H:i:s').'</span>
                                 </div>
                             </div>';
-                    
                 }else{
-                    $o = new ReflectionObject($value->dateUpdated);
+                    $o = new ReflectionObject($value->dateCreated);
                     $p = $o->getProperty('date');
-                    $odate =  $p->getValue($value->dateUpdated);
+                    $odate =  $p->getValue($value->dateCreated);
                     $date = new DateTime($odate, new DateTimeZone('UTC'));
                     $date->setTimezone(new DateTimeZone('America/New_York'));
                     $html .='<div class="single-message">
@@ -90,11 +89,11 @@ if(!empty($_POST['conversation_sid'])){
                 }
             }
         }else{
-                    $html .='<div class="single-message self-message text-center">
-                                <div class="user-massage">
-                                    <p><span class="color">NO MESSAGES</span></p>
-                                </div>
-                            </div>';
+            $html .='<div class="single-message self-message text-center">
+                        <div class="user-massage">
+                            <p><span class="color">NO MESSAGES</span></p>
+                        </div>
+                    </div>';
         }
         $html .= '<div class="latest-msg"> </div>';
         $html .=    '</div>
