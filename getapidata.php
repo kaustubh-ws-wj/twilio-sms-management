@@ -41,23 +41,28 @@ if(!empty($_POST['conversation_sid'])){
                     <div class="tab-pane fade show active" id="user-one" role="tabpanel" aria-labelledby="user-one-tab" style="height: 510px;">';
         if(!empty($messages)){
 
-            // $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
+            $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
+
+            if(empty($campaign_messages_result)):
+                echo "Given Array is empty"; 
+                die;
+            endif;
             
-            // $campaing_message_array = $campaign_messages_result[0]->toArray();
+            
+            $campaing_message_array = $campaign_messages_result[0]->toArray();
+            $o = new ReflectionObject($campaing_message_array['dateUpdated']);
+            $p = $o->getProperty('date');
+            $odates = $p->getValue($campaing_message_array['dateUpdated']);
+            $dateone = new DateTime($odates, new DateTimeZone('UTC'));
+            $dateone->setTimezone(new DateTimeZone('America/New_York'));
 
-            // $o = new ReflectionObject($campaing_message_array['dateUpdated']);
-            // $p = $o->getProperty('date');
-            // $odates = $p->getValue($campaing_message_array['dateUpdated']);
-            // $dateone = new DateTime($odates, new DateTimeZone('UTC'));
-            // $dateone->setTimezone(new DateTimeZone('America/New_York'));
-
-            // $html .='<div class="single-message self-message text-right">
-            //                 <div class="user-massage">
-            //                     <span class="user-name">'.$campaing_message_array['from'].'</span>
-            //                     <p><span class="color">'.$campaing_message_array['body'].'</span></p>
-            //                     <span style="font-size: 10px;" class="m-time">'. $dateone->format('Y-m-d H:i:s').'</span>
-            //                 </div>
-            //             </div>';
+            $html .='<div class="single-message self-message text-right">
+                            <div class="user-massage">
+                                <span class="user-name">'.$campaing_message_array['from'].'</span>
+                                <p><span class="color">'.$campaing_message_array['body'].'</span></p>
+                                <span style="font-size: 10px;" class="m-time">'. $dateone->format('Y-m-d H:i:s').'</span>
+                            </div>
+                        </div>';
 
             foreach ($messages as $key => $value){    
                 if(in_array($value->author,$purchased_number)){
@@ -70,7 +75,7 @@ if(!empty($_POST['conversation_sid'])){
                                 <div class="user-massage">
                                     <span class="user-name">'.$value->author.'</span>
                                     <p><span class="color">'.$value->body.'</span></p>
-                                    <span style="font-size: 10px;" class="m-time">'. $date->format('Y-m-d H:i:s').'</span>
+                                    <span style="font-size: 10px;" class="m-time">'.$date->format('Y-m-d H:i:s').'</span>
                                 </div>
                             </div>';
                 }else{

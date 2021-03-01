@@ -78,8 +78,8 @@
           <div class="tl-section">
             <div class="tl-dashboard bg-color">
                 <div class="container-fluid p-0">
-                     <div class="main">
-                     <div class="messages bg-white row">
+                    <div class="main">
+                        <div class="messages bg-white row">
                             <div class="side-navi col-12 col-sm-12 col-md-2 collapse show d-md-flex bg-dark pt-2 pl-0 p-0" id="sidebar" style="height:80vh;">
                                 <ul class="nav flex-column flex-nowrap overflow-hidden">
                                     <!-- <li class="nav-item nav-item-arrow">
@@ -105,7 +105,7 @@
                                                         <a class="nav-link collapsed py-1 folder" data-num="<?= $trash['folder_id']; ?>" data-name="<?= $trash['folder_name']; ?>" data-toggle="collapse" ><i class="fa fa-caret-right" aria-hidden="true"></i><span><?= $trash['folder_name'];?></span></a>
                                                         <span class="li-dot <?= (in_array($trash['folder_name'],$unread_folder))?'dot':'' ?>"></span>
                                                     </li>
-                                                <?php }?>
+                                                <?php } ?>
                                                 <li class="nav-item pt-4">
                                                     <a class="nav-link collapsed py-1 downloadCSV" data-toggle="collapse" >Download <i class="fa fa-download" aria-hidden="true"></i></a>
                                                 </li>
@@ -219,7 +219,6 @@
         </div>
       </div>
     </div>
-    <!--   Core JS Files   -->
     <!--   Core JS Files   -->
     <?php
       include 'inc/footer.php';
