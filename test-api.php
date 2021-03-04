@@ -9,41 +9,37 @@ use Twilio\Rest\Client;
 use Twilio\Exceptions\RestException;
 $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
-$proxy_address = "+12675783087";
-$from_number = "+18627725532";
-$conversation_sid = "CHb8021e07777e459e88b87cfac49e6e2a";
+$proxy_address = "+12677109451";
+$from_number = "+12678157307";
+$conversation_sid = "CHe8edef36ee614cc1adfa5dddc95b8386";
 
 // $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
 
-// $messages = $twilio->conversations->v1->conversations($conversation_sid)->fetch();
+$consql  = "SELECT ConversationSid FROM conversations WHERE msgadded = '0' AND ConversationSid != ''";
+$cids = mysqli_query($connect,$consql);
 
-$messages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
-if(!empty($messages)){ 
-    $i = count($messages);
-    $last_msg = $messages[--$i]->body;
-    $o = new ReflectionObject($messages[--$i]->dateCreated);
-    $p = $o->getProperty('date');
-    $odate =  $p->getValue($messages[--$i]->dateCreated);
-    $dates = new DateTime($odate, new DateTimeZone('UTC'));
-    $dates->setTimezone(new DateTimeZone('America/New_York'));
-    $txt_time = $dates->format('Y-m-d H:i:s');
+while($cid = mysqli_fetch_assoc($cids)){
+    $cidss = $cid['ConversationSid'];
+    if (!empty($cidss)) {
+        $messages = $twilio->conversations->v1->conversations($cidss)->messages->read();
+        $i = count($messages);
+        $last_msg = $messages[--$i]->body;
+        $setquer = "UPDATE `conversations` SET `DateCreated`='$dateny',`lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
+        $msgupdate = mysqli_query($connect,$setquer);
+    }
 }
 
-echo $txt_time;
-echo $last_msg;
+// $messages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
+// $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
 
 
-// $i = count($smessages);
-// $last_msgs = $smessages[--$i]->body;
-// $date = '2021-02-11T04:31:21.679Z';
-
-// $setquerys = "UPDATE `conversations` SET `DateCreated`='$date',`lastMsg`='$last_msgs' WHERE `ConversationSid`='$conversation_sid'";
-// echo $setquerys;
 echo "<pre>";
-print_r($messages);
+// print_r($messages);
+echo "--------------------------";
+print_r($purchased_number);
 
-// echo "-------------------------------------------------";
-// print_r($campaing_message_array);
+echo "-------------------------------------------------";
+// print_r($campaign_messages_result);
 // $o = new ReflectionObject($campaing_message_array['dateUpdated']);
 // $p = $o->getProperty('date');
 // echo  $p->getValue($campaing_message_array['dateUpdated']);

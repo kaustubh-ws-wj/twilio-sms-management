@@ -79,7 +79,7 @@ error_log('---Request End---');
                     $i = count($messages);
                     $last_msg = $messages[--$i]->body;
                     $setquer = "UPDATE `conversations` SET `DateCreated`='$dateny',`lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
-                    $msgupdate = mysqli_query($connect,$setquer);
+                    $msgupdates = mysqli_query($connect,$setquer);
                 }
             }
 

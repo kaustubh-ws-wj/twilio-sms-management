@@ -8,13 +8,12 @@
     use Twilio\Rest\Client;
     use Twilio\Exceptions\RestException;
     $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
-    
-
+  
   if(isset($_POST) && isset($_POST['pn_sid']) && $_POST['pn_sid'] != ''){
     $pn_sid = $_POST['pn_sid'];
     $phone_number = $_POST['phone_number'];
     try{
-      // $twilio->incomingPhoneNumbers($pn_sid)->delete();
+      $twilio->incomingPhoneNumbers($pn_sid)->delete();
 
       // Change status from `purchased_numbers` 
       $query = "UPDATE purchased_numbers SET status='realised' WHERE pn_sid='{$pn_sid}'";
@@ -31,7 +30,7 @@
     }
     
   }
-  $incomingPhoneNumbers = $twilio->incomingPhoneNumbers->read([], 20); 
+  $incomingPhoneNumbers = $twilio->incomingPhoneNumbers->read([]); 
     /* $curl = curl_init();
 
     curl_setopt_array($curl, array(
