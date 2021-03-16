@@ -78,7 +78,7 @@ error_log('---Request End---');
                     $messages = $twilio->conversations->v1->conversations($cidss)->messages->read();
                     $i = count($messages);
                     $last_msg = $messages[--$i]->body;
-                    $setquer = "UPDATE `conversations` SET `DateCreated`='$dateny',`lastMsg`='$last_msg',`msgadded`='1' WHERE `ConversationSid`='$cidss'";
+                    $setquer = 'UPDATE `conversations` SET `DateCreated`="'.$dateny.'",`lastMsg`="'.$last_msg.'",`msgadded`="1" WHERE `ConversationSid`="'.$cidss.'"';
                     $msgupdates = mysqli_query($connect,$setquer);
                 }
             }
