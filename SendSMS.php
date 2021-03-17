@@ -66,8 +66,19 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                                 $sender = $_POST['call_routes_id'][$next];
                                 //$sender = $number;
                                 // echo 'post msg -> '.$message_body;
+
                                 unset($new_body);
                                 $new_body = $message_body;
+                                
+                                //old find and replace code
+                                // $words = array('Hello','Hey','Hii');
+                                // $new_body = str_replace("Hello",$words[rand(0,2)],$new_body);
+                                //End of old find and replace code
+
+                                $oldwrd = ["Hello", "Hii", "Hey"];
+                                $newwrd   = ["Hello", "Hii", "Hey"];
+                                $new_body = str_replace($oldwrd, $newwrd[rand(0,2)], $new_body);
+
                                 foreach($allDataInSheet[1] as $col => $cell_val){
                                     $new_body = str_replace("#".$cell_val."#",$value[$col],$new_body);
                                 }                               
