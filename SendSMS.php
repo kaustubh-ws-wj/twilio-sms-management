@@ -12,6 +12,7 @@ $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
 if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty($_POST['call_routes_id'])){
     $message_body = $_POST['message'];
+
     // $query_test = "SELECT * FROM numbers where numbers_group_id = {$_POST['group']}";
     // $result_test = mysqli_query($connect, $query_test);
     // $total_rows_test = mysqli_num_rows($result_test);
@@ -54,7 +55,6 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                     foreach($allDataInSheet as $key => $value){
                         if($key != 1){
                             if($value[$phone_col] != ''){
-            
                                 $phone_number = '+1'.$value[$phone_col];                            
                                 if($sent_count == 120){
                                     $next++;
@@ -75,9 +75,8 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                                 // $new_body = str_replace("Hello",$words[rand(0,2)],$new_body);
                                 //End of old find and replace code
 
-                                $oldwrd = ["Hello", "Hii", "Hey"];
                                 $newwrd   = ["Hello", "Hii", "Hey"];
-                                $new_body = str_replace($oldwrd, $newwrd[rand(0,2)], $new_body);
+                                $new_body = str_replace("#spin#", $newwrd[rand(0,2)], $new_body);
 
                                 foreach($allDataInSheet[1] as $col => $cell_val){
                                     $new_body = str_replace("#".$cell_val."#",$value[$col],$new_body);
@@ -89,7 +88,6 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                                 if($check_suppression_rows > 0){
                                     $suppress_count++;
                                 }else{
-
                                     try{
                                         $message = $twilio->messages->create($phone_number, // to
                                         [

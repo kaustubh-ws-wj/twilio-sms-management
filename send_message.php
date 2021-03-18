@@ -136,6 +136,7 @@
                             <small id="message-text" class="form-text text-muted text-warning"> <span id="current-count">160</span> remaining out of 160</small>
                           </div>
                           <div class="card-body col-buttons" id="col-buttons">
+                            
                           </div>
                         </div>
                     </div>
@@ -208,6 +209,7 @@ $(document).ready(function(){
         data:{"filepath":path},
         success:function(response){
           var button_html = '';
+          button_html = '<a href="#" data-col="#spin#" class="btn btn-info btn-sm">Spin</a>';
           var obj =JSON.parse(response);
           if(obj.status){
             var button_obj = obj.buttons;
