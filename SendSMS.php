@@ -75,7 +75,7 @@ if(isset($_POST) && !empty($_POST) && isset($_POST['call_routes_id']) && !empty(
                                 // $new_body = str_replace("Hello",$words[rand(0,2)],$new_body);
                                 //End of old find and replace code
 
-                                $newwrd   = ["Hello", "Hii", "Hey"];
+                                $newwrd   = ["Hello", "Hi", "Hey"];
                                 $new_body = str_replace("#spin#", $newwrd[rand(0,2)], $new_body);
 
                                 foreach($allDataInSheet[1] as $col => $cell_val){

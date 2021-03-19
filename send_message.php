@@ -92,7 +92,7 @@
                         <div class="col-md-12">
                           <label class="card-title">Enter Campaign Name</label>
                           <div class="form-group form-file-upload form-file-simple">
-                            <input name="campaign_name" class="form-control" placeholder="Enter Campaign Name" required>
+                            <input name="campaign_name" class="form-control" placeholder="Enter Campaign Name" id="campaign_name" required>
                           </div>
                         </div>
                         <!-- <div class="col-md-12">
@@ -121,7 +121,7 @@
                         <div class="col-md-12">
                           <label class="card-title">Select Call Route/Group</label>
                           <div class="form-group form-file-upload form-file-simple">
-                            <select class="form-control getroutes" name="route" required="">
+                            <select class="form-control getroutes" name="route" id="route_group" required="">
                                 <option value="" disabled="" selected="">Select</option>
                               <?php while($row_routes=mysqli_fetch_assoc($result_routes)) {  ?>
                                 <option value="<?= $row_routes['call_routes_name']; ?>"><?= $row_routes['call_routes_name']; ?></option>
@@ -166,6 +166,11 @@
                   </tfoot>
                   <tbody id="response"></tbody>
                 </table>
+                <div id="confirmBox">
+                    <div class="message"><h1>Are you sure?</h1></div>
+                    <div class="conformbtn"><span class="button yes">Yes</span>
+                    <span class="button no">No</span></div>
+                </div>
               <div class="form-group form-file-upload form-file-multiple">
                 <input type="submit" value="Send Campaign" class="btn btn-warning pull-right mainbtn">
               </div>
@@ -176,6 +181,7 @@
         </div>
       </div>
     </div>
+    
     <!--   Core JS Files   -->
     <!--   Core JS Files   -->
 <?php
@@ -237,5 +243,36 @@ $(document).ready(function(){
         $('#current-count').text(160 - len);
       }
     };
+
+    function doConfirm(msg, yesFn, noFn) {
+        var confirmBox = $("#confirmBox");
+        confirmBox.find(".message").html(msg);
+        confirmBox.find(".yes,.no").unbind().click(function () {
+            confirmBox.hide();
+        });
+        confirmBox.find(".yes").click(yesFn);
+        confirmBox.find(".no").click(noFn);
+        confirmBox.show();
+    }
+
+    $(function () {
+        $("form").submit(function (e) {
+            e.preventDefault();
+            var form = this;
+            var campaign_name = $('#campaign_name').val();
+            var contact_list = $('#contact_list option:selected').text();
+            var route_group = $('#route_group').val();
+            var text_message = $('#text_message').val();
+            var details = `Campaign Name - ${campaign_name}, <br>
+                           Contact List - ${contact_list}, <br>
+                           Route Group - ${route_group}, <br>
+                           Text - ${text_message}, <br>`;
+            doConfirm(details, function yes() {
+                form.submit();
+            }, function no() {
+                // do nothing
+            });
+        });
+    });
 
 </script>
