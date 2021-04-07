@@ -12,63 +12,81 @@ use Twilio\Rest\Client;
 use Twilio\Exceptions\RestException;
 $twilio = new Client(ACCOUNT_SID, AUTH_TOKEN);
 
-$proxy_address = "+12677109451";
-$from_number = "+12678157307";
-$conversation_sid = "CH25c3557fa94e48f1b79c25cf67e327b2";
+$proxy_address = "+12675783493";
+$from_number = "+13474407177";
+$conversation_sid = "CH4536f5206dbc4cf7bc4e5c4bcb8c7d58";
 
-// $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
+// $call = $twilio->calls
+//                ->create("+14155551212", // to
+//                         "+14155551212", // from
+//                         ["url" => "http://demo.twilio.com/docs/classic.mp3"]
+//                );
 
-$consql  = 'SELECT ConversationSid FROM conversations WHERE `lastMsg` = "Confirming 11am showing" limit 200';
-// $consql  = 'SELECT ConversationSid FROM conversations WHERE `lastMsg` = "Call 302-295-1214" limit 200';
-$cids = mysqli_query($connect,$consql);
-// $i = 0;
-while($cid = mysqli_fetch_assoc($cids)){
-    $cidss = $cid['ConversationSid'];
-    if (!empty($cidss)) {
-        // echo $cidss.'->'.++$i."<br>";
-        $campaign_messages_result = $twilio->conversations->v1->conversations($cidss)->messages->read();
-        $i = count($campaign_messages_result);
-        
-        if ($i >= 1 ) {
-            $campaing_message_array = $campaign_messages_result[--$i]->toArray();
-            $o = new ReflectionObject($campaing_message_array['dateUpdated']);
-            $p = $o->getProperty('date');
-            $odates = $p->getValue($campaing_message_array['dateUpdated']);
-            $dateone = new DateTime($odates, new DateTimeZone('UTC'));
-            $dateone->setTimezone(new DateTimeZone('America/New_York'));
-            $dateny = $dateone->format('Y-m-d H:i:s');
-            $last_msg = $campaing_message_array['body'];
-        
-            $setquer = 'UPDATE `conversations` SET `DateCreated`="'.$dateny.'",`lastMsg`="'.$last_msg.'",`msgadded`="1" WHERE `ConversationSid`="'.$cidss.'"';
-            $msgupdate = mysqli_query($connect,$setquer);
-        }elseif($i == 0 ){
-            if (!empty($campaign_messages_result)) {
-                $campaing_message_array = $campaign_messages_result[0]->toArray();
-                $o = new ReflectionObject($campaing_message_array['dateUpdated']);
-                $p = $o->getProperty('date');
-                $odates = $p->getValue($campaing_message_array['dateUpdated']);
-                $dateone = new DateTime($odates, new DateTimeZone('UTC'));
-                $dateone->setTimezone(new DateTimeZone('America/New_York'));
-                $dateny = $dateone->format('Y-m-d H:i:s');
-                $last_msg = $campaing_message_array['body'];
-            
-                $setquer = 'UPDATE `conversations` SET `DateCreated`="'.$dateny.'",`lastMsg`="'.$last_msg.'",`msgadded`="1" WHERE `ConversationSid`="'.$cidss.'"';
-                $msgupdate = mysqli_query($connect,$setquer);
-            }
-           
-        }
-        
-    }
-}
+// print($call->sid);
+
+// $twilio->conversations->v1->conversations("CHXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")->delete();
+
 
 // $messages = $twilio->conversations->v1->conversations($conversation_sid)->messages->read();
+
 // $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
 
+$sender_msg = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
+$receiver_msg = $twilio->messages->read(["from" => $from_number,"to" => $proxy_address],20);
+
+$sender_msg_array = array();
+$receiver_msg_array = array();
+foreach ($sender_msg as $key => $value){ 
+    $o = new ReflectionObject($value->dateCreated);
+    $p = $o->getProperty('date');
+    $odate =  $p->getValue($value->dateCreated);
+    $date = new DateTime($odate, new DateTimeZone('UTC'));
+    $date->setTimezone(new DateTimeZone('America/New_York'));
+
+    array_push($sender_msg_array,array( 'body'=>$value->body, 'from'=>$value->from, 'time'=>$date->format('Y-m-d H:i:s')));
+}
+foreach ($receiver_msg as $key => $value){ 
+    $o = new ReflectionObject($value->dateCreated);
+    $p = $o->getProperty('date');
+    $odate =  $p->getValue($value->dateCreated);
+    $date = new DateTime($odate, new DateTimeZone('UTC'));
+    $date->setTimezone(new DateTimeZone('America/New_York'));
+
+    array_push($receiver_msg_array,array( 'body'=>$value->body, 'from'=>$value->from, 'time'=>$date->format('Y-m-d H:i:s')));
+}
+
+$convarray = array_merge($sender_msg_array,$receiver_msg_array);
+
+// $onlydate = date('Y-m-d', strtotime("2021-04-06"));
+// foreach ($campaign_messages_result as $key => $value){ 
+//     $o = new ReflectionObject($value->dateCreated);
+//     $p = $o->getProperty('date');
+//     $odate =  $p->getValue($value->dateCreated);
+//     $date = new DateTime($odate, new DateTimeZone('UTC'));
+//     $date->setTimezone(new DateTimeZone('America/New_York'));
+//     // if ($date->format('Y-m-d') == $onlydate) {
+//         echo $value->body."||".$date->format('Y-m-d H:i:s')."||".$key."<br>";
+//     // }
+// }
 
 echo "<pre>";
-// print_r($messages);
+print_r($sender_msg_array);
+echo "-----------------";
+print_r($receiver_msg_array);
+echo "----------------";
+print_r($convarray);
+echo "----------------";
+
+usort($convarray, function($a, $b) {
+    return $a['time'] <=> $b['time'];
+});
+print_r($convarray);
+foreach ($convarray as $key => $value){ 
+    echo $value['body'];
+}
+die;
 echo "--------------------------";
-// print_r($purchased_number);
+// print_r($campaign_messages_result);
 
 echo "-------------------------------------------------";
 // print_r($campaign_messages_result);

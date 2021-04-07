@@ -41,54 +41,49 @@ if(!empty($_POST['conversation_sid'])){
                     <div class="tab-pane fade show active" id="user-one" role="tabpanel" aria-labelledby="user-one-tab" style="height: 510px;">';
         if(!empty($messages)){
 
-            $sender_msg = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
-            $receiver_msg = $twilio->messages->read(["from" => $from_number,"to" => $proxy_address],20);
+            $campaign_messages_result = $twilio->messages->read(["from" => $proxy_address,"to" => $from_number],20);
 
-            $sender_msg_array = array();
-            $receiver_msg_array = array();
-
-            foreach ($sender_msg as $key => $value){ 
-                $o = new ReflectionObject($value->dateCreated);
+            if(!empty($campaign_messages_result)):
+                $i = count($campaign_messages_result);
+                $campaing_message_array = $campaign_messages_result[--$i]->toArray();
+                $o = new ReflectionObject($campaing_message_array['dateUpdated']);
                 $p = $o->getProperty('date');
-                $odate =  $p->getValue($value->dateCreated);
-                $date = new DateTime($odate, new DateTimeZone('UTC'));
-                $date->setTimezone(new DateTimeZone('America/New_York'));
+                $odates = $p->getValue($campaing_message_array['dateUpdated']);
+                $dateone = new DateTime($odates, new DateTimeZone('UTC'));
+                $dateone->setTimezone(new DateTimeZone('America/New_York'));
 
-                array_push($sender_msg_array,array( 'body'=>$value->body, 'from'=>$value->from, 'time'=>$date->format('Y-m-d H:i:s')));
-            }
-            foreach ($receiver_msg as $key => $value){ 
-                $o = new ReflectionObject($value->dateCreated);
-                $p = $o->getProperty('date');
-                $odate =  $p->getValue($value->dateCreated);
-                $date = new DateTime($odate, new DateTimeZone('UTC'));
-                $date->setTimezone(new DateTimeZone('America/New_York'));
-
-                array_push($receiver_msg_array,array( 'body'=>$value->body, 'from'=>$value->from, 'time'=>$date->format('Y-m-d H:i:s')));
-            }
-
-            $convarray = array_merge($sender_msg_array,$receiver_msg_array);
-
-            usort($convarray, function($a, $b) {
-                return $a['time'] <=> $b['time'];
-            });            
+                $html .='<div class="single-message self-message text-right">
+                            <div class="user-massage">
+                                <span class="user-name">'.$campaing_message_array['from'].'</span>
+                                <p><span class="color">'.$campaing_message_array['body'].'</span></p>
+                                <span style="font-size: 10px;" class="m-time">'. $dateone->format('Y-m-d H:i:s').'</span>
+                            </div>
+                        </div>';
+            endif;
+            
             
 
-            foreach ($convarray as $key => $value){
+            foreach ($messages as $key => $value){
+                $o = new ReflectionObject($value->dateCreated);
+                $p = $o->getProperty('date');
+                $odate =  $p->getValue($value->dateCreated);
+                $date = new DateTime($odate, new DateTimeZone('UTC'));
+                $date->setTimezone(new DateTimeZone('America/New_York'));
 
-                if(in_array($value['from'],$purchased_number)){
+                if(in_array($value->author,$purchased_number)){
                     $html .='<div class="single-message self-message text-right">
                                 <div class="user-massage">
-                                    <span class="user-name">'.$value['from'].'</span>
-                                    <p><span class="color">'.$value['body'].'</span></p>
-                                    <span style="font-size: 10px;" class="m-time">'.$value['time'].'</span>
+                                    <span class="user-name">'.$value->author.'</span>
+                                    <p><span class="color">'.$value->body.'</span></p>
+                                    <span style="font-size: 10px;" class="m-time">'.$date->format('Y-m-d H:i:s').'</span>
                                 </div>
                             </div>';
                 }else{
                     $html .='<div class="single-message">
                                 <div class="user-massage">
-                                    <span class="user-name">'.$value['from'].'</span>
-                                    <p><span class="color">'.$value['body'].'</span></p>
-                                    <span style="font-size: 10px;" class="m-time">'.$value['time'].'</span>
+                                    <span class="user-name">'.$value->author.'</span>
+                                    <p><span class="color">'.$value->body.'</span></p>
+                                    <span style="font-size: 10px;" class="m-time">'.$date->format('Y-m-d H:i:s').'</span>
                                 </div>
                             </div>';
                 }
